@@ -31,8 +31,8 @@ img { max-width: 100%; }
   --warn-soft: #f5dfc6;
   --err: #b3261e;
   --hit: #f4c48c;
-  --tint-s: 42%;
-  --tint-l: 87%;
+  --tint-s: 50%;
+  --tint-l: 84%;
   --display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   --body: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -254,16 +254,18 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 
   /* ---------- fixed tournament data (from the two posters) ---------- */
   var TEAMS = [
-    { id: 'ash',    e: '🔥', h: 6,   p: ['Ash', 'Yatha', 'Anas'] },
-    { id: 'sat',    e: '⚡', h: 210, p: ['Sat', 'Sky', 'Alex'] },
-    { id: 'maddy',  e: '👑', h: 50,  p: ['Maddy', 'Harish', 'Nicole'] },
-    { id: 'eugene', e: '🦖', h: 125, p: ['Eugene', 'Rossi', 'Din'] },
-    { id: 'barath', e: '🦍', h: 268, p: ['Barath', 'Shane', 'Raochelle'] },
-    { id: 'mika',   e: '🐼', h: 26,  p: ['Mika', 'Supi', 'TK'] },
-    { id: 'david',  e: '🦈', h: 186, p: ['David', 'Stan', 'Gladys'] }
+    { id: 'ash',    e: '🔥', h: 10, p: ['Ash', 'Yatha', 'Anas'] },
+    { id: 'sat',    e: '⚡', h: 44, s: 78, p: ['Sat', 'Sky', 'Alex'] },
+    { id: 'maddy',  e: '👑', h: 335, p: ['Maddy', 'Harish', 'Nicole'] },
+    { id: 'eugene', e: '🦖', h: 80, p: ['Eugene', 'Rossi', 'Din'] },
+    { id: 'barath', e: '🦍', h: 28, p: ['Barath', 'Shane', 'Raochelle'] },
+    { id: 'mika',   e: '🐼', h: 135, p: ['Mika', 'Supi', 'TK'] },
+    { id: 'david',  e: '🦈', h: 200, p: ['David', 'Stan', 'Gladys'] }
   ];
   var T = {};
   TEAMS.forEach(function (t, i) { t.i = i; T[t.id] = t; });
+  /* Team colour: hue, plus an optional stronger saturation for pale hues like yellow. */
+  function tint(t) { return '--h:' + t.h + (t.s ? ';--tint-s:' + t.s + '%' : ''); }
 
   function pg(id, c, a, b) { return { id: id, c: c, a: a, b: b }; }
   var SLOTS = [
@@ -574,7 +576,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   function teamBlock(id, label, right, res, mine, theirs) {
     if (!id) return h('div', { class: 'tb tbd' + (right ? ' r' : '') }, label);
     var t = T[id], won = res && mine > theirs, lost = res && mine < theirs;
-    return h('div', { class: 'tb' + (right ? ' r' : '') + (lost ? ' lost' : ''), style: '--h:' + t.h },
+    return h('div', { class: 'tb' + (right ? ' r' : '') + (lost ? ' lost' : ''), style: tint(t) },
       h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }),
       t.p.map(function (n, i) { return h('span', { class: 'p' + (i === 0 ? ' lead' : ''), text: n }); }),
       won ? h('span', { class: 'wtag', text: 'Won' }) : null);
@@ -720,7 +722,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     var roster = h('div', { class: 'roster' });
     TEAMS.forEach(function (t) {
       var r = R.st.rows[t.id];
-      roster.appendChild(h('div', { class: 'team', style: '--h:' + t.h, 'data-s': ('team ' + t.p.join(' ')).toLowerCase() },
+      roster.appendChild(h('div', { class: 'team', style: tint(t), 'data-s': ('team ' + t.p.join(' ')).toLowerCase() },
         h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }),
         h('p', { class: 'tname', text: 'Team ' + t.p[0] }),
         t.p.map(function (n) { return h('span', { class: 'p', text: n }); }),
