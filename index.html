@@ -136,6 +136,8 @@ h1, h2, h3, p { margin: 0; }
 .nav::-webkit-scrollbar { display: none; }
 .nav a { font-weight: 600; font-size: 15px; color: var(--ink); text-decoration: none; white-space: nowrap; padding: 5px 10px; border-radius: 999px; transition: background .2s; }
 .nav a:hover { background: var(--surface); }
+/* phones and tablets: fade the right edge so it is clear the links scroll sideways */
+@media (max-width: 899px) { .nav { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); padding-right: 48px; } }
 @media (min-width: 900px) { .nav { order: 0; flex: 0 1 auto; margin: 0; } }
 .tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .logo { display: block; width: 40px; height: 40px; border-radius: 50%; flex: none; }
@@ -154,6 +156,7 @@ h1, h2, h3, p { margin: 0; }
 .hero-copy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
 .eyebrow { font-weight: 700; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
 .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(60px, 16vw, 132px); line-height: .9; letter-spacing: -.045em; }
+.hero h1 .sg { font-size: .68em; letter-spacing: -.03em; }
 .hero h1 b { font-weight: 700; background: linear-gradient(100deg, var(--accent), #12b5c9); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .sub { font-size: clamp(17px, 2.3vw, 22px); font-weight: 500; max-width: 34ch; }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
@@ -168,7 +171,7 @@ h1, h2, h3, p { margin: 0; }
 .stat b { display: block; font-family: var(--display); font-weight: 700; font-size: 34px; line-height: 1.05; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .stat span { font-size: 13px; font-weight: 500; color: var(--muted); }
 .stamp { position: relative; z-index: 1; font-size: 13px; color: var(--muted); }
-.ballwrap { position: absolute; top: -150px; right: -130px; width: 260px; aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
+.ballwrap { position: absolute; top: -96px; right: -86px; width: 180px; aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
 @media (min-width: 1100px) { .ballwrap { top: 70px; right: 4%; width: min(32vw, 420px); } }
 .ball { position: relative; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #f7f7f7; box-shadow: 0 40px 80px -30px rgba(0, 40, 90, .45); animation: spin 60s linear infinite; }
 .ball img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.07); }
@@ -208,7 +211,14 @@ section { scroll-margin-top: 110px; min-width: 0; display: flex; flex-direction:
 .note { color: var(--muted); font-size: 14px; max-width: 72ch; }
 
 /* standings */
-.tscroll { overflow-x: auto; background: var(--surface); border-radius: 24px; }
+/* wide content scrolls sideways; shadows on the edges show there is more to swipe to */
+.tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 24px; background-color: var(--surface);
+  background-image: linear-gradient(to right, var(--surface) 40%, transparent), linear-gradient(to left, var(--surface) 40%, transparent),
+    radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, .2), transparent), radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, .2), transparent);
+  background-position: left center, right center, left center, right center; background-size: 48px 100%, 48px 100%, 16px 100%, 16px 100%;
+  background-repeat: no-repeat; background-attachment: local, local, scroll, scroll; }
+.swipe { display: none; font-size: 12px; color: var(--muted); margin-top: -6px; }
+
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
 th, td { padding: 12px 12px; text-align: right; white-space: nowrap; }
 th { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
@@ -352,8 +362,12 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   .rv { opacity: 1; transform: none; transition: none; }
   .ball, .ballwrap, .livepill::before, .intro .hero-copy > *, .intro .stats { animation: none; }
 }
-/* phones: drop points for and against, point difference stays */
-@media (max-width: 520px) { th:nth-child(7), td:nth-child(7), th:nth-child(8), td:nth-child(8) { display: none; } .qpill { display: none; } }
+@media (max-width: 640px) {
+  .swipe { display: block; }
+  /* phones: short tag so more columns fit before swiping; screen readers still hear "Semi-finals" */
+  .qpill { font-size: 0; padding: 2px 6px; }
+  .qpill::after { content: "SF"; font-size: 10px; }
+}
 @media (max-width: 420px) {
   .tb { padding: 12px 10px; }
   .score { font-size: 34px; }
@@ -693,7 +707,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
       offline ? h('p', { class: 'offline', role: 'status', text: 'No connection. Scores may be out of date.' }) : null);
   }
   function clubLogo(cls) {
-    return h('img', { class: cls, src: 'assets/club-logo.jpg', alt: 'Casual Singapore Volleyball Club', width: '256', height: '256' });
+    return h('img', { class: cls, src: 'assets/club-logo.jpg', alt: 'Casual SG logo', width: '256', height: '256' });
   }
 
   function hero(main, intro) {
@@ -707,7 +721,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ball, h('div', { class: 'hero-in' },
       h('div', { class: 'hero-copy' },
         h('p', { class: 'eyebrow', text: 'Casual SG Advanced Tournament' }),
-        h('h1', null, 'CAT SG ', h('b', { text: '1.0' })),
+        h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: '1.0' })),
         h('p', { class: 'sub', text: 'Beach volleyball, 3v3. Kallang Beach Courts, 5 October 2026, from 6:00 PM.' }),
         main ? h('div', { class: 'ctas' },
           h('a', { class: 'pill solid', href: '#schedule', text: 'See the schedule' }),
@@ -721,7 +735,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   function footer() {
     return h('footer', { class: 'foot' },
       h('span', null, h('b', { text: 'CAT SG 1.0' }), '  Casual SG Advanced Tournament'),
-      h('span', { class: 'foot-r' }, 'Hosted by Casual Singapore Volleyball Club', clubLogo('logo sm')));
+      h('span', { class: 'foot-r' }, 'Hosted by Casual SG', clubLogo('logo sm')));
   }
 
   /* Scroll reveal runs on the first render of each view only, so live score refreshes never replay it. */
@@ -852,11 +866,12 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
       : st.done ? 'All 21 pool games are in. The top 4 play the semi-finals. '
       : st.played + ' of 21 pool games are in. The top 4 after the pool games play the semi-finals. ';
     return h('section', { id: 'standings' }, sh('Standings'),
-      h('div', { class: 'tscroll' }, h('table', null,
+      h('div', { class: 'tscroll', tabindex: '0', role: 'region', 'aria-label': 'Standings table' }, h('table', null,
         h('thead', null, h('tr', null,
           h('th', { class: 'l', text: '#' }), h('th', { class: 'l', text: 'Team' }),
           h('th', { title: 'Played', text: 'P' }), h('th', { title: 'Won', text: 'W' }), h('th', { title: 'Drawn', text: 'D' }), h('th', { title: 'Lost', text: 'L' }),
           h('th', { title: 'Points scored', text: 'For' }), h('th', { title: 'Points conceded', text: 'Agst' }), h('th', { title: 'Point difference', text: '+/−' }))), tb)),
+      h('p', { class: 'swipe', text: 'Swipe the table sideways to see every column.' }),
       h('p', { class: 'note', text: note + 'Ranked by wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams when exactly two are level.' }));
   }
 

@@ -1,6 +1,6 @@
 # CAT SG 1.0 — Casual SG Advanced Tournament tracker
 
-Live schedule, scores, standings and knockouts for CAT SG 1.0, hosted by Casual Singapore Volleyball Club.
+Live schedule, scores, standings and knockouts for CAT SG 1.0, hosted by Casual SG.
 5 October 2026, Kallang Beach Courts. 7 teams, 3v3, 2 courts, 20 minutes per game, starts 6:00 PM.
 
 Website: https://mikachufm2202.github.io/tourney-tracker/
