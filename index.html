@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>CAT 1.0</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Onest:wght@400;500;600;700&display=swap">
 <style>
 [hidden] { display: none !important; }
@@ -385,7 +386,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   }
   function poll() {
     if (document.hidden) return;
-    fetch(CFG.path + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(take, function () {});
+    return fetch(CFG.path + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(take, function () {});
   }
   document.addEventListener('focusout', function () {
     setTimeout(function () { if (pendingRender && !typing() && !saving) { pendingRender = false; render(); } }, 50);
@@ -776,8 +777,10 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     document.body.classList.add('has-bar');
   }
 
-  render();
-  poll();
+  /* Show saved scores on first paint instead of a flash of an empty scoresheet. On a slow connection, show the page anyway after 4 seconds. */
+  function first() { if (!root.firstChild) render(); }
+  setTimeout(first, 4000);
+  Promise.resolve(poll()).then(first, first);
 })();
 </script>
 </body>
