@@ -157,7 +157,7 @@ h1, h2, h3, p { margin: 0; }
 
 /* hero */
 .hero { position: relative; overflow: hidden; background: var(--hero); }
-.hero-in { position: relative; max-width: 1200px; margin-inline: auto; padding: 84px 16px 40px; display: grid; gap: 28px; }
+.hero-in { position: relative; max-width: 1200px; margin-inline: auto; padding: 44px 16px 40px; display: grid; gap: 28px; }
 @media (min-width: 768px) { .hero-in { padding: 96px 32px 72px; } }
 .hero-copy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
 .eyebrow { font-weight: 700; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
@@ -177,11 +177,14 @@ h1, h2, h3, p { margin: 0; }
 .stat b { display: block; font-family: var(--display); font-weight: 700; font-size: 34px; line-height: 1.05; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .stat span { font-size: 13px; font-weight: 500; color: var(--muted); }
 .stamp { position: relative; z-index: 1; font-size: 13px; color: var(--muted); }
-.hero { --ball: clamp(104px, 27vw, 170px); }
-.ballwrap { position: absolute; top: 18px; right: 16px; width: var(--ball); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
-@media (min-width: 768px) { .ballwrap { top: 26px; right: 32px; } }
-@media (max-width: 1099px) { .hero-in { padding-top: calc(var(--ball) + 34px); } }
-@media (min-width: 1100px) { .ballwrap { top: 70px; right: 4%; width: min(32vw, 420px); } }
+/* wide screens: big ball beside the text. Phones and tablets: smaller ball on the same row as the headline. */
+.ballwrap { position: absolute; top: 70px; right: 4%; width: min(32vw, 420px); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
+.headline { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+.miniball { flex: none; width: clamp(68px, 21vw, 150px); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; }
+.miniball .ball { box-shadow: 0 16px 30px -14px rgba(0, 40, 90, .5); }
+@media (max-width: 1099px) { .ballwrap { display: none; } }
+@media (min-width: 1100px) { .miniball { display: none; } }
+@media (max-width: 599px) { .hero h1 { font-size: 14.5vw; } }
 .ball { position: relative; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #f7f7f7; box-shadow: 0 40px 80px -30px rgba(0, 40, 90, .45); animation: spin 60s linear infinite; }
 .ball img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.07); }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -374,7 +377,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .rv { opacity: 1; transform: none; transition: none; }
-  .ball, .ballwrap, .livepill::before, .intro .hero-copy > *, .intro .stats { animation: none; }
+  .ball, .ballwrap, .miniball, .livepill::before, .intro .hero-copy > *, .intro .stats { animation: none; }
 }
 @media (max-width: 640px) {
   .swipe { display: block; }
@@ -730,12 +733,17 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
       var d = new Date(STATE.updated);
       if (!isNaN(d)) upd = 'Scores updated ' + d.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
     }
-    var ball = h('div', { class: 'ballwrap', 'aria-hidden': 'true' }, h('div', { class: 'ball' },
-      h('img', { src: 'assets/mikasa-ball.jpg', alt: '', width: '600', height: '604' })));
+    function ballEl(cls) {
+      return h('div', { class: cls, 'aria-hidden': 'true' }, h('div', { class: 'ball' },
+        h('img', { src: 'assets/mikasa-ball.jpg', alt: '', width: '600', height: '604' })));
+    }
+    var ball = ballEl('ballwrap');
     return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ball, h('div', { class: 'hero-in' },
       h('div', { class: 'hero-copy' },
         h('p', { class: 'eyebrow', text: 'Casual SG Advanced Tournament' }),
-        h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: '1.0' })),
+        h('div', { class: 'headline' },
+          h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: '1.0' })),
+          ballEl('miniball')),
         h('p', { class: 'sub', text: 'Beach volleyball, 3v3. Kallang Beach Courts, 5 October 2026, from 6:00 PM.' }),
         main ? h('div', { class: 'ctas' },
           h('a', { class: 'pill solid', href: '#schedule', text: 'See the schedule' }),
