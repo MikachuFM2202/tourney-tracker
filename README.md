@@ -12,6 +12,7 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | `index.html` | The whole website: page, styles and logic in one file. |
 | `scores.json` | The saved scores. The website reads this file. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
+| `.github/workflows/pages.yml` | Publishes the website after every push and every score save. |
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
 | `icon.png` | Browser tab and phone home-screen icon (the club logo). |
 | `assets/` | Club logo and the Mikasa ball picture used on the page. |
@@ -22,7 +23,8 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 2. An admin picks **Admin** and types the admin password. The password only hides the admin screen.
 3. The admin types both scores for a game and taps **Save scores**.
 4. Saving commits a new `scores.json` to this repository through the GitHub API.
-5. GitHub Pages republishes the site, and viewers see the new scores within about a minute.
+5. The publish workflow republishes the site, and viewers see the new scores within about a minute.
+   A workflow is used because the classic GitHub Pages build is limited to about 10 builds per hour.
 
 Standings, semi-final teams (1st vs 4th, 2nd vs 3rd), the 3rd place game and the final are worked out
 from `scores.json` every time the page loads. They are never stored separately, so a corrected score
