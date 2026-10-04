@@ -12,7 +12,9 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | `index.html` | The whole website: page, styles and logic in one file. |
 | `scores.json` | The saved scores. The website reads this file. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
-| `claude-artifact/cat-1-0.html` | The same tracker as a claude.ai artifact (it saves scores inside the page instead of in `scores.json`). |
+| `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
+| `icon.png` | Browser tab and phone home-screen icon. |
+| `claude-artifact/cat-1-0.html` | An earlier version of the tracker as a claude.ai artifact (it saves scores inside the page instead of in `scores.json`). It does not have the current design. |
 
 ## How live scores work
 
