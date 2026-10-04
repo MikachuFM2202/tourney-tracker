@@ -48,6 +48,8 @@
   --tint-s: 72%;
   --tint-l: 94%;
   --hero: linear-gradient(160deg, #d9edf7 0%, #edf6f2 48%, #f9f0e1 100%);
+  --slot-a: rgba(26, 109, 255, .07);
+  --slot-b: rgba(212, 166, 60, .13);
   --glass: rgba(255, 255, 255, .72);
   --display: "Outfit", "Helvetica Neue", Arial, sans-serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -81,6 +83,8 @@
     --tint-s: 34%;
     --tint-l: 13%;
     --hero: linear-gradient(160deg, #06141f 0%, #0a1916 48%, #1a1409 100%);
+    --slot-a: rgba(91, 149, 255, .12);
+    --slot-b: rgba(233, 196, 106, .10);
     --glass: rgba(0, 0, 0, .55);
     color-scheme: dark;
   }
@@ -112,6 +116,8 @@
   --tint-s: 34%;
   --tint-l: 13%;
   --hero: linear-gradient(160deg, #06141f 0%, #0a1916 48%, #1a1409 100%);
+  --slot-a: rgba(91, 149, 255, .12);
+  --slot-b: rgba(233, 196, 106, .10);
   --glass: rgba(0, 0, 0, .55);
   color-scheme: dark;
 }
@@ -171,7 +177,10 @@ h1, h2, h3, p { margin: 0; }
 .stat b { display: block; font-family: var(--display); font-weight: 700; font-size: 34px; line-height: 1.05; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .stat span { font-size: 13px; font-weight: 500; color: var(--muted); }
 .stamp { position: relative; z-index: 1; font-size: 13px; color: var(--muted); }
-.ballwrap { position: absolute; top: -96px; right: -86px; width: 180px; aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
+.hero { --ball: clamp(104px, 27vw, 170px); }
+.ballwrap { position: absolute; top: 18px; right: 16px; width: var(--ball); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
+@media (min-width: 768px) { .ballwrap { top: 26px; right: 32px; } }
+@media (max-width: 1099px) { .hero-in { padding-top: calc(var(--ball) + 34px); } }
 @media (min-width: 1100px) { .ballwrap { top: 70px; right: 4%; width: min(32vw, 420px); } }
 .ball { position: relative; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #f7f7f7; box-shadow: 0 40px 80px -30px rgba(0, 40, 90, .45); animation: spin 60s linear infinite; }
 .ball img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.07); }
@@ -236,15 +245,20 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 .qpill { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; margin-left: 8px; vertical-align: 2px; }
 
 /* schedule */
-.slot { display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 110px; }
+/* each 20-minute slot is one tinted panel holding its Court 1 and Court 2 games; panels alternate blue and sand */
+.slot { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 110px; background: var(--slot-a); border-radius: 28px; padding: 14px; }
+.slot.alt { background: var(--slot-b); }
+.slot.now { box-shadow: inset 0 0 0 2px var(--accent); }
+.slot .match { background: var(--card); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
+@media (min-width: 768px) { .slot { padding: 18px; } }
 @media (min-width: 900px) { .slot { scroll-margin-top: 72px; } }
-.slot-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding-top: 8px; }
+.slot-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 2px 4px 0; }
 .slot-h .time { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .slot-h .stage { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .slot.now .time { color: var(--accent); }
 .pair { display: grid; grid-template-columns: 1fr; gap: 12px; }
 @media (min-width: 820px) { .pair.two { grid-template-columns: 1fr 1fr; } }
-.join { background: var(--accent-soft); border-radius: 18px; padding: 14px 18px; font-weight: 600; }
+.join { border: 1.5px dashed var(--line); border-radius: 18px; padding: 12px 18px; font-weight: 600; text-align: center; }
 .match { background: var(--surface); border-radius: 24px; overflow: hidden; min-width: 0; display: flex; flex-direction: column; transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
 @media (hover: hover) { .match:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -16px rgba(0, 0, 0, .22); } }
 .mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 12px 16px; font-size: 13px; font-weight: 600; }
@@ -924,7 +938,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     var sched = h('section', { id: 'schedule' }, sh('Schedule'));
     SLOTS.forEach(function (s, i) {
       if (s.join) sched.appendChild(h('p', { class: 'join', text: '7:00 PM. Teams Barath, Mika and David join. From here all 7 teams play.' }));
-      sched.appendChild(h('div', { class: 'slot' + (i === showIdx ? ' now' : ''), id: 'slot' + i },
+      sched.appendChild(h('div', { class: 'slot' + (i % 2 ? ' alt' : '') + (i === showIdx ? ' now' : ''), id: 'slot' + i },
         h('div', { class: 'slot-h' }, h('span', { class: 'time', text: s.t }), h('span', { class: 'stage', text: s.stage }),
           i === L ? h('span', { class: 'livepill', text: 'Live' }) : null),
         h('div', { class: 'pair' + (s.g.length === 2 ? ' two' : '') }, s.g.map(matchCard))));
