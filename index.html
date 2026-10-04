@@ -143,6 +143,7 @@ h1, h2, h3, p { margin: 0; }
 /* small phones: one row for the bar, so drop the mode badge and tighten the wordmark */
 @media (max-width: 440px) { .topbar .mode { display: none; } .mark { font-size: 17px; letter-spacing: .14em; } .topbar .logo { width: 34px; height: 34px; } .tools { gap: 10px; } }
 .foot-r { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; }
+.offline { background: var(--live); color: #fff; font-size: 13px; font-weight: 600; text-align: center; padding: 6px 16px; }
 .mode { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 3px 10px; }
 .linkbtn { background: transparent; border: 0; padding: 2px 0; font-weight: 600; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 
@@ -473,7 +474,8 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   var mem = {};
   function sget(k) { try { var v = sessionStorage.getItem(k); return v == null ? mem[k] : v; } catch (e) { return mem[k]; } }
   function sset(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
-  var mode = sget('cat.mode') || '';
+  /* a shared link to a section (#schedule, #standings, ...) opens the viewer straight away */
+  var mode = sget('cat.mode') || (location.hash.length > 1 ? 'viewer' : '');
   var draft = {};
   try { draft = JSON.parse(sget('cat.draft') || '{}') || {}; } catch (e) { draft = {}; }
   var query = '';
@@ -509,10 +511,21 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     if (typing()) { pendingRender = true; return; }
     render();
   }
+  /* offline = the last check for new scores could not reach the website (weak signal at the courts) */
+  var offline = false;
+  function setOffline(v) {
+    if (offline === v) return;
+    offline = v;
+    if (!root.firstChild) return;
+    if (typing() || saving) pendingRender = true; else render();
+  }
   function poll() {
     if (document.hidden) return;
-    return fetch(CFG.path + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(take, function () {});
+    return fetch(CFG.path + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { setOffline(false); return r.ok ? r.json() : null; })
+      .then(take, function () { setOffline(true); });
   }
+  window.addEventListener('online', poll);
   document.addEventListener('focusout', function () {
     setTimeout(function () { if (pendingRender && !typing() && !saving) { pendingRender = false; render(); } }, 50);
   });
@@ -676,7 +689,8 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
       h('div', { class: 'tools' },
         main ? h('span', { class: 'mode', text: mode === 'admin' ? 'Admin' : 'Viewer' }) : null,
         main ? h('button', { class: 'linkbtn', type: 'button', text: 'Switch view', onclick: function () { setMode(''); } }) : null,
-        clubLogo('logo'))));
+        clubLogo('logo'))),
+      offline ? h('p', { class: 'offline', role: 'status', text: 'No connection. Scores may be out of date.' }) : null);
   }
   function clubLogo(cls) {
     return h('img', { class: cls, src: 'assets/club-logo.jpg', alt: 'Casual Singapore Volleyball Club', width: '256', height: '256' });
@@ -1015,7 +1029,14 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   }
 
   /* Show saved scores on first paint instead of a flash of an empty scoresheet. On a slow connection, show the page anyway after 4 seconds. */
-  function first() { if (!root.firstChild) render(); }
+  var jumped = false;
+  function first() {
+    if (!root.firstChild) render();
+    if (jumped) return;
+    jumped = true;
+    var el = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+    if (el) el.scrollIntoView();
+  }
   setTimeout(first, 4000);
   Promise.resolve(poll()).then(first, first);
 })();
