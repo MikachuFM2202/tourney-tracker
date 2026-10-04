@@ -50,6 +50,8 @@
   --hero: linear-gradient(160deg, #d9edf7 0%, #edf6f2 48%, #f9f0e1 100%);
   --slot-a: rgba(26, 109, 255, .07);
   --slot-b: rgba(212, 166, 60, .13);
+  --slot-a-line: rgba(26, 109, 255, .5);
+  --slot-b-line: rgba(186, 132, 20, .6);
   --glass: rgba(255, 255, 255, .72);
   --display: "Outfit", "Helvetica Neue", Arial, sans-serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -85,6 +87,8 @@
     --hero: linear-gradient(160deg, #06141f 0%, #0a1916 48%, #1a1409 100%);
     --slot-a: rgba(91, 149, 255, .12);
     --slot-b: rgba(233, 196, 106, .10);
+    --slot-a-line: rgba(91, 149, 255, .55);
+    --slot-b-line: rgba(233, 196, 106, .5);
     --glass: rgba(0, 0, 0, .55);
     color-scheme: dark;
   }
@@ -118,6 +122,8 @@
   --hero: linear-gradient(160deg, #06141f 0%, #0a1916 48%, #1a1409 100%);
   --slot-a: rgba(91, 149, 255, .12);
   --slot-b: rgba(233, 196, 106, .10);
+  --slot-a-line: rgba(91, 149, 255, .55);
+  --slot-b-line: rgba(233, 196, 106, .5);
   --glass: rgba(0, 0, 0, .55);
   color-scheme: dark;
 }
@@ -250,8 +256,9 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 /* schedule */
 /* each 20-minute slot is one tinted panel holding its Court 1 and Court 2 games; panels alternate blue and sand */
 .slot { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 110px; background: var(--slot-a); border-radius: 28px; padding: 14px; }
-.slot.alt { background: var(--slot-b); }
-.slot.now { box-shadow: inset 0 0 0 2px var(--accent); }
+.slot { box-shadow: inset 0 0 0 2px var(--slot-a-line); }
+.slot.alt { background: var(--slot-b); box-shadow: inset 0 0 0 2px var(--slot-b-line); }
+.slot.now { box-shadow: inset 0 0 0 3px var(--accent); }
 .slot .match { background: var(--card); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
 @media (min-width: 768px) { .slot { padding: 18px; } }
 @media (min-width: 900px) { .slot { scroll-margin-top: 72px; } }
