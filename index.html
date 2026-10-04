@@ -320,6 +320,12 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 .btn { font-weight: 700; font-size: 15px; border-radius: 999px; padding: 10px 20px; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-on); }
 .btn.warn { border-color: var(--err); color: var(--err); }
+.btn.warn.solid { background: var(--err); color: #fff; }
+.danger.reset { background: var(--warn-soft); box-shadow: inset 0 0 0 1.5px var(--err); }
+.danger.reset p, .danger.reset .field { flex-basis: 100%; }
+.danger.reset p { color: var(--ink); }
+.danger.reset p b { color: var(--err); }
+.danger.reset p.access { color: var(--err); }
 .btn[disabled] { opacity: .45; cursor: default; }
 .savebar { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 30; max-width: 1136px; margin-inline: auto; background: var(--dark); color: var(--dark-on); border-radius: 24px; padding: 14px 18px; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .5); }
 .savebar-in { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
@@ -482,8 +488,8 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   var token = lget('cat.token'), tokMsg = '', pendingRender = false;
   function accessLine() { return null; }
   function saveBlock() { return token ? '' : 'Add token first'; }
-  /* While someone is typing a score or a search, hold page refreshes until they leave the box, so the keyboard does not close. */
-  function typing() { var a = document.activeElement; return !!a && a.tagName === 'INPUT' && ((mode === 'admin' && a.type === 'number') || a.id === 'q'); }
+  /* While someone is typing in any box (score, search, password, token), hold page refreshes until they leave it, so the keyboard does not close and nothing typed is lost. */
+  function typing() { var a = document.activeElement; return !!a && a.tagName === 'INPUT'; }
   function take(s) {
     if (!s || typeof s.scores !== 'object' || !s.scores) return;
     if ((s.rev || 0) <= (STATE.rev || 0)) return;
@@ -565,7 +571,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   }
 
   /* ---------- saving ---------- */
-  var saving = false, saveMsg = '', confirmReset = false;
+  var saving = false, saveMsg = '', confirmReset = false, resetMsg = '';
   function nextState(reset) {
     var next = { v: 1, scores: {}, updated: new Date().toISOString() };
     if (reset) return next;
@@ -902,13 +908,27 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 
     if (admin) {
       var hasAny = Object.keys(STATE.scores).length > 0;
-      wrap.appendChild(h('div', { class: 'danger' },
-        confirmReset
-          ? [h('p', { text: 'Clear every saved score for everyone? This cannot be undone.' }),
-             h('button', { class: 'btn warn', type: 'button', text: 'Yes, clear all scores', onclick: function () { save(true); } }),
-             h('button', { class: 'btn', type: 'button', text: 'Cancel', onclick: function () { confirmReset = false; render(); } })]
-          : [h('p', { text: 'Start again from an empty scoresheet, for example after a test run.' }),
-             h('button', { class: 'btn warn', type: 'button', text: 'Clear all scores', disabled: !hasAny, onclick: function () { confirmReset = true; render(); } })]));
+      /* Reset needs the organiser password typed again, so a stray tap cannot wipe the scoresheet. */
+      wrap.appendChild(confirmReset
+        ? h('form', { class: 'danger reset', id: 'reset', onsubmit: function (ev) {
+              ev.preventDefault();
+              var v = (document.getElementById('rpw').value || '').trim().toLowerCase();
+              if (!token) { resetMsg = 'This device cannot save yet. Paste the GitHub token in the box at the top first.'; render(); }
+              else if (pwHash(v) === PW) { resetMsg = ''; save(true); }
+              else { resetMsg = v ? 'That password is not right. Nothing was reset.' : 'Type the password to reset.'; render(); document.getElementById('reset').scrollIntoView({ block: 'center' }); }
+            } },
+            h('p', null, h('b', { text: 'Warning: this deletes every saved score for everyone. ' }),
+              'Standings, semi-finals and the final go back to empty. This cannot be undone. Type the organiser password to confirm.'),
+            h('input', { id: 'rpw', class: 'field', type: 'password', placeholder: 'Organiser password', autocomplete: 'off', 'aria-label': 'Organiser password' }),
+            h('button', { class: 'btn warn solid', type: 'submit', text: 'Reset all scores' }),
+            h('button', { class: 'btn', type: 'button', text: 'Cancel', onclick: function () { confirmReset = false; resetMsg = ''; render(); } }),
+            resetMsg ? h('p', { class: 'access no', role: 'alert', text: resetMsg }) : null)
+        : h('div', { class: 'danger', id: 'reset' },
+            h('p', { text: 'Start again from an empty scoresheet, for example after testing the site.' }),
+            h('button', { class: 'btn warn', type: 'button', text: 'Reset scores', disabled: !hasAny, onclick: function () {
+              confirmReset = true; resetMsg = ''; render();
+              var f = document.getElementById('rpw'); if (f) { f.focus(); f.scrollIntoView({ block: 'center' }); }
+            } })));
     }
     wrap.appendChild(footer());
     root.appendChild(wrap);
