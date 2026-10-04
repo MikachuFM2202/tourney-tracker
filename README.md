@@ -15,7 +15,6 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
 | `icon.png` | Browser tab and phone home-screen icon (the club logo). |
 | `assets/` | Club logo and the Mikasa ball picture used on the page. |
-| `claude-artifact/cat-1-0.html` | An earlier version of the tracker as a claude.ai artifact (it saves scores inside the page instead of in `scores.json`). It does not have the current design. |
 
 ## How live scores work
 
@@ -42,14 +41,27 @@ device only. It is never stored in this repository.
 
 Share the token privately with any other admin. Delete the token on GitHub after the tournament.
 
+## Testing, then starting clean
+
+1. On an admin device, type a score for game 1 and tap **Save scores**.
+2. Open the website on another phone. The score shows within about a minute.
+3. Back on the admin device, scroll to the bottom and tap **Reset scores**.
+4. Read the warning, type the organiser password, and tap **Reset all scores**. Every score is deleted for everyone.
+
+The organiser password is the same as the admin password.
+
 ## Rules built into the page
 
 - Ranking: wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams when exactly two are level.
 - Scores are whole numbers from 0 to 99. A knockout game cannot be level.
 - A knockout score only counts for the two teams it was saved against. If a correction changes who is in that game, the admin is asked to enter the score again.
 - If two admins save at the same moment, the second save is placed on top of the first. Nothing is overwritten.
+- "On court now" follows the clock in Singapore time, so it moves to the next slot by itself.
+- If a phone loses signal, a red "No connection" strip shows under the top bar until the next successful check.
+- A link that ends in a section name opens straight at that section, for example `#schedule`, `#standings` or `#bracket`.
 
 ## Changing the tournament
 
 Teams and the schedule are the `TEAMS` and `SLOTS` lists near the top of the script in `index.html`.
+The date and time zone used for "On court now" are in `DAY` in the same file. All slot times are PM.
 The repository name and owner are in `CFG` in the same file.
