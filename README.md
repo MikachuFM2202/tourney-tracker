@@ -1,6 +1,6 @@
-# CAT 1.0 — Casual Advanced Tournament tracker
+# CAT SG 1.0 — Casual SG Advanced Tournament tracker
 
-Live schedule, scores, standings and knockouts for CAT 1.0.
+Live schedule, scores, standings and knockouts for CAT SG 1.0, hosted by Casual Singapore Volleyball Club.
 5 October 2026, Kallang Beach Courts. 7 teams, 3v3, 2 courts, 20 minutes per game, starts 6:00 PM.
 
 Website: https://mikachufm2202.github.io/tourney-tracker/
@@ -13,7 +13,8 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | `scores.json` | The saved scores. The website reads this file. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
-| `icon.png` | Browser tab and phone home-screen icon. |
+| `icon.png` | Browser tab and phone home-screen icon (the club logo). |
+| `assets/` | Club logo and the Mikasa ball picture used on the page. |
 | `claude-artifact/cat-1-0.html` | An earlier version of the tracker as a claude.ai artifact (it saves scores inside the page instead of in `scores.json`). It does not have the current design. |
 
 ## How live scores work
@@ -43,7 +44,7 @@ Share the token privately with any other admin. Delete the token on GitHub after
 
 ## Rules built into the page
 
-- Ranking: wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams.
+- Ranking: wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams when exactly two are level.
 - Scores are whole numbers from 0 to 99. A knockout game cannot be level.
 - A knockout score only counts for the two teams it was saved against. If a correction changes who is in that game, the admin is asked to enter the score again.
 - If two admins save at the same moment, the second save is placed on top of the first. Nothing is overwritten.
