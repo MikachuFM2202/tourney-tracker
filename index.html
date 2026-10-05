@@ -186,13 +186,13 @@ h1, h2, h3, p { margin: 0; }
 /* wide screens: big ball beside the text. Phones and tablets: smaller ball on the same row as the headline. */
 .ballwrap { position: absolute; top: 70px; right: 4%; width: min(32vw, 420px); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; pointer-events: none; }
 .headline { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
-.miniball { flex: none; width: clamp(68px, 21vw, 150px); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; }
-.miniball .ball { box-shadow: 0 16px 30px -14px rgba(0, 40, 90, .5); }
+.miniball { flex: none; width: clamp(76px, 25vw, 170px); aspect-ratio: 1; animation: bob 6s ease-in-out infinite; }
 @media (max-width: 1099px) { .ballwrap { display: none; } }
 @media (min-width: 1100px) { .miniball { display: none; } }
 @media (max-width: 599px) { .hero h1 { font-size: 14.5vw; } }
-.ball { position: relative; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #f7f7f7; box-shadow: 0 40px 80px -30px rgba(0, 40, 90, .45); animation: spin 60s linear infinite; }
-.ball img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.07); }
+/* the spinning image is a cut-out on a transparent background, so the shadow follows its outline */
+.ball { position: relative; width: 100%; height: 100%; animation: spin 60s linear infinite; }
+.ball img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 24px 30px rgba(0, 40, 90, .35)); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes bob { 50% { transform: translateY(-14px); } }
 .intro .hero-copy > *, .intro .stats { animation: up .9s var(--ease) both; }
@@ -742,7 +742,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     }
     function ballEl(cls) {
       return h('div', { class: cls, 'aria-hidden': 'true' }, h('div', { class: 'ball' },
-        h('img', { src: 'assets/mikasa-ball.jpg', alt: '', width: '600', height: '604' })));
+        h('img', { src: 'assets/yatha.png', alt: '', width: '543', height: '720' })));
     }
     var ball = ballEl('ballwrap');
     return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ball, h('div', { class: 'hero-in' },

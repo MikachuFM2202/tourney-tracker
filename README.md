@@ -15,7 +15,7 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | `.github/workflows/pages.yml` | Publishes the website after every push and every score save. |
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
 | `icon.png` | Browser tab and phone home-screen icon (the club logo). |
-| `assets/` | Club logo and the Mikasa ball picture used on the page. |
+| `assets/` | Club logo and the spinning picture in the header (`yatha.png`). |
 
 ## How live scores work
 
