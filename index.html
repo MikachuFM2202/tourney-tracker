@@ -16,6 +16,10 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CAT SG">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <style>
@@ -147,7 +151,8 @@ h1, h2, h3, p { margin: 0; }
 .nav { order: 3; flex: 1 1 100%; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-inline: -10px; }
 .nav::-webkit-scrollbar { display: none; }
 .nav a { font-weight: 600; font-size: 15px; color: var(--ink); text-decoration: none; white-space: nowrap; padding: 5px 10px; border-radius: 999px; transition: background .2s; }
-.nav a:hover { background: var(--surface); }
+.nav a:hover, .nav button:hover { background: var(--surface); }
+.nav button { font-weight: 700; font-size: 15px; white-space: nowrap; padding: 5px 12px; border-radius: 999px; border: 0; background: var(--accent-soft); color: var(--accent); }
 /* phones and tablets: fade the right edge so it is clear the links scroll sideways */
 @media (max-width: 899px) { .nav { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); padding-right: 48px; } }
 @media (min-width: 900px) { .nav { order: 0; flex: 0 1 auto; margin: 0; } }
@@ -373,6 +378,31 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
 .savebar .btn { border-color: rgba(255, 255, 255, .35); color: var(--dark-on); }
 .savebar .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-on); }
 #none { text-align: center; color: var(--muted); padding: 20px 0; }
+
+/* popups: scorecard and add-to-home-screen. They live outside #root so live score refreshes never close them. */
+dialog.pop { width: min(560px, calc(100% - 24px)); max-height: calc(100% - 24px); margin: auto; padding: 0; border: 0; border-radius: 28px; background: var(--bg); color: var(--ink); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .55); overscroll-behavior: contain; }
+dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
+.pop-in { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.pop-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pop-h h2 { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: -.02em; }
+.xbtn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 0; background: var(--surface); font-size: 22px; line-height: 1; }
+.pop select { font: inherit; font-size: 16px; width: 100%; padding: 11px 16px; border: 1.5px solid var(--line); border-radius: 16px; background: var(--card); color: var(--ink); }
+.clock { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--surface); border-radius: 20px; padding: 12px 16px; }
+.clock .t { flex: 1 1 auto; font-family: var(--display); font-weight: 700; font-size: 40px; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.clock .t small { display: block; font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.clock.on .t { color: var(--live); }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.side { display: flex; flex-direction: column; gap: 8px; min-width: 0; border-radius: 22px; padding: 12px; background: hsl(var(--h, 210) var(--tint-s) var(--tint-l)); }
+.side .nm { font-weight: 700; text-align: center; overflow-wrap: anywhere; min-height: 1.5em; }
+.side .plus { border: 0; border-radius: 18px; background: var(--card); padding: 14px 4px; font-family: var(--display); font-weight: 700; font-size: clamp(64px, 20vw, 96px); line-height: 1; font-variant-numeric: tabular-nums; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.side .plus:active { transform: scale(.97); }
+.side .plus small { display: block; font-family: var(--body); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 6px; }
+.side .minus { border: 1.5px solid var(--line); border-radius: 999px; background: transparent; padding: 6px; font-weight: 700; touch-action: manipulation; }
+.pop .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pop .row .btn { flex: 1 1 auto; }
+.pop .msg2 { font-size: 14px; color: var(--muted); }
+.pop .msg2.good { color: var(--win); font-weight: 600; }
+.pop ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
 
 /* footer */
 .foot { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: var(--muted); }
@@ -721,9 +751,11 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
   function topbar(main) {
     return h('header', { class: 'topbar' }, h('div', { class: 'topbar-in' },
       h('a', { class: 'mark', href: '#top', 'aria-label': 'CAT SG 1.0, back to top' }, 'CAT SG ', h('b', { text: '1.0' })),
-      main ? h('nav', { class: 'nav', 'aria-label': 'Jump to' },
-        [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']]
-          .map(function (l) { return h('a', { href: l[0], text: l[1] }); })) : null,
+      h('nav', { class: 'nav', 'aria-label': 'Jump to' },
+        h('button', { type: 'button', id: 'open-sc', text: 'Scorecard', onclick: openSc }),
+        installed() ? null : h('button', { type: 'button', id: 'open-app', text: 'Get the app', onclick: openApp }),
+        main ? [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']]
+          .map(function (l) { return h('a', { href: l[0], text: l[1] }); }) : null),
       h('div', { class: 'tools' },
         main ? h('span', { class: 'mode', text: mode === 'admin' ? 'Admin' : 'Viewer' }) : null,
         main ? h('button', { class: 'linkbtn', type: 'button', text: 'Switch view', onclick: function () { setMode(''); } }) : null,
@@ -1002,6 +1034,7 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
     applySearch();
     updateBar();
     reveal();
+    if (scDlg && scDlg.open) scPaint();
   }
 
   function svgIcon(paths) {
@@ -1032,6 +1065,175 @@ tr.cut td { border-bottom: 2px dashed var(--muted); }
         h('div', { class: 'bcol' }, node(22), node(23)),
         h('div', { class: 'bcol' }, node(25, 'final'), node(24))),
       h('p', { class: 'note', text: 'After the 21 pool games, 1st plays 4th and 2nd plays 3rd. The winners play the final, the losers play for 3rd place.' }));
+  }
+
+  /* ---------- popups ---------- */
+  function popup(id, label) {
+    var d = h('dialog', { class: 'pop', id: id, 'aria-label': label });
+    /* a tap on the dark backdrop closes it */
+    d.addEventListener('click', function (ev) { if (ev.target === d) d.close(); });
+    document.body.appendChild(d);
+    return d;
+  }
+  function popHead(d, title) {
+    return h('div', { class: 'pop-h' }, h('h2', { text: title }),
+      h('button', { class: 'xbtn', type: 'button', 'aria-label': 'Close', text: '×', onclick: function () { d.close(); } }));
+  }
+  /* destructive buttons need a second tap within 3 seconds */
+  function twoTap(label, fn) {
+    var armed = null;
+    var b = h('button', { class: 'btn', type: 'button', text: label, onclick: function () {
+      if (armed) { clearTimeout(armed); armed = null; b.textContent = label; fn(); return; }
+      b.textContent = 'Tap again to confirm';
+      armed = setTimeout(function () { armed = null; b.textContent = label; }, 3000);
+    } });
+    return b;
+  }
+
+  /* ---------- scorecard: a point counter and match clock for anyone at the courts ----------
+     Kept on this device only. The clock stores when it started, not a tick count, so it stays
+     right when the phone sleeps, the tab is closed or the page reloads. */
+  var sc = { g: '', a: 0, b: 0, start: null, acc: 0 };
+  try {
+    var scSaved = JSON.parse(lget('cat.sc') || 'null');
+    if (scSaved && isInt(scSaved.a) && isInt(scSaved.b)) sc = {
+      g: GAMES.some(function (g) { return String(g.id) === String(scSaved.g); }) ? String(scSaved.g) : '',
+      a: scSaved.a, b: scSaved.b,
+      start: typeof scSaved.start === 'number' && scSaved.start <= Date.now() ? scSaved.start : null,
+      acc: typeof scSaved.acc === 'number' && scSaved.acc >= 0 ? scSaved.acc : 0 };
+  } catch (e) {}
+  function scKeep() { lset('cat.sc', JSON.stringify(sc)); }
+  function elapsed() { return Math.max(0, sc.acc + (sc.start ? Date.now() - sc.start : 0)); }
+  function clockText(ms) {
+    var s = Math.floor(ms / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s / 60) % 60, ss = s % 60;
+    return (hh ? hh + ':' + (mm < 10 ? '0' : '') : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+  }
+  var scDlg = null, scEl = {}, scTick = null, wake = null;
+  function lockScreen() {
+    /* keep the phone screen on while the clock runs and the scorecard is open */
+    if (wake || !sc.start || !scDlg || !scDlg.open || !navigator.wakeLock) return;
+    navigator.wakeLock.request('screen').then(function (w) { wake = w; w.addEventListener('release', function () { if (wake === w) wake = null; }); }, function () {});
+  }
+  function unlockScreen() { if (wake) { wake.release().catch(function () {}); wake = null; } }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) lockScreen(); });
+  function scTeams() {
+    var g = sc.g && GAMES.filter(function (x) { return String(x.id) === sc.g; })[0], v = g && VIEW[g.id];
+    return { g: g, a: v && v.a, b: v && v.b, la: v ? (v.la || 'Team A') : 'Team A', lb: v ? (v.lb || 'Team B') : 'Team B' };
+  }
+  function teamName(id, fallback) { return id ? T[id].e + ' Team ' + T[id].p[0] : fallback; }
+  function scPaint() {
+    if (!scDlg) return;
+    var t = scTeams();
+    scClock();
+    scEl.clock.classList.toggle('on', !!sc.start);
+    scEl.go.textContent = sc.start ? 'Pause' : elapsed() ? 'Resume' : 'Start';
+    scEl.go.className = 'btn' + (sc.start ? '' : ' primary');
+    ['a', 'b'].forEach(function (k) {
+      var id = t[k], name = teamName(id, t['l' + k]);
+      scEl['side' + k].style.cssText = id ? tint(T[id]) : '';
+      scEl['nm' + k].textContent = name;
+      scEl['n' + k].firstChild.nodeValue = String(sc[k]);
+      scEl['plus' + k].setAttribute('aria-label', 'Add a point for ' + name + '. Now ' + sc[k] + '.');
+      scEl['minus' + k].setAttribute('aria-label', 'Take a point off ' + name);
+      scEl['minus' + k].disabled = !sc[k];
+    });
+    var canUse = mode === 'admin' && t.g && t.a && t.b;
+    scEl.use.hidden = !canUse;
+    if (canUse) scEl.use.textContent = 'Put ' + sc.a + '–' + sc.b + ' into Game ' + t.g.id;
+  }
+  function scClock() {
+    var txt = clockText(elapsed()), n = scEl.t.firstChild;
+    if (n.nodeValue !== txt) n.nodeValue = txt;
+  }
+  function scPoint(k, d) {
+    var n = sc[k] + d;
+    if (n < 0 || n > 99) return;
+    sc[k] = n; scEl.msg.textContent = ''; scKeep(); scPaint();
+  }
+  function scBuild() {
+    if (!scDlg) {
+      scDlg = popup('scorecard', 'Scorecard');
+      scDlg.addEventListener('close', function () { clearInterval(scTick); scTick = null; unlockScreen(); });
+    }
+    scDlg.textContent = '';
+    var sel = h('select', { 'aria-label': 'Which game', onchange: function (ev) { sc.g = ev.target.value; scKeep(); scPaint(); } },
+      h('option', { value: '', text: 'Any match (no game picked)' }),
+      GAMES.map(function (g) {
+        var v = VIEW[g.id];
+        return h('option', { value: String(g.id), selected: String(g.id) === sc.g,
+          text: 'Game ' + g.id + (g.ko ? ', ' + g.ko : '') + ': ' + teamName(v.a, v.la) + ' vs ' + teamName(v.b, v.lb) });
+      }));
+    function side(k) {
+      scEl['n' + k] = h('span', null, '0', h('small', { text: '+1 point' }));
+      scEl['plus' + k] = h('button', { class: 'plus', type: 'button', onclick: function () { scPoint(k, 1); } }, scEl['n' + k]);
+      scEl['minus' + k] = h('button', { class: 'minus', type: 'button', text: '−1', onclick: function () { scPoint(k, -1); } });
+      scEl['nm' + k] = h('p', { class: 'nm' });
+      return scEl['side' + k] = h('div', { class: 'side' }, scEl['nm' + k], scEl['plus' + k], scEl['minus' + k]);
+    }
+    scEl.t = h('p', { class: 't', role: 'timer', 'aria-live': 'off' }, '0:00', h('small', { text: 'Match time' }));
+    scEl.go = h('button', { class: 'btn primary', type: 'button', onclick: function () {
+      if (sc.start) { sc.acc = elapsed(); sc.start = null; unlockScreen(); } else { sc.start = Date.now(); lockScreen(); }
+      scKeep(); scPaint();
+    } });
+    scEl.clock = h('div', { class: 'clock' }, scEl.t, scEl.go,
+      twoTap('Reset clock', function () { sc.start = null; sc.acc = 0; unlockScreen(); scKeep(); scPaint(); }));
+    scEl.msg = h('p', { class: 'msg2', role: 'status' });
+    scEl.use = h('button', { class: 'btn primary', type: 'button', hidden: true, onclick: function () {
+      var t = scTeams();
+      if (mode !== 'admin' || !t.g || !t.a || !t.b) return;
+      draft[t.g.id] = { a: String(sc.a), b: String(sc.b) };
+      sset('cat.draft', JSON.stringify(draft));
+      render();
+      scEl.msg.className = 'msg2 good';
+      scEl.msg.textContent = 'Added to Game ' + t.g.id + '. Close this and tap Save scores to publish it.';
+    } });
+    scDlg.appendChild(h('div', { class: 'pop-in' }, popHead(scDlg, 'Scorecard'), sel, scEl.clock,
+      h('div', { class: 'sides' }, side('a'), side('b')),
+      h('div', { class: 'row' }, twoTap('Reset score to 0–0', function () { sc.a = 0; sc.b = 0; scEl.msg.textContent = ''; scKeep(); scPaint(); }), scEl.use),
+      scEl.msg,
+      h('p', { class: 'msg2', text: 'Only on this phone. It does not change the scores on the website.' })));
+    scPaint();
+  }
+  function openSc() {
+    scBuild();
+    if (!scDlg.open) scDlg.showModal();
+    clearInterval(scTick);
+    scTick = setInterval(scClock, 250);
+    lockScreen();
+  }
+
+  /* ---------- add to home screen ---------- */
+  var installEv = null, appDlg = null;
+  window.addEventListener('beforeinstallprompt', function (ev) { ev.preventDefault(); installEv = ev; });
+  window.addEventListener('appinstalled', function () { installEv = null; if (appDlg && appDlg.open) appDlg.close(); if (!typing() && !saving) render(); });
+  function installed() {
+    try { return navigator.standalone === true || matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; }
+  }
+  function openApp() {
+    if (installEv) {
+      var ev = installEv; installEv = null;
+      ev.prompt();
+      return;
+    }
+    var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var steps = ios
+      ? ['Tap the Share button (the square with an arrow) in Safari’s toolbar.', 'Scroll down and tap Add to Home Screen.', 'Tap Add. CAT SG now opens from your home screen like an app.']
+      : /Android/.test(ua)
+        ? ['Tap the browser menu (⋮) at the top right.', 'Tap Install app or Add to Home screen.', 'Tap Install or Add.']
+        : ['Click the install icon at the right end of the address bar, if there is one.', 'Or open the browser menu and choose Install, or Save and share, then Install page as app.', 'In Safari on a Mac: File, then Add to Dock.'];
+    if (!appDlg) appDlg = popup('getapp', 'Get the app');
+    appDlg.textContent = '';
+    var copied = h('p', { class: 'msg2', role: 'status' });
+    appDlg.appendChild(h('div', { class: 'pop-in' }, popHead(appDlg, 'Get the app'),
+      h('p', { text: 'Add CAT SG to your home screen to open live scores and the scorecard in one tap.' }),
+      h('ol', null, steps.map(function (s) { return h('li', { text: s }); })),
+      h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', text: 'Copy the link', onclick: function () {
+        var url = location.origin + location.pathname;
+        function ok() { copied.className = 'msg2 good'; copied.textContent = 'Link copied.'; }
+        function no() { copied.className = 'msg2'; copied.textContent = url; }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, no); else no();
+      } })), copied));
+    appDlg.showModal();
   }
 
   /* move the Live marker when the clock enters a new slot */
