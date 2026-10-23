@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CAT SG 1.0</title>
-<meta name="description" content="Live scores, standings and knockouts for CAT SG 1.0 (Casual SG Advanced Tournament), 3v3 beach volleyball at Kallang Beach Courts, 5 October 2026.">
+<title>CAT SG 2.0</title>
+<meta name="description" content="Live scores, standings and knockouts for CAT SG 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
-<meta property="og:title" content="CAT SG 1.0 · Live scores">
-<meta property="og:description" content="Casual SG Advanced Tournament. 3v3 beach volleyball. Kallang Beach Courts, 5 October 2026, from 6:00 PM. Schedule, live scores, standings and knockouts.">
+<meta property="og:title" content="CAT SG 2.0 · Live scores">
+<meta property="og:description" content="Casual SG Advanced Tournament. 2v2 beach volleyball, 14 teams in two pools. Pool A from 4:00 PM, Pool B from 5:30 PM. Schedule, live scores, standings, knockouts and rules.">
 <meta property="og:url" content="https://mikachufm2202.github.io/tourney-tracker/">
 <meta property="og:image" content="https://mikachufm2202.github.io/tourney-tracker/og.png">
 <meta property="og:image:width" content="1200">
@@ -60,6 +60,8 @@
   --display: "Outfit", "Helvetica Neue", Arial, sans-serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ease: cubic-bezier(.2, .7, .2, 1);
+  --sand: #efdcb0;
+  --sky: #dcf0fa;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -94,6 +96,8 @@
     --slot-a-line: rgba(91, 149, 255, .55);
     --slot-b-line: rgba(233, 196, 106, .5);
     --glass: rgba(0, 0, 0, .55);
+    --sand: #3d3320;
+    --sky: #0c1a26;
     color-scheme: dark;
   }
 }
@@ -129,6 +133,8 @@
   --slot-a-line: rgba(91, 149, 255, .55);
   --slot-b-line: rgba(233, 196, 106, .5);
   --glass: rgba(0, 0, 0, .55);
+  --sand: #3d3320;
+  --sky: #0c1a26;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -404,6 +410,173 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 .pop .msg2.good { color: var(--win); font-weight: 600; }
 .pop ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
 
+/* page tabs, previous-tournament strip, jump links */
+.nav a[aria-current="page"] { background: var(--ink); color: var(--bg); }
+.subtabs { background: var(--surface); border-bottom: 1px solid var(--line); }
+.subtabs-in { max-width: 1200px; margin-inline: auto; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+@media (min-width: 768px) { .subtabs-in { padding-inline: 32px; } }
+.subtabs .k { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.subtabs a { font-weight: 700; font-size: 14px; text-decoration: none; color: var(--bg); background: var(--ink); border-radius: 999px; padding: 5px 14px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.ctas a { text-decoration: none; }
+
+/* CAT SG 2.0: three games a round, resting team, pools side by side */
+@media (min-width: 820px) { .pair.three { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1180px) { .pair.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.slot-h .bye { font-size: 13px; font-weight: 600; color: var(--muted); }
+.pools { display: grid; gap: 16px; min-width: 0; }
+@media (min-width: 1100px) { .pools.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pooltbl { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ph { font-family: var(--display); font-weight: 700; font-size: 24px; letter-spacing: -.02em; }
+.gtag { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--err); background: var(--warn-soft); border-radius: 999px; padding: 2px 8px; margin-left: 8px; vertical-align: 2px; }
+
+/* blacked-out game: absent team or a team that left early */
+.match.out, .slot .match.out { background: repeating-linear-gradient(135deg, #0d0d0d 0 12px, #1c1c1c 12px 24px); color: #fff; }
+.match.out .tb { background: transparent; opacity: .5; }
+.match.out .p { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.match.out .gno { color: rgba(255, 255, 255, .65); }
+.match.out .mfoot { border-color: rgba(255, 255, 255, .15); }
+.match.out .mfoot .st.bad { color: #ff9c94; }
+.match.out .mfoot button { border-color: rgba(255, 255, 255, .35); }
+.xo { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #fff; border: 1.5px solid rgba(255, 255, 255, .5); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.mhead .done.x { color: rgba(255, 255, 255, .8); }
+.mfoot button.blk { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* sponsor */
+.sponsor { position: relative; overflow: hidden; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px 22px; border-radius: 28px; padding: 22px 24px; background: linear-gradient(120deg, var(--accent-soft), var(--surface) 70%); scroll-margin-top: 110px; }
+@media (min-width: 900px) { .sponsor { scroll-margin-top: 72px; } }
+.sponsor .slogo { width: 92px; height: 92px; border-radius: 24px; display: grid; place-items: center; background: var(--card); overflow: hidden; }
+.sponsor .slogo img { width: 100%; height: 100%; object-fit: contain; }
+.sponsor.tbc .slogo { background: transparent; border: 2px dashed var(--muted); color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.sponsor .scopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sponsor .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.sponsor .v { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; letter-spacing: -.02em; }
+.sponsor.tbc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .35) 50%, transparent 65%); transform: translateX(-100%); animation: sheen 4.5s var(--ease) infinite; pointer-events: none; }
+@keyframes sheen { 60%, 100% { transform: translateX(100%); } }
+
+/* admins */
+.admins { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.admin { border-radius: 24px; padding: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: hsl(var(--h) var(--tint-s) var(--tint-l)); }
+.admin .av { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 22px; background: var(--ink); color: var(--bg); }
+.admin .an { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.1; letter-spacing: -.02em; }
+.admin .ar { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+select.field { appearance: none; -webkit-appearance: none; padding-right: 36px; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+
+/* smaller page header for gallery and rules */
+.phead .hero-in { padding: 40px 16px 36px; }
+@media (min-width: 768px) { .phead .hero-in { padding: 72px 32px 56px; } }
+.phead h1 { font-family: var(--display); font-weight: 700; font-size: clamp(44px, 9vw, 104px); line-height: .95; letter-spacing: -.04em; overflow-wrap: anywhere; }
+
+/* gallery */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chipbtn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--ink); background: transparent; border-radius: 999px; padding: 8px 18px; font-weight: 700; }
+.chipbtn span { font-size: 12px; opacity: .7; }
+.chipbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+@media (min-width: 768px) { .gal { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; } }
+.gi { position: relative; display: block; border: 0; padding: 0; border-radius: 18px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--surface); }
+.gi img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+@media (hover: hover) { .gi:hover img { transform: scale(1.05); } }
+.gi.vid::after { content: "▶"; position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; padding-left: 4px; background: rgba(0, 0, 0, .6); color: #fff; font-size: 20px; }
+.empty { background: var(--surface); border-radius: 24px; padding: 48px 24px; text-align: center; color: var(--muted); }
+dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
+.lb .pop-h h2 { font-size: 20px; }
+.lbm img, .lbm video { display: block; width: 100%; max-height: 72vh; object-fit: contain; border-radius: 18px; background: #000; }
+
+/* rules: each card has a looping picture; tapping it pauses */
+.rules, .tlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.rule { background: var(--surface); border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.rfig { display: block; width: 100%; border: 0; padding: 0; background: var(--sky); cursor: pointer; }
+.rfig svg { display: block; width: 100%; height: auto; }
+.rule.paused .sv * { animation-play-state: paused !important; }
+.rt, .tcard { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 6px; }
+.rn { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: var(--accent); }
+.rule h3, .tcard h3 { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
+.tcard { background: var(--surface); border-radius: 24px; padding: 20px 22px; }
+.tcard .ic { font-size: 30px; line-height: 1; }
+.banner a { color: inherit; font-weight: 700; text-underline-offset: 3px; }
+.sv text { font-family: var(--body); font-weight: 700; font-size: 10px; fill: var(--ink); }
+.sv .sand { fill: var(--sand); } .sv .sky { fill: var(--sky); }
+.sv .cl { fill: none; stroke: #fff; stroke-width: 2.5; }
+.sv .fz { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 4 4; opacity: .5; }
+.sv .net { stroke: var(--ink); stroke-width: 3; }
+.sv .mesh { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.sv .div { stroke: var(--line); stroke-width: 2; }
+.sv .pa { fill: var(--c1); } .sv .pb { fill: var(--live); }
+.sv .bl { fill: #ffd23f; stroke: #1d4ed8; stroke-width: 1.5; }
+.sv .ok { fill: var(--win); } .sv .no { fill: var(--live); }
+.sv .big { font-family: var(--display); font-size: 26px; }
+.sv .num { font-family: var(--display); font-size: 16px; fill: var(--accent); }
+.sv .emo { font-size: 44px; }
+.sv .mk { font-size: 24px; }
+.sv .shl { fill: var(--ink); opacity: .75; }
+.sv .arw { stroke-width: 4; stroke-linecap: round; } .sv .ok-s { stroke: var(--win); } .sv .no-s { stroke: var(--live); }
+.sv .rbg { fill: none; stroke: var(--line); stroke-width: 6; }
+.sv .ring { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 176; }
+.sv .wline { fill: #fff; }
+.sv .rip { fill: none; stroke: #fff; stroke-width: 2; opacity: 0; }
+.sv .face { fill: var(--card); stroke: var(--ink); stroke-width: 3; }
+.sv .hand { stroke: var(--live); stroke-width: 3; stroke-linecap: round; transform-origin: 120px 64px; }
+.sv .fb { transform-box: fill-box; transform-origin: center; }
+.a-pulse { animation: r-pulse 2.4s ease-in-out infinite; }
+@keyframes r-pulse { 50% { opacity: .15; } }
+.a-rally { animation: r-rally 4s ease-in-out infinite; }
+@keyframes r-rally { 0%, 100% { transform: translate(75px, 50px); } 25% { transform: translate(170px, 88px); } 50% { transform: translate(80px, 92px); } 75% { transform: translate(165px, 48px); } }
+.a-shuf1 { animation: r-shuf1 3s ease-in-out infinite; } .a-shuf2 { animation: r-shuf2 3.4s ease-in-out infinite; }
+@keyframes r-shuf1 { 50% { transform: translate(12px, 6px); } }
+@keyframes r-shuf2 { 50% { transform: translate(-10px, -6px); } }
+.a-arc { animation: r-arc 2.6s linear infinite; }
+@keyframes r-arc { 0% { transform: translate(40px, 80px); } 20% { transform: translate(80px, 40px); } 40% { transform: translate(120px, 28px); } 60% { transform: translate(158px, 48px); } 78%, 100% { transform: translate(185px, 100px); } }
+.a-plus { animation: r-plus 2.6s ease-out infinite; opacity: 0; }
+@keyframes r-plus { 0%, 76% { opacity: 0; transform: translateY(0); } 84% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+.a-three { animation: r-three 4s ease-in-out infinite; }
+@keyframes r-three { 0% { transform: translate(200px, 30px); } 18% { transform: translate(90px, 72px); } 30% { transform: translate(70px, 35px); } 42% { transform: translate(50px, 72px); } 54% { transform: translate(78px, 22px); } 66% { transform: translate(95px, 52px); } 80% { transform: translate(160px, 70px); } 90%, 100% { transform: translate(185px, 100px); } }
+.a-jump3 { animation: r-jump3 4s ease-in-out infinite; }
+@keyframes r-jump3 { 0%, 56%, 76%, 100% { transform: none; } 66% { transform: translateY(-16px); } }
+.a-n1, .a-n2, .a-n3, .a-n2b, .a-bt, .a-fault, .a-in { opacity: 0; }
+.a-n1 { animation: r-n1 4s infinite; } .a-n2 { animation: r-n2 4s infinite; } .a-n3 { animation: r-n3 4s infinite; }
+@keyframes r-n1 { 0%, 17% { opacity: 0; } 19%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes r-n2 { 0%, 41% { opacity: 0; } 43%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes r-n3 { 0%, 65% { opacity: 0; } 67%, 92% { opacity: 1; } 100% { opacity: 0; } }
+.a-block { animation: r-block 3.6s ease-in-out infinite; }
+@keyframes r-block { 0% { transform: translate(190px, 40px); } 20% { transform: translate(138px, 44px); } 30% { transform: translate(122px, 44px); } 45% { transform: translate(90px, 28px); } 65% { transform: translate(55px, 72px); } 85%, 100% { transform: translate(70px, 30px); } }
+.a-att { animation: r-att 3.6s ease-in-out infinite; }
+@keyframes r-att { 0%, 8%, 32%, 100% { transform: none; } 20% { transform: translateY(-18px); } }
+.a-blk { animation: r-blk 3.6s ease-in-out infinite; }
+@keyframes r-blk { 0%, 18%, 40%, 100% { transform: none; } 28% { transform: translateY(-16px); } }
+.a-bt { animation: r-bt 3.6s infinite; }
+@keyframes r-bt { 0%, 29% { opacity: 0; } 31%, 94% { opacity: 1; } 100% { opacity: 0; } }
+.a-n2b { animation: r-n2b 3.6s infinite; }
+@keyframes r-n2b { 0%, 64% { opacity: 0; } 66%, 94% { opacity: 1; } 100% { opacity: 0; } }
+.a-tap1, .a-tap2 { animation: r-tap 1.6s ease-in-out infinite; } .a-tap2 { animation-delay: -.8s; }
+@keyframes r-tap { 50% { transform: translateY(-8px); } }
+.a-pop1, .a-pop2 { animation: r-pop 1.6s ease-in-out infinite; } .a-pop2 { animation-delay: -.8s; }
+@keyframes r-pop { 0%, 100% { transform: scale(.7); } 50% { transform: scale(1.15); } }
+.a-alt1, .a-alt2 { animation: r-alt 4s infinite; } .a-alt2 { animation-delay: -2s; }
+@keyframes r-alt { 0%, 46% { opacity: 1; } 50%, 96% { opacity: 0; } 100% { opacity: 1; } }
+.a-swapA { animation: r-swapA 5s ease-in-out infinite; } .a-swapB { animation: r-swapB 5s ease-in-out infinite; }
+@keyframes r-swapA { 0%, 30%, 95%, 100% { transform: none; } 45%, 80% { transform: translateX(88px); } }
+@keyframes r-swapB { 0%, 30%, 95%, 100% { transform: none; } 45%, 80% { transform: translateX(-88px); } }
+.a-ring { animation: r-ring 5s linear infinite; }
+@keyframes r-ring { to { stroke-dashoffset: 176; } }
+.a-c { opacity: 0; animation: r-five 5s step-end infinite; }
+@keyframes r-five { 0% { opacity: 1; } 20%, 100% { opacity: 0; } }
+.a-toss { animation: r-toss 2.5s ease-in-out infinite; }
+@keyframes r-toss { 0%, 100% { transform: translate(184px, 72px); } 50% { transform: translate(184px, 26px); } }
+.a-netjump { animation: r-netjump 2.8s ease-in-out infinite; }
+@keyframes r-netjump { 0%, 30%, 80%, 100% { transform: none; } 50%, 62% { transform: translate(8px, -14px); } }
+.a-flash { animation: r-flash 2.8s infinite; }
+@keyframes r-flash { 0%, 46%, 68%, 100% { stroke: var(--ink); } 50%, 64% { stroke: var(--live); } }
+.a-fault { animation: r-fault 2.8s infinite; }
+@keyframes r-fault { 0%, 46% { opacity: 0; } 50%, 66% { opacity: 1; } 76%, 100% { opacity: 0; } }
+.a-drop { animation: r-drop 2.6s ease-in infinite; }
+@keyframes r-drop { 0% { transform: translateY(-52px) scale(1.9); } 45%, 100% { transform: none; } }
+.a-rip { animation: r-rip 2.6s ease-out infinite; }
+@keyframes r-rip { 0%, 44% { opacity: 0; transform: scale(1); } 46% { opacity: 1; } 90%, 100% { opacity: 0; transform: scale(3.2); } }
+.a-in { animation: r-in 2.6s infinite; }
+@keyframes r-in { 0%, 45% { opacity: 0; } 50%, 90% { opacity: 1; } 100% { opacity: 0; } }
+.a-hand { animation: spin 3s linear infinite; }
+
 /* footer */
 .foot { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: var(--muted); }
 .foot b { color: var(--ink); font-family: var(--display); font-weight: 800; letter-spacing: .2em; }
@@ -414,7 +587,8 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .rv { opacity: 1; transform: none; transition: none; }
-  .ball, .ballwrap, .miniball, .livepill::before, .intro .hero-copy > *, .intro .stats { animation: none; }
+  .ball, .ballwrap, .miniball, .livepill::before, .intro .hero-copy > *, .intro .stats, .sv * { animation: none !important; }
+  .sv .a-c:first-of-type { opacity: 1; }
 }
 @media (max-width: 640px) {
   .swipe { display: block; }
@@ -436,70 +610,159 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 (function () {
   'use strict';
 
-  /* ---------- fixed tournament data (from the two posters) ---------- */
-  var TEAMS = [
-    { id: 'ash',    e: '🔥', h: 10, p: ['Ash', 'Yatha', 'Anas'] },
-    { id: 'sat',    e: '⚡', h: 44, s: 78, p: ['Sat', 'Sky', 'Alex'] },
-    { id: 'maddy',  e: '👑', h: 335, p: ['Maddy', 'Harish', 'Nicole'] },
-    { id: 'eugene', e: '🦖', h: 80, p: ['Eugene', 'Rossi', 'Din'] },
-    { id: 'barath', e: '🦍', h: 28, p: ['Barath', 'Shane', 'Raochelle'] },
-    { id: 'mika',   e: '🐼', h: 135, p: ['Mika', 'Supi', 'TK'] },
-    { id: 'david',  e: '🦈', h: 200, p: ['David', 'Stan', 'Gladys'] }
-  ];
-  var T = {};
-  TEAMS.forEach(function (t, i) { t.i = i; T[t.id] = t; });
+  /* ---------- tournaments ----------
+     Each tournament has its own teams, schedule and scores file. CAT SG 2.0 is the live one,
+     where admins save scores. CAT SG 1.0 sits under Previous and is read only. */
+  function pg(id, c, a, b) { return { id: id, c: c, a: a, b: b }; }
+
+  var CAT1 = {
+    key: 'cat1', ver: '1.0', path: 'scores.json', archived: true, draws: true,
+    sub: 'Beach volleyball, 3v3. Kallang Beach Courts, 5 October 2026, from 6:00 PM.',
+    ball: { src: 'assets/yatha.png', w: 543, h: 720 },
+    day: { y: 2026, m: 9, d: 5, tz: 8 },
+    teams: [
+      { id: 'ash',    e: '🔥', h: 10, p: ['Ash', 'Yatha', 'Anas'] },
+      { id: 'sat',    e: '⚡', h: 44, s: 78, p: ['Sat', 'Sky', 'Alex'] },
+      { id: 'maddy',  e: '👑', h: 335, p: ['Maddy', 'Harish', 'Nicole'] },
+      { id: 'eugene', e: '🦖', h: 80, p: ['Eugene', 'Rossi', 'Din'] },
+      { id: 'barath', e: '🦍', h: 28, p: ['Barath', 'Shane', 'Raochelle'] },
+      { id: 'mika',   e: '🐼', h: 135, p: ['Mika', 'Supi', 'TK'] },
+      { id: 'david',  e: '🦈', h: 200, p: ['David', 'Stan', 'Gladys'] }
+    ],
+    slots: [
+      { t: '6:00 – 6:20', stage: 'Pool', g: [pg(1, 1, 'ash', 'sat'), pg(2, 2, 'maddy', 'eugene')] },
+      { t: '6:20 – 6:40', stage: 'Pool', g: [pg(3, 1, 'ash', 'maddy'), pg(4, 2, 'sat', 'eugene')] },
+      { t: '6:40 – 7:00', stage: 'Pool', g: [pg(5, 1, 'ash', 'eugene'), pg(6, 2, 'sat', 'maddy')] },
+      { t: '7:00 – 7:20', stage: 'Pool', join: '7:00 PM. Teams Barath, Mika and David join. From here all 7 teams play.', g: [pg(7, 1, 'barath', 'mika'), pg(8, 2, 'david', 'ash')] },
+      { t: '7:20 – 7:40', stage: 'Pool', g: [pg(9, 1, 'barath', 'sat'), pg(10, 2, 'mika', 'maddy')] },
+      { t: '7:40 – 8:00', stage: 'Pool', g: [pg(11, 1, 'david', 'eugene'), pg(12, 2, 'barath', 'ash')] },
+      { t: '8:00 – 8:20', stage: 'Pool', g: [pg(13, 1, 'mika', 'sat'), pg(14, 2, 'david', 'maddy')] },
+      { t: '8:20 – 8:40', stage: 'Pool', g: [pg(15, 1, 'barath', 'eugene'), pg(16, 2, 'mika', 'ash')] },
+      { t: '8:40 – 9:00', stage: 'Pool', g: [pg(17, 1, 'david', 'sat'), pg(18, 2, 'barath', 'maddy')] },
+      { t: '9:00 – 9:20', stage: 'Pool', g: [pg(19, 1, 'mika', 'eugene'), pg(20, 2, 'david', 'barath')] },
+      { t: '9:20 – 9:40', stage: 'Pool', g: [pg(21, 0, 'david', 'mika')] },
+      { t: '9:40 – 10:00', stage: 'Semi-finals', grp: 'KO', g: [
+        { id: 22, c: 1, ko: 'Semi-final 1', wait: 'Teams are set once all 21 pool games have a score.' },
+        { id: 23, c: 2, ko: 'Semi-final 2', wait: 'Teams are set once all 21 pool games have a score.' }] },
+      { t: '10:00 – 10:20', stage: '3rd place', grp: 'KO', g: [{ id: 24, c: 0, ko: '3rd place', wait: 'Teams are set once both semi-finals have a score.' }] },
+      { t: '10:20 – 10:40', stage: 'Final', grp: 'KO', g: [{ id: 25, c: 0, ko: 'Final', wait: 'Teams are set once both semi-finals have a score.' }] }
+    ],
+    final: 25, bracket: [[22, 23], [25, 24]],
+    ko: function (S, mk, K) {
+      var s = S[0];
+      mk(22, s && s[0], s && s[3], '1st place', '4th place');
+      mk(23, s && s[1], s && s[2], '2nd place', '3rd place');
+      mk(24, K[22].lose, K[23].lose, 'Loser of Semi-final 1', 'Loser of Semi-final 2');
+      mk(25, K[22].win, K[23].win, 'Winner of Semi-final 1', 'Winner of Semi-final 2');
+    },
+    stats: function (done) { return [['7', 'Teams'], ['2', 'Courts'], ['20', 'Minutes per game'], [done + '/25', 'Games played']]; },
+    qText: 'The top 4 after the pool games play the semi-finals.',
+    rankText: 'Ranked by wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams when exactly two are level.',
+    koNote: 'After the 21 pool games, 1st plays 4th and 2nd plays 3rd. The winners play the final, the losers play for 3rd place.',
+    check: function (a, b, g) { return g.ko && a === b ? 'A knockout game needs a winner. The scores cannot be level.' : ''; }
+  };
+  CAT1.pools = [{ name: '', q: 4, teams: CAT1.teams.map(function (t) { return t.id; }) }];
+
+  function duo(id, e, hue, a, b, sat) { return { id: id, e: e, h: hue, s: sat, p: [a, b], n: a + ' & ' + b }; }
+  var POOL_A = [duo('yh', '🦅', 10, 'Yatharth', 'Harish'), duo('dm', '🐬', 200, 'David', 'Mitch'), duo('cn', '🌵', 120, 'Cynthia', 'Neil'),
+    duo('lh', '🦁', 38, 'Léo', 'Hamza'), duo('ec', '🍉', 350, 'Edoardo', 'Crystal'), duo('sp', '🐙', 275, 'Shane', 'Peter'), duo('tc', '🌸', 320, 'Thitikorn', 'Charlene')];
+  var POOL_B = [duo('rs', '🚀', 225, 'Rob', 'Stan'), duo('as', '⚡', 50, 'Ash', 'Sat', 78), duo('rk', '🦖', 90, 'Rossi', 'Khai'),
+    duo('uk', '🐯', 25, 'Udhaya', 'Karthi'), duo('sf', '🐼', 155, 'Supi', 'Fai'), duo('tj', '🎯', 0, 'TBC', 'Josh'), duo('ks', '🌊', 190, 'Khather', 'Syed')];
+  function ids(l) { return l.map(function (t) { return t.id; }); }
+  /* Every team plays every other team in its pool once (circle method): 7 rounds of 3 games, one team rests each round. */
+  function roundRobin(teams, id, pool, start, c) {
+    var arr = teams.concat([null]), n = arr.length, out = [];
+    for (var r = 0; r < n - 1; r++) {
+      var g = [], bye = null;
+      for (var i = 0; i < n / 2; i++) {
+        var a = arr[i], b = arr[n - 1 - i];
+        if (!a || !b) { bye = a || b; continue; }
+        var x = pg(id++, c, a, b); x.chip = 'Pool ' + pool; g.push(x);
+      }
+      out.push({ t: 'Round ' + (r + 1), stage: 'Pool ' + pool + (r ? '' : ' · starts ' + start), grp: pool, bye: bye, g: g });
+      arr.splice(1, 0, arr.pop());
+    }
+    return out;
+  }
+  var CAT2 = {
+    key: 'cat2', ver: '2.0', path: 'scores-cat2.json', cap: 15,
+    sub: 'Beach volleyball, 2v2. 14 teams in two pools, then the semi-finals and the final. Every game is first to 15, no deuce.',
+    ball: { src: 'assets/mikasa.png', w: 480, h: 480 },
+    teams: POOL_A.concat(POOL_B),
+    slots: roundRobin(ids(POOL_A), 1, 'A', '4:00 PM', 1).concat(roundRobin(ids(POOL_B), 22, 'B', '5:30 PM', 2), [
+      { t: 'Semi-finals', stage: 'Knockouts', grp: 'KO', g: [
+        { id: 43, c: 0, chip: '', ko: 'Semi-final 1', wait: 'Teams are set once every Pool A and Pool B game is done.' },
+        { id: 44, c: 0, chip: '', ko: 'Semi-final 2', wait: 'Teams are set once every Pool A and Pool B game is done.' }] },
+      { t: 'Final', stage: 'Knockouts', grp: 'KO', g: [{ id: 45, c: 0, chip: '', ko: 'Final', wait: 'Teams are set once both semi-finals have a score.' }] }]),
+    pools: [{ name: 'Pool A', q: 2, teams: ids(POOL_A) }, { name: 'Pool B', q: 2, teams: ids(POOL_B) }],
+    final: 45, bracket: [[43, 44], [45]],
+    ko: function (S, mk, K) {
+      var A = S[0], B = S[1];
+      mk(43, A && A[0], B && B[1], 'Pool A winner', 'Pool B 2nd place');
+      mk(44, B && B[0], A && A[1], 'Pool B winner', 'Pool A 2nd place');
+      mk(45, K[43].win, K[44].win, 'Winner of Semi-final 1', 'Winner of Semi-final 2');
+    },
+    stats: function (done) { return [['14', 'Teams'], ['2', 'Pools'], ['15', 'Points to win'], [done + '/45', 'Games done']]; },
+    schedNote: 'Pool A starts at 4:00 PM and Pool B at 5:30 PM. Games are played in this order, one round after the other. In each round one team rests.',
+    qText: 'The top 2 in each pool play the semi-finals.',
+    rankText: 'Ranked by wins, then point difference, then points scored, then the result between the two teams when exactly two are level. Blacked-out games do not count for anyone. A team that withdrew drops to the bottom.',
+    koNote: 'Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. Knockout games are also first to 15, no deuce.',
+    check: function (a, b) { return Math.max(a, b) !== 15 || a === b ? 'First to 15, no deuce: the winning team has exactly 15 and the other team 0 to 14.' : ''; }
+  };
+
+  [CAT1, CAT2].forEach(function (tr) {
+    tr.T = {};
+    tr.teams.forEach(function (t, i) { t.i = i; tr.T[t.id] = t; });
+    tr.games = [];
+    tr.slots.forEach(function (s) { s.g.forEach(function (g) { tr.games.push(g); }); });
+    tr.pool = tr.games.filter(function (g) { return !g.ko; });
+    tr.pools.forEach(function (p) { p.games = tr.pool.filter(function (g) { return p.teams.indexOf(g.a) > -1; }); });
+    tr.state = { v: 1, rev: 0, scores: {}, updated: null };
+  });
+
+  /* The tournament on screen. Everything below reads these. */
+  var TR, TEAMS, T, SLOTS, GAMES, POOL, STATE;
+  function use(tr) { TR = tr; TEAMS = tr.teams; T = tr.T; SLOTS = tr.slots; GAMES = tr.games; POOL = tr.pool; STATE = tr.state; }
+  function setState(tr, s) { tr.state = s; if (TR === tr) STATE = s; }
+  use(CAT2);
+
+  var ADMINS = ['Yatha', 'Sat', 'Ash', 'Mika'];
+  /* When the sponsor is confirmed: { name: 'Brand', logo: 'assets/sponsor.png', url: 'https://example.com', line: 'Official partner of CAT SG 2.0' } */
+  var SPONSOR = null;
+
   /* Team colour: hue, plus an optional stronger saturation for pale hues like yellow. */
   function tint(t) { return '--h:' + t.h + (t.s ? ';--tint-s:' + t.s + '%' : ''); }
-
-  function pg(id, c, a, b) { return { id: id, c: c, a: a, b: b }; }
-  var SLOTS = [
-    { t: '6:00 – 6:20', stage: 'Pool', g: [pg(1, 1, 'ash', 'sat'), pg(2, 2, 'maddy', 'eugene')] },
-    { t: '6:20 – 6:40', stage: 'Pool', g: [pg(3, 1, 'ash', 'maddy'), pg(4, 2, 'sat', 'eugene')] },
-    { t: '6:40 – 7:00', stage: 'Pool', g: [pg(5, 1, 'ash', 'eugene'), pg(6, 2, 'sat', 'maddy')] },
-    { t: '7:00 – 7:20', stage: 'Pool', join: true, g: [pg(7, 1, 'barath', 'mika'), pg(8, 2, 'david', 'ash')] },
-    { t: '7:20 – 7:40', stage: 'Pool', g: [pg(9, 1, 'barath', 'sat'), pg(10, 2, 'mika', 'maddy')] },
-    { t: '7:40 – 8:00', stage: 'Pool', g: [pg(11, 1, 'david', 'eugene'), pg(12, 2, 'barath', 'ash')] },
-    { t: '8:00 – 8:20', stage: 'Pool', g: [pg(13, 1, 'mika', 'sat'), pg(14, 2, 'david', 'maddy')] },
-    { t: '8:20 – 8:40', stage: 'Pool', g: [pg(15, 1, 'barath', 'eugene'), pg(16, 2, 'mika', 'ash')] },
-    { t: '8:40 – 9:00', stage: 'Pool', g: [pg(17, 1, 'david', 'sat'), pg(18, 2, 'barath', 'maddy')] },
-    { t: '9:00 – 9:20', stage: 'Pool', g: [pg(19, 1, 'mika', 'eugene'), pg(20, 2, 'david', 'barath')] },
-    { t: '9:20 – 9:40', stage: 'Pool', g: [pg(21, 0, 'david', 'mika')] },
-    { t: '9:40 – 10:00', stage: 'Semi-finals', g: [{ id: 22, c: 1, ko: 'Semi-final 1' }, { id: 23, c: 2, ko: 'Semi-final 2' }] },
-    { t: '10:00 – 10:20', stage: '3rd place', g: [{ id: 24, c: 0, ko: '3rd place' }] },
-    { t: '10:20 – 10:40', stage: 'Final', g: [{ id: 25, c: 0, ko: 'Final' }] }
-  ];
-  var GAMES = [];
-  SLOTS.forEach(function (s) { s.g.forEach(function (g) { GAMES.push(g); }); });
-  var POOL = GAMES.filter(function (g) { return !g.ko; });
-
-  /* ---------- saved state: scores.json in the repository ---------- */
-  var STATE = { v: 1, rev: 0, scores: {}, updated: null };
+  function tn(t) { return t.n || 'Team ' + t.p[0]; }
 
   function isInt(n) { return typeof n === 'number' && n >= 0 && n <= 99 && Math.floor(n) === n; }
   function rec(scores, id) { var r = scores[id]; return r && isInt(r.a) && isInt(r.b) ? r : null; }
+  /* a blacked-out game is saved as { x: 1 }: not played, counts for nobody */
+  function isOut(scores, id) { var r = scores[id]; return !!(r && r.x); }
+  function goneSet(state) { var o = {}; (state.gone || []).forEach(function (id) { o[id] = true; }); return o; }
 
-  function standings(scores) {
-    var rows = {}, played = 0;
-    TEAMS.forEach(function (t) { rows[t.id] = { id: t.id, i: t.i, p: 0, w: 0, d: 0, l: 0, pf: 0, pa: 0 }; });
-    POOL.forEach(function (g) {
+  function standings(state, p) {
+    var scores = state.scores, gone = goneSet(state), rows = {}, played = 0, settled = 0;
+    p.teams.forEach(function (id) { rows[id] = { id: id, i: T[id].i, p: 0, w: 0, d: 0, l: 0, pf: 0, pa: 0, gone: !!gone[id] }; });
+    p.games.forEach(function (g) {
+      if (isOut(scores, g.id)) { settled++; return; }
       var r = rec(scores, g.id);
       if (!r) return;
-      played++;
+      played++; settled++;
       var A = rows[g.a], B = rows[g.b];
       A.p++; B.p++; A.pf += r.a; A.pa += r.b; B.pf += r.b; B.pa += r.a;
       if (r.a > r.b) { A.w++; B.l++; } else if (r.a < r.b) { B.w++; A.l++; } else { A.d++; B.d++; }
     });
     function h2h(x, y) {
-      for (var k = 0; k < POOL.length; k++) {
-        var g = POOL[k], r = rec(scores, g.id);
+      for (var k = 0; k < p.games.length; k++) {
+        var g = p.games[k], r = rec(scores, g.id);
         if (!r) continue;
         if (g.a === x.id && g.b === y.id) return r.b - r.a;
         if (g.a === y.id && g.b === x.id) return r.a - r.b;
       }
       return 0;
     }
-    function cmp(x, y) { return (y.w * 2 + y.d) - (x.w * 2 + x.d) || (y.pf - y.pa) - (x.pf - x.pa) || y.pf - x.pf; }
-    var list = TEAMS.map(function (t) { return rows[t.id]; });
+    function cmp(x, y) { return (+x.gone - +y.gone) || (y.w * 2 + y.d) - (x.w * 2 + x.d) || (y.pf - y.pa) - (x.pf - x.pa) || y.pf - x.pf; }
+    var list = p.teams.map(function (id) { return rows[id]; });
     list.sort(function (x, y) { return cmp(x, y) || x.i - y.i; });
     /* The result between the two teams only settles a tie of exactly two teams. Applying it
        inside a three-way tie makes the order depend on the browser's sort. */
@@ -509,73 +772,84 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
       if (j - i === 2 && h2h(list[i], list[i + 1]) > 0) { var t = list[i]; list[i] = list[i + 1]; list[i + 1] = t; }
       i = j;
     }
-    return { list: list, rows: rows, played: played, done: played === POOL.length };
+    return { list: list, rows: rows, played: played, settled: settled, done: settled === p.games.length };
   }
 
   /* Knockout teams are derived, never stored on their own. A knockout score is
      only valid for the two teams it was saved against, so a later correction
      that changes the seeding or a semi-final winner retires it automatically. */
-  function resolve(scores) {
-    var st = standings(scores), K = {};
-    var seed = st.done ? st.list.map(function (r) { return r.id; }) : null;
+  function resolve(state) {
+    var st = TR.pools.map(function (p) { return standings(state, p); }), rows = {}, K = {};
+    st.forEach(function (s) { for (var k in s.rows) rows[k] = s.rows[k]; });
+    /* a team that withdrew cannot be seeded */
+    var seeds = st.map(function (s) { return s.done ? s.list.filter(function (r) { return !r.gone; }).map(function (r) { return r.id; }) : null; });
     function mk(id, a, b, la, lb) {
       var g = { a: a || null, b: b || null, la: la, lb: lb, res: null, stale: false, win: null, lose: null };
-      var r = rec(scores, id);
+      var r = rec(state.scores, id);
       if (r) {
         if (g.a && g.b && r.ta === g.a && r.tb === g.b && r.a !== r.b) g.res = r; else g.stale = true;
       }
       if (g.res) { g.win = g.res.a > g.res.b ? g.a : g.b; g.lose = g.res.a > g.res.b ? g.b : g.a; }
       K[id] = g;
     }
-    mk(22, seed && seed[0], seed && seed[3], '1st place', '4th place');
-    mk(23, seed && seed[1], seed && seed[2], '2nd place', '3rd place');
-    mk(24, K[22].lose, K[23].lose, 'Loser of Semi-final 1', 'Loser of Semi-final 2');
-    mk(25, K[22].win, K[23].win, 'Winner of Semi-final 1', 'Winner of Semi-final 2');
-    return { st: st, K: K };
+    TR.ko(seeds, mk, K);
+    return { st: st, rows: rows, K: K };
   }
   function viewOf(g, R, scores) {
     if (g.ko) return R.K[g.id];
-    return { a: g.a, b: g.b, res: rec(scores, g.id), stale: false };
+    return { a: g.a, b: g.b, res: rec(scores, g.id), out: isOut(scores, g.id), stale: false };
   }
 
-  /* ---------- per-tab memory (mode, unsaved admin entries) ---------- */
+  /* ---------- per-tab memory (mode, page, unsaved admin entries) ---------- */
   var mem = {};
   function sget(k) { try { var v = sessionStorage.getItem(k); return v == null ? mem[k] : v; } catch (e) { return mem[k]; } }
   function sset(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
-  /* a shared link to a section (#schedule, #standings, ...) opens the viewer straight away */
+
+  var PAGES = { cat2: 'CAT SG 2.0', previous: 'Previous', gallery: 'Gallery', rules: 'Rules', 'tournament-rules': 'Tournament rules' };
+  function hashPage() { var k = location.hash.slice(1); return PAGES.hasOwnProperty(k) ? k : k === 'cat1' ? 'previous' : null; }
+  var page = hashPage() || sget('cat.page') || 'cat2';
+  if (!PAGES.hasOwnProperty(page)) page = 'cat2';
+  function pageTour() { return page === 'previous' ? CAT1 : CAT2; }
+  function tourPage() { return page === 'cat2' || page === 'previous'; }
+
+  /* a shared link to a page or section (#gallery, #schedule, ...) opens the viewer straight away */
   var mode = sget('cat.mode') || (location.hash.length > 1 ? 'viewer' : '');
   var draft = {};
-  try { draft = JSON.parse(sget('cat.draft') || '{}') || {}; } catch (e) { draft = {}; }
+  try { draft = JSON.parse(sget('cat2.draft') || '{}') || {}; } catch (e) { draft = {}; }
+  function keepDraft() { sset('cat2.draft', JSON.stringify(draft)); }
   var query = '';
   /* The password only hides the admin screen. What actually protects the scores is who is allowed to save. */
-  var unlocked = sget('cat.unlock') === '1', pwMsg = '';
+  var unlocked = sget('cat.unlock') === '1', pwMsg = '', who = sget('cat.who') || '';
   function pwHash(s) { var x = 5381, i; for (i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0; return x; }
   var PW = 2087698566;
   if (mode === 'admin' && !unlocked) mode = '';
+  /* only the live tournament page can be edited */
+  function admin() { return mode === 'admin' && page === 'cat2'; }
   function tryUnlock(ev) {
     ev.preventDefault();
+    var w = document.getElementById('who').value;
     var v = (document.getElementById('pw').value || '').trim().toLowerCase();
-    if (pwHash(v) === PW) { unlocked = true; pwMsg = ''; sset('cat.unlock', '1'); setMode('admin'); }
+    if (!w) { pwMsg = 'Pick your name first.'; render(); }
+    else if (pwHash(v) === PW) { who = w; sset('cat.who', w); unlocked = true; pwMsg = ''; sset('cat.unlock', '1'); page = 'cat2'; sset('cat.page', page); setMode('admin'); }
     else { pwMsg = v ? 'That password is not right.' : 'Type the admin password first.'; render(); }
   }
 
   /* ---------- GitHub storage ----------
-     Viewers read scores.json from this website. An admin device saves by
-     committing scores.json through the GitHub API with a token that is kept
-     on that device only (never in this repository). */
-  var CFG = { owner: 'MikachuFM2202', repo: 'tourney-tracker', branch: 'main', path: 'scores.json' };
+     Viewers read the scores file from this website. An admin device saves by
+     committing the CAT SG 2.0 scores file through the GitHub API with a token
+     that is kept on that device only (never in this repository). */
+  var CFG = { owner: 'MikachuFM2202', repo: 'tourney-tracker', branch: 'main' };
   function lget(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return mem['l' + k] || ''; } }
   function lset(k, v) { mem['l' + k] = v; try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} }
   var token = lget('cat.token'), tokMsg = '', pendingRender = false;
-  function accessLine() { return null; }
   function saveBlock() { return token ? '' : 'Add token first'; }
   /* While someone is typing in any box (score, search, password, token), hold page refreshes until they leave it, so the keyboard does not close and nothing typed is lost. */
-  function typing() { var a = document.activeElement; return !!a && a.tagName === 'INPUT'; }
-  function take(s) {
+  function typing() { var a = document.activeElement; return !!a && (a.tagName === 'INPUT' || a.tagName === 'SELECT'); }
+  function take(tr, s) {
     if (!s || typeof s.scores !== 'object' || !s.scores) return;
-    if ((s.rev || 0) <= (STATE.rev || 0)) return;
-    STATE = s;
-    if (saving) return;
+    if ((s.rev || 0) <= (tr.state.rev || 0)) return;
+    setState(tr, s);
+    if (saving || !tourPage() || pageTour() !== tr) return;
     if (typing()) { pendingRender = true; return; }
     render();
   }
@@ -587,18 +861,19 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     if (!root.firstChild) return;
     if (typing() || saving) pendingRender = true; else render();
   }
-  function poll() {
+  function poll(tr) {
+    tr = tr || CAT2;
     if (document.hidden) return;
-    return fetch(CFG.path + '?t=' + Date.now(), { cache: 'no-store' })
+    return fetch(tr.path + '?t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { setOffline(false); return r.ok ? r.json() : null; })
-      .then(take, function () { setOffline(true); });
+      .then(function (s) { take(tr, s); }, function () { setOffline(true); });
   }
-  window.addEventListener('online', poll);
+  window.addEventListener('online', function () { poll(); });
   document.addEventListener('focusout', function () {
     setTimeout(function () { if (pendingRender && !typing() && !saving) { pendingRender = false; render(); } }, 50);
   });
-  document.addEventListener('visibilitychange', poll);
-  setInterval(poll, 20000);
+  document.addEventListener('visibilitychange', function () { poll(); });
+  setInterval(function () { poll(); }, 20000);
   function adminExtra(wrap) {
     if (token) {
       wrap.appendChild(h('div', { class: 'danger' }, h('p', { text: 'This device can save scores.' }),
@@ -637,52 +912,63 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
   }
 
-  /* ---------- unsaved entries ---------- */
-  var R = resolve(STATE.scores), VIEW = {}, FOOT = {};
+  /* ---------- unsaved entries (CAT SG 2.0 only) ---------- */
+  var R = resolve(STATE), VIEW = {}, FOOT = {};
   function curStr(id, side) { var v = VIEW[id]; return v && v.res ? String(v.res[side]) : ''; }
   function dstat(g) {
     var d = draft[g.id], v = VIEW[g.id];
     if (!d) return { k: 'none' };
-    if (d.clear) return (v.res || v.stale) ? { k: 'clear' } : { k: 'none' };
+    if (d.out) return v.out ? { k: 'none' } : { k: 'out' };
+    if (d.clear) return (v.res || v.stale || v.out) ? { k: 'clear' } : { k: 'none' };
     var ok = /^\d{1,2}$/;
     if (d.a === '' && d.b === '' && !v.res) return { k: 'none' };
     if (!ok.test(d.a) || !ok.test(d.b)) return { k: 'err', m: 'Enter both scores as whole numbers from 0 to 99.' };
-    if (g.ko && +d.a === +d.b) return { k: 'err', m: 'A knockout game needs a winner. The scores cannot be level.' };
+    var bad = TR.check(+d.a, +d.b, g);
+    if (bad) return { k: 'err', m: bad };
     if (g.ko && !(v.a && v.b)) return { k: 'err', m: 'The teams for this game are not set yet.' };
     if (v.res && +d.a === v.res.a && +d.b === v.res.b) return { k: 'none' };
     return { k: 'ok', a: +d.a, b: +d.b };
   }
   function pruneDraft() {
     GAMES.forEach(function (g) { if (draft[g.id] && dstat(g).k === 'none') delete draft[g.id]; });
-    sset('cat.draft', JSON.stringify(draft));
+    if (draft.gone) {
+      var cur = goneSet(STATE);
+      Object.keys(draft.gone).forEach(function (k) { if (!T[k] || !!draft.gone[k] === !!cur[k]) delete draft.gone[k]; });
+      if (!Object.keys(draft.gone).length) delete draft.gone;
+    }
+    keepDraft();
   }
   function counts() {
-    var n = 0, bad = 0;
-    GAMES.forEach(function (g) { var s = dstat(g).k; if (s === 'ok' || s === 'clear') n++; else if (s === 'err') bad++; });
+    var n = draft.gone ? Object.keys(draft.gone).length : 0, bad = 0;
+    GAMES.forEach(function (g) { var s = dstat(g).k; if (s === 'ok' || s === 'clear' || s === 'out') n++; else if (s === 'err') bad++; });
     return { n: n, bad: bad };
   }
 
   /* ---------- saving ---------- */
   var saving = false, saveMsg = '', confirmReset = false, resetMsg = '';
   function nextState(reset) {
-    var next = { v: 1, scores: {}, updated: new Date().toISOString() };
+    var next = { v: 1, scores: {}, updated: new Date().toISOString(), by: who || undefined };
     if (reset) return next;
     Object.keys(STATE.scores).forEach(function (k) { next.scores[k] = STATE.scores[k]; });
     POOL.forEach(function (g) {
       var s = dstat(g);
       if (s.k === 'ok') next.scores[g.id] = { a: s.a, b: s.b };
+      else if (s.k === 'out') next.scores[g.id] = { x: 1 };
       else if (s.k === 'clear') delete next.scores[g.id];
     });
+    var gs = goneSet(STATE), gd = draft.gone || {};
+    Object.keys(gd).forEach(function (k) { gs[k] = gd[k]; });
+    next.gone = TEAMS.filter(function (t) { return gs[t.id]; }).map(function (t) { return t.id; });
     /* knockouts in order, each against the teams the new scores produce */
     GAMES.filter(function (g) { return g.ko; }).forEach(function (g) {
-      var s = dstat(g), k = resolve(next.scores).K[g.id];
+      var s = dstat(g), k = resolve(next).K[g.id];
       if (s.k === 'clear') delete next.scores[g.id];
       else if (s.k === 'ok' && k.a && k.b) next.scores[g.id] = { a: s.a, b: s.b, ta: k.a, tb: k.b };
     });
     return next;
   }
   function gh(method, body) {
-    var url = 'https://api.github.com/repos/' + CFG.owner + '/' + CFG.repo + '/contents/' + CFG.path;
+    var url = 'https://api.github.com/repos/' + CFG.owner + '/' + CFG.repo + '/contents/' + CAT2.path;
     if (method === 'GET') url += '?ref=' + CFG.branch + '&t=' + Date.now();
     return fetch(url, { method: method, cache: 'no-store',
       headers: { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' },
@@ -704,22 +990,25 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
           return { sha: j.sha, state: st };
         });
       }).then(function (cur) {
-        if (cur.state && cur.state.scores && (cur.state.rev || 0) > (STATE.rev || 0)) STATE = cur.state;
+        /* the page may have changed tab while waiting, so work on CAT SG 2.0 explicitly */
+        use(CAT2);
+        if (cur.state && cur.state.scores && (cur.state.rev || 0) > (STATE.rev || 0)) setState(CAT2, cur.state);
         refresh();
         var next = nextState(reset);
         next.rev = (STATE.rev || 0) + 1;
-        var body = { message: (reset ? 'Clear all scores' : 'Update scores') + ' (rev ' + next.rev + ')', content: b64e(JSON.stringify(next, null, 1) + '\n'), branch: CFG.branch };
+        var body = { message: (reset ? 'Clear all CAT SG 2.0 scores' : 'Update CAT SG 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
+          content: b64e(JSON.stringify(next, null, 1) + '\n'), branch: CFG.branch };
         if (cur.sha) body.sha = cur.sha;
         return gh('PUT', body).then(function (r) {
           if (r.status === 409 || r.status === 422) { if (n < 2) return attempt(n + 1); throw { code: 'conflict' }; }
           if (r.status === 401 || r.status === 403 || r.status === 404) throw { code: 'auth' };
           if (!r.ok) throw { code: 'GitHub error ' + r.status };
-          STATE = next;
+          setState(CAT2, next);
         });
       });
     }
     attempt(0).then(function () {
-      saving = false; confirmReset = false; if (reset) draft = {};
+      saving = false; confirmReset = false; if (reset) { draft = {}; keepDraft(); }
       render();
     }, function (err) {
       saving = false;
@@ -736,10 +1025,10 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
   var root = document.getElementById('root');
   var bar = null;
 
-  /* Live slot by the clock. All slots are PM on the day, Singapore time (UTC+8). */
-  var DAY = { y: 2026, m: 9, d: 5, tz: 8 };
-  function at(hh, mm) { return Date.UTC(DAY.y, DAY.m, DAY.d, +hh + 12 - DAY.tz, +mm); }
+  /* Live slot by the clock, for tournaments with fixed slot times. All slots are PM on the day, Singapore time (UTC+8). */
+  function at(hh, mm) { var D = TR.day; return Date.UTC(D.y, D.m, D.d, +hh + 12 - D.tz, +mm); }
   function liveIdx() {
+    if (!TR.day) return -1;
     var now = Date.now();
     for (var i = 0; i < SLOTS.length; i++) {
       var m = SLOTS[i].t.match(/(\d+):(\d+)\D+(\d+):(\d+)/);
@@ -750,14 +1039,13 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 
   function topbar(main) {
     return h('header', { class: 'topbar' }, h('div', { class: 'topbar-in' },
-      h('a', { class: 'mark', href: '#top', 'aria-label': 'CAT SG 1.0, back to top' }, 'CAT SG ', h('b', { text: '1.0' })),
-      h('nav', { class: 'nav', 'aria-label': 'Jump to' },
-        h('button', { type: 'button', id: 'open-sc', text: 'Scorecard', onclick: openSc }),
-        installed() ? null : h('button', { type: 'button', id: 'open-app', text: 'Get the app', onclick: openApp }),
-        main ? [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']]
-          .map(function (l) { return h('a', { href: l[0], text: l[1] }); }) : null),
+      h('a', { class: 'mark', href: '#cat2', 'aria-label': 'CAT SG 2.0 home' }, 'CAT SG ', h('b', { text: '2.0' })),
+      h('nav', { class: 'nav', 'aria-label': 'Pages' },
+        Object.keys(PAGES).map(function (k) { return h('a', { href: '#' + k, text: PAGES[k], 'aria-current': main && page === k ? 'page' : null }); }),
+        page === 'cat2' ? h('button', { type: 'button', id: 'open-sc', text: 'Scorecard', onclick: openSc }) : null,
+        installed() ? null : h('button', { type: 'button', id: 'open-app', text: 'Get the app', onclick: openApp })),
       h('div', { class: 'tools' },
-        main ? h('span', { class: 'mode', text: mode === 'admin' ? 'Admin' : 'Viewer' }) : null,
+        main ? h('span', { class: 'mode', text: mode === 'admin' ? 'Admin' + (who ? ' · ' + who : '') : 'Viewer' }) : null,
         main ? h('button', { class: 'linkbtn', type: 'button', text: 'Switch view', onclick: function () { setMode(''); } }) : null,
         clubLogo('logo'))),
       offline ? h('p', { class: 'offline', role: 'status', text: 'No connection. Scores may be out of date.' }) : null);
@@ -766,36 +1054,43 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     return h('img', { class: cls, src: 'assets/club-logo.jpg', alt: 'Casual SG logo', width: '256', height: '256' });
   }
 
+  function doneCount() { return GAMES.filter(function (g) { var v = VIEW[g.id]; return v.res || v.out; }).length; }
+
   function hero(main, intro) {
-    var upd = null, done = GAMES.filter(function (g) { return VIEW[g.id].res; }).length;
+    var upd = null;
     if (STATE.updated) {
       var d = new Date(STATE.updated);
-      if (!isNaN(d)) upd = 'Scores updated ' + d.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+      if (!isNaN(d)) upd = 'Scores updated ' + d.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + (STATE.by ? ' by ' + STATE.by : '');
     }
     function ballEl(cls) {
       return h('div', { class: cls, 'aria-hidden': 'true' }, h('div', { class: 'ball' },
-        h('img', { src: 'assets/yatha.png', alt: '', width: '543', height: '720' })));
+        h('img', { src: TR.ball.src, alt: '', width: String(TR.ball.w), height: String(TR.ball.h) })));
     }
-    var ball = ballEl('ballwrap');
-    return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ball, h('div', { class: 'hero-in' },
+    return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ballEl('ballwrap'), h('div', { class: 'hero-in' },
       h('div', { class: 'hero-copy' },
-        h('p', { class: 'eyebrow', text: 'Casual SG Advanced Tournament' }),
+        h('p', { class: 'eyebrow', text: (TR.archived ? 'Previous tournament · ' : '') + 'Casual SG Advanced Tournament' }),
         h('div', { class: 'headline' },
-          h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: '1.0' })),
+          h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: TR.ver })),
           ballEl('miniball')),
-        h('p', { class: 'sub', text: 'Beach volleyball, 3v3. Kallang Beach Courts, 5 October 2026, from 6:00 PM.' }),
+        h('p', { class: 'sub', text: TR.sub }),
         main ? h('div', { class: 'ctas' },
           h('a', { class: 'pill solid', href: '#schedule', text: 'See the schedule' }),
-          h('a', { class: 'pill', href: '#standings', text: 'Standings' })) : null),
+          h('a', { class: 'pill', href: '#standings', text: 'Standings' }),
+          TR.archived ? null : h('a', { class: 'pill', href: '#tournament-rules', text: 'Tournament rules' })) : null),
       h('div', { class: 'stats' },
-        [['7', 'Teams'], ['2', 'Courts'], ['20', 'Minutes per game'], [done + '/25', 'Games played']]
-          .map(function (s) { return h('div', { class: 'stat' }, h('b', { text: s[0] }), h('span', { text: s[1] })); })),
+        TR.stats(doneCount()).map(function (s) { return h('div', { class: 'stat' }, h('b', { text: s[0] }), h('span', { text: s[1] })); })),
       upd ? h('p', { class: 'stamp', text: upd }) : null));
+  }
+
+  /* smaller header for the pages that are not a tournament */
+  function pageHead(eyebrow, title, sub) {
+    return h('div', { class: 'hero phead' + (revealed ? '' : ' intro'), id: 'top' }, h('div', { class: 'hero-in' }, h('div', { class: 'hero-copy' },
+      h('p', { class: 'eyebrow', text: eyebrow }), h('h1', { text: title }), h('p', { class: 'sub', text: sub }))));
   }
 
   function footer() {
     return h('footer', { class: 'foot' },
-      h('span', null, h('b', { text: 'CAT SG 1.0' }), '  Casual SG Advanced Tournament'),
+      h('span', null, h('b', { text: 'CAT SG' }), '  Casual SG Advanced Tournament'),
       h('span', { class: 'foot-r' }, 'Hosted by Casual SG', clubLogo('logo sm')));
   }
 
@@ -808,15 +1103,23 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px' });
-    root.querySelectorAll('.next, .champ, .search, .sh, .tscroll, .slot, .bnode, .team, .choice, .gatehead').forEach(function (el) {
+    root.querySelectorAll('.next, .champ, .search, .sh, .tscroll, .slot, .bnode, .team, .choice, .gatehead, .sponsor, .admin, .rule, .tcard').forEach(function (el) {
       el.classList.add('rv'); io.observe(el);
     });
   }
 
   function setMode(m) { mode = m; sset('cat.mode', m); query = ''; saveMsg = ''; revealed = false; window.scrollTo(0, 0); render(); }
+  function goPage(p) { page = p; sset('cat.page', p); query = ''; revealed = false; window.scrollTo(0, 0); render(); }
+  /* page tabs are plain links (#gallery, #rules, ...), so they can be shared and the back button works */
+  window.addEventListener('hashchange', function () {
+    var p = hashPage();
+    if (!p) return;
+    if (!mode) { mode = 'viewer'; sset('cat.mode', mode); }
+    goPage(p);
+  });
 
   function renderGate() {
-    var done = GAMES.filter(function (g) { return VIEW[g.id].res; }).length;
+    use(CAT2); refresh();
     root.appendChild(topbar(false));
     root.appendChild(hero(false, !revealed));
     root.appendChild(h('div', { class: 'wrap' },
@@ -824,19 +1127,21 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
       h('div', { class: 'gate' },
         h('div', { class: 'choice' },
           h('h2', { text: 'Viewer' }),
-          h('p', { text: 'See the schedule, every team’s players, the scores and the standings. ' + done + ' of 25 games have a score.' }),
+          h('p', { text: 'See the schedule, every team, the scores and the standings. ' + doneCount() + ' of 45 games are done.' }),
           h('button', { class: 'go', type: 'button', id: 'go-viewer', text: 'Open viewer', onclick: function () { setMode('viewer'); } })),
         h('div', { class: 'choice' },
           h('h2', { text: 'Admin' }),
-          h('p', { text: 'Enter and correct scores. Saved scores update the standings and knockout games for everyone.' }),
-          accessLine(),
+          h('p', { text: 'For ' + ADMINS.slice(0, -1).join(', ') + ' and ' + ADMINS[ADMINS.length - 1] + ' only. Enter scores and black out games. Saved scores update the standings and knockouts for everyone.' }),
           unlocked
-            ? h('button', { class: 'go', type: 'button', id: 'go-admin', text: 'Open admin', onclick: function () { setMode('admin'); } })
+            ? h('button', { class: 'go', type: 'button', id: 'go-admin', text: 'Open admin' + (who ? ' as ' + who : ''), onclick: function () { page = 'cat2'; sset('cat.page', page); setMode('admin'); } })
             : h('form', { class: 'pwform', onsubmit: tryUnlock },
+                h('select', { id: 'who', class: 'field', 'aria-label': 'Which admin are you' },
+                  h('option', { value: '', text: 'Who are you?' }),
+                  ADMINS.map(function (n) { return h('option', { value: n, text: n, selected: n === who }); })),
                 h('input', { id: 'pw', class: 'field', type: 'password', placeholder: 'Admin password', autocomplete: 'off', 'aria-label': 'Admin password' }),
                 h('button', { class: 'go', type: 'submit', id: 'go-admin', text: 'Open admin' })),
-          pwMsg ? h('p', { class: 'access no', text: pwMsg }) : null)), footer()));
-    reveal();
+          pwMsg ? h('p', { class: 'access no', text: pwMsg }) : null)),
+      sponsorBlock(), footer()));
   }
 
   function teamBlock(id, label, right, res, mine, theirs) {
@@ -853,42 +1158,53 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     f.textContent = '';
     var v = VIEW[g.id], s = dstat(g), cls = 'st', txt;
     if (s.k === 'ok') { cls += ' pend'; txt = 'Not saved yet: ' + s.a + '–' + s.b; }
-    else if (s.k === 'clear') { cls += ' pend'; txt = 'This score will be cleared when you save.'; }
+    else if (s.k === 'out') { cls += ' pend'; txt = 'This game will be blacked out when you save. It will not count for either team.'; }
+    else if (s.k === 'clear') { cls += ' pend'; txt = v.out ? 'This game comes back when you save.' : 'This score will be cleared when you save.'; }
     else if (s.k === 'err') { cls += ' bad'; txt = s.m; }
+    else if (v.out) { cls += ' bad'; txt = 'Blacked out. It does not count for either team.'; }
     else if (v.res) { cls += ' good'; txt = 'Saved: ' + v.res.a + '–' + v.res.b; }
     else if (v.stale) { cls += ' bad'; txt = 'The teams in this game changed after its score was saved, so that score no longer counts. Enter the new score.'; }
-    else if (g.ko && !(v.a && v.b)) txt = g.id < 24 ? 'Teams are set once all 21 pool games have a score.' : 'Teams are set once both semi-finals have a score.';
+    else if (g.ko && !(v.a && v.b)) txt = g.wait;
     else txt = 'No score yet.';
     f.appendChild(h('span', { class: cls, text: txt }));
-    if (draft[g.id]) f.appendChild(h('button', { type: 'button', text: 'Undo', onclick: function () { delete draft[g.id]; sset('cat.draft', JSON.stringify(draft)); render(); } }));
-    else if (v.res || v.stale) f.appendChild(h('button', { type: 'button', text: 'Clear score', onclick: function () { draft[g.id] = { clear: true }; sset('cat.draft', JSON.stringify(draft)); render(); } }));
+    function set(d) { return function () { if (d) draft[g.id] = d; else delete draft[g.id]; keepDraft(); render(); }; }
+    if (draft[g.id]) f.appendChild(h('button', { type: 'button', text: 'Undo', onclick: set(null) }));
+    else if (v.out) f.appendChild(h('button', { type: 'button', text: 'Bring back', onclick: set({ clear: true }) }));
+    else {
+      if (v.res || v.stale) f.appendChild(h('button', { type: 'button', text: 'Clear score', onclick: set({ clear: true }) }));
+      if (!g.ko) f.appendChild(h('button', { type: 'button', class: 'blk', text: 'Black out', onclick: set({ out: true }) }));
+    }
   }
 
   function onScore(g, side, ev) {
     var d = draft[g.id];
-    if (!d || d.clear) d = { a: curStr(g.id, 'a'), b: curStr(g.id, 'b') };
+    if (!d || d.clear || d.out) d = { a: curStr(g.id, 'a'), b: curStr(g.id, 'b') };
     d[side] = ev.target.value.trim();
     draft[g.id] = d;
     if (dstat(g).k === 'none' && d.a === curStr(g.id, 'a') && d.b === curStr(g.id, 'b')) delete draft[g.id];
-    sset('cat.draft', JSON.stringify(draft));
+    keepDraft();
     fillFoot(g); updateBar();
   }
 
+  function chipText(g) { return g.chip != null ? g.chip : g.c ? 'Court ' + g.c : 'Either court'; }
+
   function matchCard(g) {
-    var v = VIEW[g.id], admin = mode === 'admin', res = v.res;
-    var names = [g.ko || '', 'game ' + g.id, g.c ? 'court ' + g.c : ''];
+    var v = VIEW[g.id], adm = admin(), res = v.res, chip = chipText(g);
+    var names = [g.ko || '', 'game ' + g.id, chip];
     [v.a, v.b].forEach(function (id) { if (id) names = names.concat(T[id].p); });
     var mid;
-    if (admin) {
-      var d = draft[g.id], off = !(v.a && v.b);
-      var va = d && !d.clear ? d.a : (d && d.clear ? '' : curStr(g.id, 'a'));
-      var vb = d && !d.clear ? d.b : (d && d.clear ? '' : curStr(g.id, 'b'));
+    if (adm) {
+      var d = draft[g.id], off = !(v.a && v.b) || v.out || !!(d && d.out);
+      var va = d ? (d.clear || d.out ? '' : d.a) : curStr(g.id, 'a');
+      var vb = d ? (d.clear || d.out ? '' : d.b) : curStr(g.id, 'b');
       function inp(side, val, who) {
         return h('input', { id: 's' + g.id + side, type: 'number', inputmode: 'numeric', min: '0', max: '99', step: '1', value: val, disabled: off,
           'aria-label': 'Game ' + g.id + ' score for ' + who, oninput: function (ev) { onScore(g, side, ev); } });
       }
       mid = h('div', { class: 'mid' }, h('div', { class: 'inputs' },
-        inp('a', va, v.a ? 'Team ' + T[v.a].p[0] : v.la), h('span', { text: '–' }), inp('b', vb, v.b ? 'Team ' + T[v.b].p[0] : v.lb)));
+        inp('a', va, v.a ? tn(T[v.a]) : v.la), h('span', { text: '–' }), inp('b', vb, v.b ? tn(T[v.b]) : v.lb)));
+    } else if (v.out) {
+      mid = h('div', { class: 'mid' }, h('span', { class: 'xo', text: 'Blacked out' }));
     } else if (res) {
       mid = h('div', { class: 'mid' }, h('div', { class: 'score' },
         res.a >= res.b ? h('b', { text: String(res.a) }) : String(res.a), h('i', { text: '–' }),
@@ -896,84 +1212,108 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     } else {
       mid = h('div', { class: 'mid' }, h('span', { class: 'vs', text: 'vs' }));
     }
-    var card = h('article', { class: 'match', 'data-s': names.join(' ').toLowerCase() },
+    var card = h('article', { class: 'match' + (v.out ? ' out' : ''), 'data-s': names.join(' ').toLowerCase() },
       h('div', { class: 'mhead' },
         h('span', { class: 'gno', text: 'Game ' + g.id }),
-        h('span', { class: 'chip c' + g.c, text: g.c ? 'Court ' + g.c : 'Either court' }),
+        chip ? h('span', { class: 'chip c' + g.c, text: chip }) : null,
         g.ko ? h('span', { class: 'stagename', text: g.ko }) : null,
-        (res && !admin) ? h('span', { class: 'done', text: res.a === res.b ? 'Draw' : 'Final score' }) : null),
+        adm ? null : v.out ? h('span', { class: 'done x', text: 'Not played' })
+          : res ? h('span', { class: 'done', text: res.a === res.b ? 'Draw' : 'Final score' }) : null),
       h('div', { class: 'mbody' },
         teamBlock(v.a, v.la, false, res, res && res.a, res && res.b), mid,
         teamBlock(v.b, v.lb, true, res, res && res.b, res && res.a)));
-    if (admin) { FOOT[g.id] = h('div', { class: 'mfoot' }); card.appendChild(FOOT[g.id]); fillFoot(g); }
+    if (adm) { FOOT[g.id] = h('div', { class: 'mfoot' }); card.appendChild(FOOT[g.id]); fillFoot(g); }
     return card;
   }
 
   function sh(text) { return h('div', { class: 'sh' }, h('h2', { text: text })); }
 
   function standingsSection() {
-    var st = R.st;
-    var tb = h('tbody');
-    st.list.forEach(function (r, i) {
-      var t = T[r.id], diff = r.pf - r.pa;
-      tb.appendChild(h('tr', { class: (i < 4 && st.played ? 'q' : '') + (i === 3 ? ' cut' : '') },
-        h('td', { class: 'rank l', text: String(i + 1) }),
-        h('td', { class: 'tm l' }, h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }), 'Team ' + t.p[0],
-          (st.done && i < 4) ? h('span', { class: 'qpill', text: 'Semi-finals' }) : null),
-        h('td', { text: String(r.p) }), h('td', { class: 'strong', text: String(r.w) }), h('td', { text: String(r.d) }), h('td', { text: String(r.l) }),
-        h('td', { text: String(r.pf) }), h('td', { text: String(r.pa) }), h('td', { class: 'strong', text: (diff > 0 ? '+' : '') + diff })));
+    var multi = R.st.length > 1, settled = 0, all = true;
+    var tables = R.st.map(function (st, pi) {
+      var p = TR.pools[pi], tb = h('tbody');
+      settled += st.settled; all = all && st.done;
+      st.list.forEach(function (r, i) {
+        var t = T[r.id], diff = r.pf - r.pa, q = !r.gone && i < p.q;
+        tb.appendChild(h('tr', { class: (q && st.settled ? 'q' : '') + (i === p.q - 1 ? ' cut' : '') },
+          h('td', { class: 'rank l', text: String(i + 1) }),
+          h('td', { class: 'tm l' }, h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }), tn(t),
+            r.gone ? h('span', { class: 'gtag', text: 'Withdrew' }) : (st.done && q) ? h('span', { class: 'qpill', text: 'Semi-finals' }) : null),
+          h('td', { text: String(r.p) }), h('td', { class: 'strong', text: String(r.w) }), TR.draws ? h('td', { text: String(r.d) }) : null, h('td', { text: String(r.l) }),
+          h('td', { text: String(r.pf) }), h('td', { text: String(r.pa) }), h('td', { class: 'strong', text: (diff > 0 ? '+' : '') + diff })));
+      });
+      return h('div', { class: 'pooltbl' }, multi ? h('h3', { class: 'ph', text: p.name }) : null,
+        h('div', { class: 'tscroll', tabindex: '0', role: 'region', 'aria-label': (p.name || 'Standings') + ' table' }, h('table', null,
+          h('thead', null, h('tr', null,
+            h('th', { class: 'l', text: '#' }), h('th', { class: 'l', text: 'Team' }),
+            h('th', { title: 'Played', text: 'P' }), h('th', { title: 'Won', text: 'W' }), TR.draws ? h('th', { title: 'Drawn', text: 'D' }) : null, h('th', { title: 'Lost', text: 'L' }),
+            h('th', { title: 'Points scored', text: 'For' }), h('th', { title: 'Points conceded', text: 'Agst' }), h('th', { title: 'Point difference', text: '+/−' }))), tb)));
     });
-    var note = st.played === 0 ? 'No scores yet. The table fills in as the admin saves scores. '
-      : st.done ? 'All 21 pool games are in. The top 4 play the semi-finals. '
-      : st.played + ' of 21 pool games are in. The top 4 after the pool games play the semi-finals. ';
+    var note = settled === 0 ? 'No scores yet. The table fills in as the admins save scores. '
+      : all ? 'All pool games are in. ' + TR.qText + ' '
+      : settled + ' of ' + POOL.length + ' pool games are in. ' + TR.qText + ' ';
     return h('section', { id: 'standings' }, sh('Standings'),
-      h('div', { class: 'tscroll', tabindex: '0', role: 'region', 'aria-label': 'Standings table' }, h('table', null,
-        h('thead', null, h('tr', null,
-          h('th', { class: 'l', text: '#' }), h('th', { class: 'l', text: 'Team' }),
-          h('th', { title: 'Played', text: 'P' }), h('th', { title: 'Won', text: 'W' }), h('th', { title: 'Drawn', text: 'D' }), h('th', { title: 'Lost', text: 'L' }),
-          h('th', { title: 'Points scored', text: 'For' }), h('th', { title: 'Points conceded', text: 'Agst' }), h('th', { title: 'Point difference', text: '+/−' }))), tb)),
+      h('div', { class: 'pools' + (multi ? ' two' : '') }, tables),
       h('p', { class: 'swipe', text: 'Swipe the table sideways to see every column.' }),
-      h('p', { class: 'note', text: note + 'Ranked by wins (a draw counts as half a win), then point difference, then points scored, then the result between the two teams when exactly two are level.' }));
+      h('p', { class: 'note', text: note + TR.rankText }));
   }
 
   function refresh() {
-    R = resolve(STATE.scores); VIEW = {};
+    R = resolve(STATE); VIEW = {};
     GAMES.forEach(function (g) { VIEW[g.id] = viewOf(g, R, STATE.scores); });
   }
 
   function render() {
-    refresh(); FOOT = {};
-    pruneDraft();
+    use(pageTour()); refresh(); FOOT = {};
+    if (TR === CAT2) pruneDraft();
     root.textContent = '';
     if (bar) { bar.remove(); bar = null; }
     document.body.classList.remove('has-bar');
-    if (mode !== 'viewer' && mode !== 'admin') { renderGate(); return; }
-    var admin = mode === 'admin';
-    var intro = !revealed;
-    root.appendChild(topbar(true));
-    root.appendChild(hero(true, intro));
+    if (mode !== 'viewer' && mode !== 'admin') renderGate();
+    else {
+      root.appendChild(topbar(true));
+      if (page === 'gallery') renderGallery();
+      else if (page === 'rules') renderRules();
+      else if (page === 'tournament-rules') renderTourRules();
+      else renderTour();
+    }
+    reveal();
+    if (scDlg && scDlg.open) scPaint();
+  }
+
+  function renderTour() {
+    var adm = admin();
+    if (TR.archived) root.appendChild(h('nav', { class: 'subtabs', 'aria-label': 'Previous tournaments' }, h('div', { class: 'subtabs-in' },
+      h('span', { class: 'k', text: 'Previous tournaments' }), h('a', { href: '#cat1', 'aria-current': 'page', text: 'CAT SG 1.0 · 5 Oct 2026' }))));
+    root.appendChild(hero(true, !revealed));
     var wrap = h('div', { class: 'wrap' });
+    var jumps = [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']];
+    if (!TR.archived) jumps.push(['#sponsor', 'Sponsor'], ['#admins', 'Admins']);
+    wrap.appendChild(h('nav', { class: 'jump', 'aria-label': 'Jump to' }, jumps.map(function (l) { return h('a', { class: 'pill sm', href: l[0], text: l[1] }); })));
 
-    if (admin) wrap.appendChild(h('p', { class: 'banner' }, h('b', { text: 'Admin. ' }),
-      'Type both scores for a game, then tap Save scores at the bottom. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
-    if (admin) adminExtra(wrap);
+    if (adm) wrap.appendChild(h('p', { class: 'banner' }, h('b', { text: 'Admin. ' }),
+      'Type both scores for a game, then tap Save scores at the bottom. Every game is first to 15, no deuce, so the winner has exactly 15. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
+    if (adm) adminExtra(wrap);
 
-    var champ = R.K[25].win;
-    var doneCount = GAMES.filter(function (g) { return VIEW[g.id].res; }).length;
-    var nextIdx = -1;
-    SLOTS.forEach(function (s, i) { if (nextIdx < 0 && s.g.some(function (g) { return !VIEW[g.id].res; })) nextIdx = i; });
-    /* the slot on court right now, if it still has a game without a score; otherwise the next one without a score */
-    var L = liveIdx();
+    var champ = R.K[TR.final].win, done = doneCount();
+    /* a game can be played now when both teams are known and it has no score and is not blacked out */
+    function open(g) { var v = VIEW[g.id]; return v.a && v.b && !v.res && !v.out; }
+    var L = liveIdx(), nexts = [], seen = {};
     lastLive = L;
-    var live = L >= 0 && SLOTS[L].g.some(function (g) { return !VIEW[g.id].res; });
-    var showIdx = live ? L : nextIdx;
-    if (champ) wrap.appendChild(h('div', { class: 'champ', id: showIdx < 0 ? 'live' : null }, h('p', { class: 'k', text: 'Champions' }),
-      h('p', { class: 'v', text: T[champ].e + ' Team ' + T[champ].p[0] }), h('p', { text: T[champ].p.join(', ') })));
-    if (showIdx >= 0) wrap.appendChild(h('div', { class: 'next', id: 'live' },
-      live ? h('span', { class: 'livepill', text: 'On court now' }) : h('span', { class: 'k', text: doneCount ? 'Next without a score' : 'First games' }),
-      h('span', { class: 'v', text: SLOTS[showIdx].t }),
-      h('a', { class: 'pill sm', href: '#slot' + showIdx, text: 'Go to these games' }),
-      h('span', { class: 'prog', text: doneCount + ' of 25 games scored' })));
+    if (L >= 0 && SLOTS[L].g.some(open)) nexts.push(L);
+    /* otherwise the next round to play in each pool (each pool runs on its own) */
+    else SLOTS.forEach(function (s, i) { var k = s.grp || ''; if (!seen[k] && s.g.some(open)) { seen[k] = 1; nexts.push(i); } });
+    if (champ) wrap.appendChild(h('div', { class: 'champ', id: nexts.length ? null : 'live' }, h('p', { class: 'k', text: 'Champions' }),
+      h('p', { class: 'v', text: T[champ].e + ' ' + tn(T[champ]) }), h('p', { text: T[champ].p.join(', ') })));
+    nexts.forEach(function (idx, n) {
+      var s = SLOTS[idx], live = idx === L;
+      wrap.appendChild(h('div', { class: 'next', id: n ? null : 'live' },
+        live ? h('span', { class: 'livepill', text: 'On court now' }) : h('span', { class: 'k', text: done ? 'Next up' : 'First games' }),
+        h('span', { class: 'v', text: (s.grp && s.grp !== 'KO' && TR.pools.length > 1 ? 'Pool ' + s.grp + ' · ' : '') + s.t }),
+        h('a', { class: 'pill sm', href: '#slot' + idx, text: 'Go to these games' }),
+        n ? null : h('span', { class: 'prog', text: done + ' of ' + GAMES.length + ' games done' })));
+    });
+    if (!TR.archived) wrap.appendChild(sponsorBlock());
 
     wrap.appendChild(h('label', { class: 'search', for: 'q' },
       svgIcon('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
@@ -982,13 +1322,14 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 
     wrap.appendChild(standingsSection());
 
-    var sched = h('section', { id: 'schedule' }, sh('Schedule'));
+    var sched = h('section', { id: 'schedule' }, sh('Schedule'), TR.schedNote ? h('p', { class: 'note', text: TR.schedNote }) : null);
     SLOTS.forEach(function (s, i) {
-      if (s.join) sched.appendChild(h('p', { class: 'join', text: '7:00 PM. Teams Barath, Mika and David join. From here all 7 teams play.' }));
-      sched.appendChild(h('div', { class: 'slot' + (i % 2 ? ' alt' : '') + (i === showIdx ? ' now' : ''), id: 'slot' + i },
+      if (s.join) sched.appendChild(h('p', { class: 'join', text: s.join }));
+      sched.appendChild(h('div', { class: 'slot' + (i % 2 ? ' alt' : '') + (nexts.indexOf(i) > -1 ? ' now' : ''), id: 'slot' + i },
         h('div', { class: 'slot-h' }, h('span', { class: 'time', text: s.t }), h('span', { class: 'stage', text: s.stage }),
+          s.bye ? h('span', { class: 'bye', text: 'Resting: ' + tn(T[s.bye]) }) : null,
           i === L ? h('span', { class: 'livepill', text: 'Live' }) : null),
-        h('div', { class: 'pair' + (s.g.length === 2 ? ' two' : '') }, s.g.map(matchCard))));
+        h('div', { class: 'pair' + (s.g.length === 2 ? ' two' : s.g.length === 3 ? ' three' : '') }, s.g.map(matchCard))));
     });
     sched.appendChild(h('p', { id: 'none', hidden: true, text: 'No player or team matches that search.' }));
     wrap.appendChild(sched);
@@ -996,17 +1337,19 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 
     var roster = h('div', { class: 'roster' });
     TEAMS.forEach(function (t) {
-      var r = R.st.rows[t.id];
-      roster.appendChild(h('div', { class: 'team', style: tint(t), 'data-s': ('team ' + t.p.join(' ')).toLowerCase() },
+      var r = R.rows[t.id], pool = TR.pools.filter(function (p) { return p.teams.indexOf(t.id) > -1; })[0].name;
+      roster.appendChild(h('div', { class: 'team', style: tint(t), 'data-s': ('team ' + tn(t) + ' ' + t.p.join(' ') + ' ' + pool).toLowerCase() },
         h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }),
-        h('p', { class: 'tname', text: 'Team ' + t.p[0] }),
-        t.p.map(function (n) { return h('span', { class: 'p', text: n }); }),
-        h('span', { class: 'rec', text: r.p ? r.w + ' won, ' + r.d + ' drawn, ' + r.l + ' lost' : 'No games scored yet' })));
+        h('p', { class: 'tname', text: tn(t) }),
+        t.n ? h('span', { class: 'p', text: pool }) : t.p.map(function (n) { return h('span', { class: 'p', text: n }); }),
+        h('span', { class: 'rec', text: r.gone ? 'Withdrew' : r.p ? r.w + ' won, ' + (TR.draws ? r.d + ' drawn, ' : '') + r.l + ' lost' : 'No games scored yet' })));
     });
     wrap.appendChild(h('section', { id: 'teams' }, sh('Teams'), roster));
+    if (!TR.archived) wrap.appendChild(adminsSection());
 
-    if (admin) {
-      var hasAny = Object.keys(STATE.scores).length > 0;
+    if (adm) {
+      withdrawBox(wrap);
+      var hasAny = Object.keys(STATE.scores).length > 0 || (STATE.gone || []).length > 0;
       /* Reset needs the organiser password typed again, so a stray tap cannot wipe the scoresheet. */
       wrap.appendChild(confirmReset
         ? h('form', { class: 'danger reset', id: 'reset', onsubmit: function (ev) {
@@ -1016,8 +1359,8 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
               else if (pwHash(v) === PW) { resetMsg = ''; save(true); }
               else { resetMsg = v ? 'That password is not right. Nothing was reset.' : 'Type the password to reset.'; render(); var f = document.getElementById('rpw'); f.focus(); f.scrollIntoView({ block: 'center' }); }
             } },
-            h('p', null, h('b', { text: 'Warning: this deletes every saved score for everyone. ' }),
-              'Standings, semi-finals and the final go back to empty. This cannot be undone. Type the organiser password to confirm.'),
+            h('p', null, h('b', { text: 'Warning: this deletes every saved CAT SG 2.0 score for everyone. ' }),
+              'Standings, blacked-out games, withdrawals, the semi-finals and the final go back to empty. This cannot be undone. Type the organiser password to confirm.'),
             h('input', { id: 'rpw', class: 'field', type: 'password', placeholder: 'Organiser password', autocomplete: 'off', 'aria-label': 'Organiser password' }),
             h('button', { class: 'btn warn solid', type: 'submit', text: 'Reset all scores' }),
             h('button', { class: 'btn', type: 'button', text: 'Cancel', onclick: function () { confirmReset = false; resetMsg = ''; render(); } }),
@@ -1033,8 +1376,35 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     root.appendChild(wrap);
     applySearch();
     updateBar();
-    reveal();
-    if (scDlg && scDlg.open) scPaint();
+  }
+
+  /* A team that is absent or leaves early: every game it has not finished is blacked out,
+     and it drops to the bottom of its pool so it cannot be seeded into the semi-finals. */
+  function withdrawBox(wrap) {
+    var cur = goneSet(STATE), gd = draft.gone || {};
+    function isGone(id) { return gd.hasOwnProperty(id) ? gd[id] : !!cur[id]; }
+    function mine(id) { return POOL.filter(function (g) { return g.a === id || g.b === id; }); }
+    var sel = h('select', { id: 'gone-team', class: 'field', 'aria-label': 'Team' },
+      TEAMS.map(function (t) { return h('option', { value: t.id, text: tn(t) + (isGone(t.id) ? ' (withdrawn)' : '') }); }));
+    var list = TEAMS.filter(function (t) { return isGone(t.id); }).map(tn);
+    wrap.appendChild(h('div', { class: 'danger', id: 'withdraw' },
+      h('p', null, h('b', { text: 'Team absent or left early? ' }),
+        'Mark it as withdrawn: every game it has not finished is blacked out, and it drops to the bottom of its pool, so it cannot reach the semi-finals. To black out one game only, tap Black out on that game. Then tap Save scores. ' +
+        (list.length ? 'Withdrawn: ' + list.join(', ') + '.' : 'No team has withdrawn.')),
+      sel,
+      h('button', { class: 'btn warn', type: 'button', text: 'Mark withdrawn', onclick: function () {
+        var id = sel.value;
+        draft.gone = draft.gone || {}; draft.gone[id] = true;
+        mine(id).forEach(function (g) { var v = VIEW[g.id]; if (!v.res && !v.out && !draft[g.id]) draft[g.id] = { out: true }; });
+        keepDraft(); render();
+      } }),
+      h('button', { class: 'btn', type: 'button', text: 'Undo withdrawal', onclick: function () {
+        var id = sel.value;
+        draft.gone = draft.gone || {}; draft.gone[id] = false;
+        /* drop blackouts that are not saved yet; saved ones come back with Bring back on each game */
+        mine(id).forEach(function (g) { if (draft[g.id] && draft[g.id].out) delete draft[g.id]; });
+        keepDraft(); render();
+      } })));
   }
 
   function svgIcon(paths) {
@@ -1046,25 +1416,204 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
   function bracketSection() {
     var when = {};
     SLOTS.forEach(function (s) { s.g.forEach(function (g) { when[g.id] = s.t; }); });
-    function node(id, cls) {
+    function node(id) {
       var v = R.K[id], g = GAMES.filter(function (x) { return x.id === id; })[0], res = v.res;
       function row(team, label, mine, theirs) {
         var st = res ? (mine > theirs ? ' w' : ' l') : '';
         return h('div', { class: 'brow' + st },
-          team ? h('span', { class: 'bt' }, h('span', { class: 'em', 'aria-hidden': 'true', text: T[team].e }), 'Team ' + T[team].p[0])
+          team ? h('span', { class: 'bt' }, h('span', { class: 'em', 'aria-hidden': 'true', text: T[team].e }), tn(T[team]))
             : h('span', { class: 'bt tbd', text: label }),
           h('span', { class: 'bs', text: res ? String(mine) : '' }));
       }
-      return h('div', { class: 'bnode' + (cls ? ' ' + cls : '') },
-        h('div', { class: 'bmeta' }, h('span', { text: g.ko }), h('span', { text: when[id] })),
+      return h('div', { class: 'bnode' + (id === TR.final ? ' final' : '') },
+        h('div', { class: 'bmeta' }, h('span', { text: g.ko }), h('span', { text: TR.day ? when[id] : '' })),
         row(v.a, v.la, res && res.a, res && res.b),
         row(v.b, v.lb, res && res.b, res && res.a));
     }
     return h('section', { id: 'bracket' }, sh('Knockouts'),
-      h('div', { class: 'bracket' },
-        h('div', { class: 'bcol' }, node(22), node(23)),
-        h('div', { class: 'bcol' }, node(25, 'final'), node(24))),
-      h('p', { class: 'note', text: 'After the 21 pool games, 1st plays 4th and 2nd plays 3rd. The winners play the final, the losers play for 3rd place.' }));
+      h('div', { class: 'bracket' }, TR.bracket.map(function (col) { return h('div', { class: 'bcol' }, col.map(node)); })),
+      h('p', { class: 'note', text: TR.koNote }));
+  }
+
+  /* ---------- sponsor and admins (CAT SG 2.0) ---------- */
+  function sponsorBlock() {
+    var s = SPONSOR;
+    return h('section', { id: 'sponsor', class: 'sponsor' + (s ? '' : ' tbc'), 'aria-label': 'Sponsor' },
+      s ? h('a', { class: 'slogo', href: s.url, target: '_blank', rel: 'noopener' }, h('img', { src: s.logo, alt: s.name + ' logo' }))
+        : h('div', { class: 'slogo', 'aria-hidden': 'true', text: 'Logo' }),
+      h('div', { class: 'scopy' },
+        h('p', { class: 'k', text: 'Official sponsor' }),
+        h('p', { class: 'v', text: s ? s.name : 'To be announced' }),
+        h('p', { class: 'note', text: s ? (s.line || '') : 'This space is saved for the CAT SG 2.0 sponsor. Watch this spot.' })));
+  }
+  function adminsSection() {
+    var hues = [210, 40, 10, 150];
+    return h('section', { id: 'admins' }, sh('Admins'),
+      h('div', { class: 'admins' }, ADMINS.map(function (n, i) {
+        return h('div', { class: 'admin', style: '--h:' + hues[i] }, h('span', { class: 'av', 'aria-hidden': 'true', text: n[0] }),
+          h('p', { class: 'an', text: n }), h('span', { class: 'ar', text: 'Admin' }));
+      })),
+      h('p', { class: 'note', text: 'Only these four can enter scores, black out a game or mark a team as withdrawn. If a score looks wrong, find one of them at the courts.' }));
+  }
+
+  /* ---------- gallery ---------- */
+  function shots(dir, n) {
+    var a = [];
+    for (var i = 1; i <= n; i++) { var k = (i < 10 ? '0' : '') + i; a.push({ src: dir + k + '.webp', th: dir + k + '-t.webp' }); }
+    return a;
+  }
+  var GALLERY = [
+    { key: 'cat2', name: 'CAT SG 2.0', items: [], empty: 'Photos and videos from CAT SG 2.0 go up here after the event.' },
+    { key: 'cat1', name: 'CAT SG 1.0', when: '5 October 2026 · Kallang Beach Courts',
+      items: [{ v: true, src: 'assets/gallery/cat1/v1.mp4', th: 'assets/gallery/cat1/v1-t.jpg' }].concat(shots('assets/gallery/cat1/', 33)) }
+  ];
+  var galKey = sget('cat.gal') || 'cat1';
+  function renderGallery() {
+    var cur = GALLERY.filter(function (x) { return x.key === galKey; })[0] || GALLERY[1];
+    root.appendChild(pageHead('Photos and videos', 'Gallery', 'Pictures and clips from every CAT SG tournament. Tap one to open it full size.'));
+    root.appendChild(h('div', { class: 'wrap' },
+      h('div', { class: 'chips', role: 'group', 'aria-label': 'Tournament' }, GALLERY.map(function (x) {
+        return h('button', { type: 'button', class: 'chipbtn', 'aria-pressed': x === cur ? 'true' : 'false',
+          onclick: function () { galKey = x.key; sset('cat.gal', x.key); render(); } }, x.name, h('span', { text: String(x.items.length) }));
+      })),
+      cur.when ? h('p', { class: 'note', text: cur.when }) : null,
+      cur.items.length ? h('div', { class: 'gal' }, cur.items.map(function (it, i) {
+        return h('button', { class: 'gi' + (it.v ? ' vid' : ''), type: 'button', 'aria-label': (it.v ? 'Play video ' : 'Open photo ') + (i + 1) + ' of ' + cur.items.length,
+          onclick: function () { openLb(cur, i); } },
+          h('img', { src: it.th, alt: '', loading: 'lazy', decoding: 'async', width: '520', height: '390' }));
+      })) : h('p', { class: 'empty', text: cur.empty }),
+      footer()));
+  }
+  var lb = null, lbSet = null, lbI = 0;
+  function openLb(set, i) {
+    if (!lb) {
+      lb = popup('lightbox', 'Photo viewer'); lb.classList.add('lb');
+      lb.addEventListener('close', function () { lb.textContent = ''; });
+      var x0 = null;
+      lb.addEventListener('touchstart', function (ev) { x0 = ev.touches[0].clientX; }, { passive: true });
+      lb.addEventListener('touchend', function (ev) {
+        if (x0 == null) return;
+        var dx = ev.changedTouches[0].clientX - x0; x0 = null;
+        if (Math.abs(dx) > 50) lbGo(dx < 0 ? 1 : -1);
+      });
+      document.addEventListener('keydown', function (ev) {
+        if (!lb.open) return;
+        if (ev.key === 'ArrowRight') lbGo(1); else if (ev.key === 'ArrowLeft') lbGo(-1);
+      });
+    }
+    lbSet = set; lbI = i; lbPaint();
+    if (!lb.open) lb.showModal();
+  }
+  function lbGo(d) { var n = lbSet.items.length; lbI = (lbI + d + n) % n; lbPaint(); }
+  function lbPaint() {
+    var it = lbSet.items[lbI], n = lbSet.items.length;
+    lb.textContent = '';
+    lb.appendChild(h('div', { class: 'pop-in' }, popHead(lb, lbSet.name + ' · ' + (lbI + 1) + ' of ' + n),
+      h('div', { class: 'lbm' }, it.v
+        ? h('video', { src: it.src, poster: it.th, controls: true, autoplay: true, playsinline: true })
+        : h('img', { src: it.src, alt: 'Photo ' + (lbI + 1) + ' from ' + lbSet.name })),
+      n > 1 ? h('div', { class: 'row' },
+        h('button', { class: 'btn', type: 'button', text: '‹ Previous', onclick: function () { lbGo(-1); } }),
+        h('button', { class: 'btn', type: 'button', text: 'Next ›', onclick: function () { lbGo(1); } })) : null));
+  }
+
+  /* ---------- rules: FIVB beach volleyball, each with a small looping picture ---------- */
+  function fig(x, cls, anim) {
+    return '<g transform="translate(' + x + ' 105)"><g class="' + cls + (anim ? ' ' + anim : '') + '"><circle cy="-27" r="5.5"/><rect x="-4.5" y="-21" width="9" height="21" rx="4.5"/></g></g>';
+  }
+  function side(inner, meshCls) {
+    return '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><rect y="105" width="240" height="35" class="sand"/>' +
+      '<line x1="120" y1="50" x2="120" y2="105" class="net"/><rect x="117" y="50" width="6" height="22" class="mesh' + (meshCls ? ' ' + meshCls : '') + '"/>' + inner + '</svg>';
+  }
+  function court(inner) {
+    return '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sand"/><rect x="40" y="30" width="160" height="80" class="cl"/>' +
+      '<line x1="120" y1="24" x2="120" y2="116" class="net"/>' + inner + '</svg>';
+  }
+  function ball(anim, x, y) { return '<circle r="5" class="bl ' + anim + '" transform="translate(' + x + ' ' + y + ')"/>'; }
+  function txt(x, y, s, cls) { return '<text x="' + x + '" y="' + y + '" text-anchor="middle"' + (cls ? ' class="' + cls + '"' : '') + '>' + s + '</text>'; }
+  var RULES = [
+    { t: 'Court and net', p: 'The court is 16 m by 8 m, on sand at least 40 cm deep, with a free zone of at least 3 m all round. The net is 2.43 m high for men and 2.24 m for women. The lines are part of the court.',
+      svg: court('<rect x="14" y="10" width="212" height="120" rx="6" class="fz a-pulse"/>' + txt(120, 124, '16 m') + txt(213, 73, '8 m') + txt(120, 20, 'free zone 3 m+') + ball('a-rally', 75, 50)) },
+    { t: 'Two players, no substitutes', p: 'Each team has two players and no substitutes. There are no fixed positions, so both players cover the whole court. If a player cannot go on, the team is incomplete and loses the match.',
+      svg: court('<g class="a-shuf1"><circle cx="78" cy="52" r="7" class="pa"/><circle cx="88" cy="90" r="7" class="pa"/></g><g class="a-shuf2"><circle cx="158" cy="55" r="7" class="pb"/><circle cx="165" cy="88" r="7" class="pb"/></g>' +
+        txt(80, 20, '2 players') + txt(160, 20, '2 players') + txt(120, 130, 'no substitutes')) },
+    { t: 'Rally point scoring', p: 'Every rally wins a point, whoever served. A match is best of three sets: sets 1 and 2 go to 21, a deciding set 3 goes to 15. A set must be won by 2 clear points, with no cap.',
+      svg: side(fig(45, 'pa') + fig(80, 'pa') + fig(160, 'pb') + fig(205, 'pb') + ball('a-arc', 40, 80) + txt(60, 40, '+1', 'big ok a-plus fb') + txt(120, 22, 'Sets to 21 · 21 · 15, win by 2')) },
+    { t: 'Three hits per side', p: 'A team has up to three hits to send the ball back. The same player may not hit the ball twice in a row. On the first hit of a rally, several touches in one action are allowed, unless it is played with the fingers overhand.',
+      svg: side(fig(50, 'pa') + fig(90, 'pa', 'a-jump3') + fig(170, 'pb') + fig(205, 'pb') + ball('a-three', 200, 30) +
+        txt(106, 72, '1', 'num a-n1') + txt(36, 66, '2', 'num a-n2') + txt(110, 40, '3', 'num a-n3') + txt(170, 22, 'Max 3 hits')) },
+    { t: 'The block counts as a hit', p: 'In beach volleyball a block touch is one of the team’s three hits. After a block the team has two hits left, and the player who blocked may take the next one.',
+      svg: side(fig(55, 'pa') + fig(108, 'pa', 'a-blk') + fig(140, 'pb', 'a-att') + fig(200, 'pb') + ball('a-block', 190, 40) +
+        txt(80, 20, 'Block = hit 1', 'ok a-bt') + txt(40, 66, '2', 'num a-n2b')) },
+    { t: 'No open-hand tips', p: 'Pushing the ball over with an open hand, fingers spread (a dink), is a fault. Attack with the knuckles (a poke), stiff fingers held together (a cobra), the heel of the hand or a full hit. Attacking the other team’s serve while the ball is fully above the net is also a fault.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><line x1="120" y1="14" x2="120" y2="126" class="div"/>' +
+        txt(60, 82, '🖐️', 'emo a-tap1') + txt(180, 82, '✊', 'emo a-tap2') + txt(96, 46, '✗', 'mk no a-pop1 fb') + txt(214, 46, '✓', 'mk ok a-pop2 fb') +
+        txt(60, 118, 'Open-hand tip: fault') + txt(180, 118, 'Knuckle poke: legal') + '</svg>' },
+    { t: 'Setting over the net', p: 'If you send the ball over the net with an overhand finger pass, it must travel straight in front of you or straight behind you, at right angles to your shoulders. Setting to your partner has no such limit.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sand"/><line x1="160" y1="15" x2="160" y2="125" class="net"/>' +
+        '<circle cx="70" cy="70" r="10" class="pa"/><rect x="66" y="48" width="8" height="44" rx="4" class="shl"/>' +
+        '<g class="a-alt1"><line x1="84" y1="70" x2="146" y2="70" class="arw ok-s"/><path d="M146 63 L156 70 L146 77 Z" class="ok"/>' + txt(110, 124, '✓ Straight ahead: legal', 'ok') + '</g>' +
+        '<g class="a-alt2"><line x1="82" y1="63" x2="139.5" y2="28.3" class="arw no-s"/><path d="M148 23 L143.2 34.3 L135.8 22.3 Z" class="no"/>' + txt(110, 124, '✗ Angled: fault', 'no') + '</g>' +
+        txt(70, 38, 'shoulders') + '</svg>' },
+    { t: 'Changing ends', p: 'Teams change ends every 7 points in sets 1 and 2 (at 7, 14, 21 and so on) and every 5 points in set 3, without delay. The points counted are both scores added together.',
+      svg: court('<g class="a-swapA"><circle cx="75" cy="52" r="7" class="pa"/><circle cx="82" cy="90" r="7" class="pa"/></g><g class="a-swapB"><circle cx="165" cy="55" r="7" class="pb"/><circle cx="158" cy="88" r="7" class="pb"/></g>' +
+        txt(120, 18, 'Change ends every 7 points') + txt(120, 130, 'every 5 in set 3')) },
+    { t: 'Serving', p: 'Serve within 5 seconds of the referee’s whistle, from anywhere behind the end line. The two partners take turns to serve each time the team wins the serve back. A serve may touch the net on the way over. The server’s partner must not block the other team’s view of the serve.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><rect y="105" width="240" height="35" class="sand"/>' +
+        '<circle cx="70" cy="62" r="28" class="rbg"/><circle cx="70" cy="62" r="28" class="ring a-ring" transform="rotate(-90 70 62)"/>' +
+        [5, 4, 3, 2, 1].map(function (n, i) { return '<text x="70" y="71" text-anchor="middle" class="big a-c" style="animation-delay:' + i + 's">' + n + '</text>'; }).join('') +
+        fig(178, 'pa') + ball('a-toss', 184, 72) + txt(120, 126, 'Serve within 5 seconds of the whistle') + '</svg>' },
+    { t: 'The net', p: 'Touching the net between the antennae while playing the ball is a fault, and the ball must cross between the antennae. You may go under the net into the other side, as long as you do not get in the other team’s way.',
+      svg: side(fig(60, 'pa') + fig(105, 'pa', 'a-netjump') + fig(160, 'pb') + txt(120, 30, 'Net touch: fault', 'no a-fault'), 'a-flash') },
+    { t: 'A ball on the line is in', p: 'A ball that touches any part of a line is in. It is out when it lands fully outside the lines, or touches an antenna, a post, the net outside the antennae or anything outside the court.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sand"/><rect x="0" y="76" width="240" height="8" class="wline"/>' +
+        txt(36, 50, 'court') + txt(36, 112, 'outside') + '<circle cx="120" cy="80" r="8" class="rip a-rip fb"/><circle cx="120" cy="80" r="7" class="bl a-drop fb"/>' + txt(170, 62, 'IN', 'big ok a-in') + '</svg>' },
+    { t: 'Time-outs', p: 'Each team may call one time-out of 30 seconds in each set. At FIVB events there is also a technical time-out in sets 1 and 2 when the two scores add up to 21.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><circle cx="120" cy="64" r="36" class="face"/>' +
+        '<line x1="120" y1="64" x2="120" y2="36" class="hand a-hand"/><circle cx="120" cy="64" r="3" class="no"/>' + txt(120, 124, '30 seconds · one per team per set') + '</svg>' }
+  ];
+  function renderRules() {
+    root.appendChild(pageHead('Official FIVB beach volleyball rules', 'Rules', 'The main rules of beach volleyball from the FIVB, the world governing body. Tap a picture to pause it.'));
+    root.appendChild(h('div', { class: 'wrap' },
+      h('p', { class: 'banner' }, h('b', { text: 'Playing CAT SG 2.0? ' }), 'Our games are shorter than an FIVB match: one game, first to 15, no deuce. ',
+        h('a', { href: '#tournament-rules', text: 'Read the tournament rules' }), '.'),
+      h('div', { class: 'rules' }, RULES.map(function (r, i) {
+        var card = h('article', { class: 'rule' });
+        var pic = h('button', { class: 'rfig', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Pause the picture for ' + r.t, onclick: function () {
+          var on = card.classList.toggle('paused');
+          pic.setAttribute('aria-pressed', on ? 'true' : 'false');
+        } });
+        pic.innerHTML = r.svg;
+        pic.firstChild.setAttribute('aria-hidden', 'true');
+        card.appendChild(pic);
+        card.appendChild(h('div', { class: 'rt' }, h('span', { class: 'rn', text: (i < 9 ? '0' : '') + (i + 1) }), h('h3', { text: r.t }), h('p', { text: r.p })));
+        return card;
+      })),
+      h('p', { class: 'note', text: 'A short guide based on the FIVB Official Beach Volleyball Rules. When the FIVB rules and the tournament rules differ, the tournament rules apply at CAT SG.' }),
+      footer()));
+  }
+
+  /* ---------- tournament rules: CAT SG 2.0 ---------- */
+  var TOUR_RULES = [
+    ['👥', 'Format', '14 teams of two in two pools of seven. Each team plays every other team in its pool once, so six games each. In every round one team in the pool rests.'],
+    ['🕓', 'Start times', 'Pool A starts at 4:00 PM. Pool B starts at 5:30 PM. Be at the courts and warmed up before your pool starts.'],
+    ['🏐', 'Scoring', 'Every game is one set, first to 15 points, no deuce. At 14–14 the next rally wins the game 15–14. Every rally wins a point, whoever served.'],
+    ['↔️', 'Changing ends', 'Teams change ends every 5 points, counting both scores together (at 5, 10, 15, 20 and so on), as in the deciding set of an FIVB match.'],
+    ['📊', 'Pool ranking', 'Teams are ranked by wins, then point difference, then points scored. If exactly two teams are still level, the game between them decides.'],
+    ['🏆', 'Semi-finals and final', 'The top 2 of each pool go through. Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. These games are also first to 15, no deuce.'],
+    ['⬛', 'Absent or leaving early', 'If a team does not turn up for a game, or leaves before its games are done, the admins black out those games. A blacked-out game does not count for either team. A team that withdraws drops to the bottom of its pool and cannot reach the semi-finals. A team that misses a semi-final or the final loses it 15–0.'],
+    ['📝', 'Scores', 'Only the admins (' + ADMINS.join(', ') + ') enter scores on this site. Tell an admin the final score as soon as your game ends. Both teams should agree the score before they leave the court.'],
+    ['⚖️', 'Disputes', 'The admins settle any dispute on the spot. Their decision is final.'],
+    ['📘', 'Everything else', 'Anything these rules do not cover follows the FIVB beach volleyball rules on the Rules page.']
+  ];
+  function renderTourRules() {
+    root.appendChild(pageHead('CAT SG 2.0', 'Tournament rules', 'How CAT SG 2.0 is played: two pools, semi-finals and the final, every game first to 15 with no deuce.'));
+    root.appendChild(h('div', { class: 'wrap' },
+      h('div', { class: 'tlist' }, TOUR_RULES.map(function (r) {
+        return h('article', { class: 'tcard' }, h('span', { class: 'ic', 'aria-hidden': 'true', text: r[0] }), h('h3', { text: r[1] }), h('p', { text: r[2] }));
+      })),
+      h('div', { class: 'ctas' }, h('a', { class: 'pill solid', href: '#cat2', text: 'Back to CAT SG 2.0' }), h('a', { class: 'pill', href: '#rules', text: 'FIVB rules' })),
+      footer()));
   }
 
   /* ---------- popups ---------- */
@@ -1090,19 +1639,19 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     return b;
   }
 
-  /* ---------- scorecard: a point counter and match clock for anyone at the courts ----------
+  /* ---------- scorecard: a point counter and match clock for anyone at the courts (CAT SG 2.0) ----------
      Kept on this device only. The clock stores when it started, not a tick count, so it stays
      right when the phone sleeps, the tab is closed or the page reloads. */
   var sc = { g: '', a: 0, b: 0, start: null, acc: 0 };
   try {
-    var scSaved = JSON.parse(lget('cat.sc') || 'null');
+    var scSaved = JSON.parse(lget('cat2.sc') || 'null');
     if (scSaved && isInt(scSaved.a) && isInt(scSaved.b)) sc = {
       g: GAMES.some(function (g) { return String(g.id) === String(scSaved.g); }) ? String(scSaved.g) : '',
       a: scSaved.a, b: scSaved.b,
       start: typeof scSaved.start === 'number' && scSaved.start <= Date.now() ? scSaved.start : null,
       acc: typeof scSaved.acc === 'number' && scSaved.acc >= 0 ? scSaved.acc : 0 };
   } catch (e) {}
-  function scKeep() { lset('cat.sc', JSON.stringify(sc)); }
+  function scKeep() { lset('cat2.sc', JSON.stringify(sc)); }
   function elapsed() { return Math.max(0, sc.acc + (sc.start ? Date.now() - sc.start : 0)); }
   function clockText(ms) {
     var s = Math.floor(ms / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s / 60) % 60, ss = s % 60;
@@ -1120,7 +1669,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     var g = sc.g && GAMES.filter(function (x) { return String(x.id) === sc.g; })[0], v = g && VIEW[g.id];
     return { g: g, a: v && v.a, b: v && v.b, la: v ? (v.la || 'Team A') : 'Team A', lb: v ? (v.lb || 'Team B') : 'Team B' };
   }
-  function teamName(id, fallback) { return id ? T[id].e + ' Team ' + T[id].p[0] : fallback; }
+  function teamName(id, fallback) { return id ? T[id].e + ' ' + tn(T[id]) : fallback; }
   function scPaint() {
     if (!scDlg) return;
     var t = scTeams();
@@ -1137,7 +1686,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
       scEl['minus' + k].setAttribute('aria-label', 'Take a point off ' + name);
       scEl['minus' + k].disabled = !sc[k];
     });
-    var canUse = mode === 'admin' && t.g && t.a && t.b;
+    var canUse = admin() && t.g && t.a && t.b;
     scEl.use.hidden = !canUse;
     if (canUse) scEl.use.textContent = 'Put ' + sc.a + '–' + sc.b + ' into Game ' + t.g.id;
   }
@@ -1148,7 +1697,9 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
   function scPoint(k, d) {
     var n = sc[k] + d;
     if (n < 0 || n > 99) return;
-    sc[k] = n; scEl.msg.textContent = ''; scKeep(); scPaint();
+    /* first to 15, no deuce: the game ends the moment one side reaches 15 */
+    if (d > 0 && CAT2.cap && (sc.a >= CAT2.cap || sc.b >= CAT2.cap)) { scEl.msg.className = 'msg2'; scEl.msg.textContent = 'Game over at ' + CAT2.cap + '. Reset the score for the next game.'; return; }
+    sc[k] = n; scEl.msg.className = 'msg2'; scEl.msg.textContent = n === CAT2.cap && d > 0 ? 'Game! ' + sc.a + '–' + sc.b + '.' : ''; scKeep(); scPaint();
   }
   function scBuild() {
     if (!scDlg) {
@@ -1163,7 +1714,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
         return h('option', { value: String(g.id), selected: String(g.id) === sc.g,
           text: 'Game ' + g.id + (g.ko ? ', ' + g.ko : '') + ': ' + teamName(v.a, v.la) + ' vs ' + teamName(v.b, v.lb) });
       }));
-    function side(k) {
+    function scSide(k) {
       scEl['n' + k] = h('span', null, '0', h('small', { text: '+1 point' }));
       scEl['plus' + k] = h('button', { class: 'plus', type: 'button', onclick: function () { scPoint(k, 1); } }, scEl['n' + k]);
       scEl['minus' + k] = h('button', { class: 'minus', type: 'button', text: '−1', onclick: function () { scPoint(k, -1); } });
@@ -1180,18 +1731,18 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     scEl.msg = h('p', { class: 'msg2', role: 'status' });
     scEl.use = h('button', { class: 'btn primary', type: 'button', hidden: true, onclick: function () {
       var t = scTeams();
-      if (mode !== 'admin' || !t.g || !t.a || !t.b) return;
+      if (!admin() || !t.g || !t.a || !t.b) return;
       draft[t.g.id] = { a: String(sc.a), b: String(sc.b) };
-      sset('cat.draft', JSON.stringify(draft));
+      keepDraft();
       render();
       scEl.msg.className = 'msg2 good';
       scEl.msg.textContent = 'Added to Game ' + t.g.id + '. Close this and tap Save scores to publish it.';
     } });
     scDlg.appendChild(h('div', { class: 'pop-in' }, popHead(scDlg, 'Scorecard'), sel, scEl.clock,
-      h('div', { class: 'sides' }, side('a'), side('b')),
+      h('div', { class: 'sides' }, scSide('a'), scSide('b')),
       h('div', { class: 'row' }, twoTap('Reset score to 0–0', function () { sc.a = 0; sc.b = 0; scEl.msg.textContent = ''; scKeep(); scPaint(); }), scEl.use),
       scEl.msg,
-      h('p', { class: 'msg2', text: 'Only on this phone. It does not change the scores on the website.' })));
+      h('p', { class: 'msg2', text: 'First to 15, no deuce. Only on this phone: it does not change the scores on the website.' })));
     scPaint();
   }
   function openSc() {
@@ -1238,7 +1789,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 
   /* move the Live marker when the clock enters a new slot */
   var lastLive = -2;
-  setInterval(function () { if ((mode === 'viewer' || mode === 'admin') && liveIdx() !== lastLive && !typing() && !saving) render(); }, 30000);
+  setInterval(function () { if ((mode === 'viewer' || mode === 'admin') && tourPage() && liveIdx() !== lastLive && !typing() && !saving) render(); }, 30000);
 
   function applySearch() {
     var v = query.trim().toLowerCase(), any = false;
@@ -1257,7 +1808,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
   function updateBar() {
     if (bar) { bar.remove(); bar = null; }
     document.body.classList.remove('has-bar');
-    if (mode !== 'admin') return;
+    if (!admin()) return;
     var c = counts();
     if (!c.n && !c.bad && !saving && !saveMsg) return;
     var main = saving ? 'Saving…'
@@ -1267,7 +1818,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     bar = h('div', { class: 'savebar', role: 'status' }, h('div', { class: 'savebar-in' },
       h('p', { class: 'msg' }, main, h('small', { text: sub })),
       h('button', { class: 'btn', type: 'button', id: 'discard', text: 'Discard', disabled: saving || !(c.n || c.bad),
-        onclick: function () { draft = {}; saveMsg = ''; sset('cat.draft', '{}'); render(); } }),
+        onclick: function () { draft = {}; saveMsg = ''; keepDraft(); render(); } }),
       h('button', { class: 'btn primary', type: 'button', id: 'save', text: saveBlock() || 'Save scores', disabled: saving || !!saveBlock() || !c.n || c.bad > 0,
         onclick: function () { save(false); } })));
     document.body.appendChild(bar);
@@ -1280,11 +1831,11 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
     if (!root.firstChild) render();
     if (jumped) return;
     jumped = true;
-    var el = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+    var el = location.hash.length > 1 && !hashPage() && document.getElementById(location.hash.slice(1));
     if (el) el.scrollIntoView();
   }
   setTimeout(first, 4000);
-  Promise.resolve(poll()).then(first, first);
+  Promise.all([poll(CAT2), poll(CAT1)]).then(first, first);
 })();
 </script>
 </body>

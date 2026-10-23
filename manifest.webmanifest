@@ -1,7 +1,7 @@
 {
-  "name": "CAT SG 1.0",
+  "name": "CAT SG 2.0",
   "short_name": "CAT SG",
-  "description": "Live scores, standings, knockouts and a match scorecard for CAT SG 1.0.",
+  "description": "Live scores, standings, knockouts and a match scorecard for CAT SG 2.0, plus the gallery, rules and past tournaments.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

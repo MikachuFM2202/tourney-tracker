@@ -1,7 +1,11 @@
-# CAT SG 1.0 — Casual SG Advanced Tournament tracker
+# CAT SG — Casual SG Advanced Tournament tracker
 
-Live schedule, scores, standings and knockouts for CAT SG 1.0, hosted by Casual SG.
-5 October 2026, Kallang Beach Courts. 7 teams, 3v3, 2 courts, 20 minutes per game, starts 6:00 PM.
+Live schedule, scores, standings and knockouts for CAT SG 2.0, hosted by Casual SG.
+14 teams, 2v2, two pools of 7 (Pool A from 4:00 PM, Pool B from 5:30 PM), then semi-finals and the final.
+Every game is first to 15, no deuce.
+
+Tabs: **CAT SG 2.0** (live), **Previous** (CAT SG 1.0, read only), **Gallery**, **Rules** (FIVB beach rules with
+animated pictures) and **Tournament rules**. Each tab is a link: `#cat2`, `#previous`, `#gallery`, `#rules`, `#tournament-rules`.
 
 Website: https://mikachufm2202.github.io/tourney-tracker/
 
@@ -10,12 +14,13 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | File | What it is |
 | --- | --- |
 | `index.html` | The whole website: page, styles and logic in one file. |
-| `scores.json` | The saved scores. The website reads this file. |
+| `scores-cat2.json` | The saved CAT SG 2.0 scores. Admins write this file. |
+| `scores.json` | The final CAT SG 1.0 scores (read only now). |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 | `.github/workflows/pages.yml` | Publishes the website after every push and every score save. |
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
 | `icon.png` | Browser tab and phone home-screen icon (the club logo). |
-| `assets/` | Club logo and the spinning picture in the header (`yatha.png`). |
+| `assets/` | Club logo, the spinning Mikasa ball (CAT SG 2.0) and Yatha (CAT SG 1.0), and `gallery/` photos and video. |
 
 ## How live scores work
 
@@ -62,8 +67,17 @@ The organiser password is the same as the admin password.
 - If a phone loses signal, a red "No connection" strip shows under the top bar until the next successful check.
 - A link that ends in a section name opens straight at that section, for example `#schedule`, `#standings` or `#bracket`.
 
+## Admins, blackouts and withdrawals
+
+- Admins are Yatha, Sat, Ash and Mika (`ADMINS` in `index.html`). An admin picks their name and types the password;
+  each save is committed as "... by <name>".
+- **Black out** on a pool game marks it as not played. It counts for nobody.
+- **Mark withdrawn** (bottom of the admin screen) blacks out every unfinished game of a team that is absent or left
+  early, and drops it to the bottom of its pool so it cannot be seeded into the semi-finals.
+
 ## Changing the tournament
 
-Teams and the schedule are the `TEAMS` and `SLOTS` lists near the top of the script in `index.html`.
-The date and time zone used for "On court now" are in `DAY` in the same file. All slot times are PM.
+CAT SG 2.0 is the `CAT2` object near the top of the script in `index.html`: teams are `POOL_A` and `POOL_B`,
+the schedule is generated round by round from them. CAT SG 1.0 is `CAT1`.
+The sponsor goes in `SPONSOR` (logo file in `assets/`). Gallery photos are listed in `GALLERY`.
 The repository name and owner are in `CFG` in the same file.
