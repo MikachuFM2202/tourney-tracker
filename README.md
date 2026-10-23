@@ -1,11 +1,14 @@
-# CAT SG — Casual SG Advanced Tournament tracker
+# Casual SG — CAT (Casual SG Advanced Tournament) tracker
 
-Live schedule, scores, standings and knockouts for CAT SG 2.0, hosted by Casual SG.
+Live schedule, scores, standings and knockouts for CAT 2.0, hosted by Casual SG.
 14 teams, 2v2, two pools of 7 (Pool A from 4:00 PM, Pool B from 5:30 PM), then semi-finals and the final.
 Every game is first to 15, no deuce.
 
-Tabs: **CAT SG 2.0** (live), **Previous** (CAT SG 1.0, read only), **Gallery**, **Rules** (FIVB beach rules with
-animated pictures) and **Tournament rules**. Each tab is a link: `#cat2`, `#previous`, `#gallery`, `#rules`, `#tournament-rules`.
+Tabs: **CAT 2.0** (sub-tabs: scores and schedule `#cat2`, tournament rules `#tournament-rules`), **Past Tournaments**
+(CAT 1.0, read only, `#past`), **Gallery** (`#gallery`) and **Rules** (sub-tabs: 2v2 `#rules`, 3v3 `#rules-3v3`,
+rotation `#rotation`, each with animated pictures). Old `#previous` and `#cat1` links open Past Tournaments.
+
+The scorecard switches to a big landscape layout when the phone is turned sideways, or with its Landscape button.
 
 Website: https://mikachufm2202.github.io/tourney-tracker/
 
@@ -14,13 +17,13 @@ Website: https://mikachufm2202.github.io/tourney-tracker/
 | File | What it is |
 | --- | --- |
 | `index.html` | The whole website: page, styles and logic in one file. |
-| `scores-cat2.json` | The saved CAT SG 2.0 scores. Admins write this file. |
-| `scores.json` | The final CAT SG 1.0 scores (read only now). |
+| `scores-cat2.json` | The saved CAT 2.0 scores. Admins write this file. |
+| `scores.json` | The final CAT 1.0 scores (read only now). |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 | `.github/workflows/pages.yml` | Publishes the website after every push and every score save. |
 | `og.png` | The preview picture shown when the link is shared in WhatsApp, Telegram and similar apps. |
 | `icon.png` | Browser tab and phone home-screen icon (the club logo). |
-| `assets/` | Club logo, the spinning Mikasa ball (CAT SG 2.0) and Yatha (CAT SG 1.0), and `gallery/` photos and video. |
+| `assets/` | Club logo, the spinning Mikasa ball (CAT 2.0) and Yatha (CAT 1.0), and `gallery/` photos and video. |
 
 ## How live scores work
 
@@ -77,7 +80,7 @@ The organiser password is the same as the admin password.
 
 ## Changing the tournament
 
-CAT SG 2.0 is the `CAT2` object near the top of the script in `index.html`: teams are `POOL_A` and `POOL_B`,
-the schedule is generated round by round from them. CAT SG 1.0 is `CAT1`.
+CAT 2.0 is the `CAT2` object near the top of the script in `index.html`: teams are `POOL_A` and `POOL_B`,
+the schedule is generated round by round from them. CAT 1.0 is `CAT1`.
 The sponsor goes in `SPONSOR` (logo file in `assets/`). Gallery photos are listed in `GALLERY`.
 The repository name and owner are in `CFG` in the same file.

@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CAT SG 2.0</title>
-<meta name="description" content="Live scores, standings and knockouts for CAT SG 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
+<title>Casual SG</title>
+<meta name="description" content="Live scores, standings and knockouts for CAT 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
-<meta property="og:title" content="CAT SG 2.0 · Live scores">
+<meta property="og:title" content="CAT 2.0 · Live scores">
 <meta property="og:description" content="Casual SG Advanced Tournament. 2v2 beach volleyball, 14 teams in two pools. Pool A from 4:00 PM, Pool B from 5:30 PM. Schedule, live scores, standings, knockouts and rules.">
 <meta property="og:url" content="https://mikachufm2202.github.io/tourney-tracker/">
 <meta property="og:image" content="https://mikachufm2202.github.io/tourney-tracker/og.png">
@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="CAT SG">
+<meta name="apple-mobile-web-app-title" content="Casual SG">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <style>
@@ -416,11 +416,12 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 .subtabs-in { max-width: 1200px; margin-inline: auto; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 @media (min-width: 768px) { .subtabs-in { padding-inline: 32px; } }
 .subtabs .k { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.subtabs a { font-weight: 700; font-size: 14px; text-decoration: none; color: var(--bg); background: var(--ink); border-radius: 999px; padding: 5px 14px; }
+.subtabs a { font-weight: 700; font-size: 14px; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 14px; white-space: nowrap; }
+.subtabs a[aria-current="page"] { color: var(--bg); background: var(--ink); }
 .jump { display: flex; flex-wrap: wrap; gap: 8px; }
 .ctas a { text-decoration: none; }
 
-/* CAT SG 2.0: three games a round, resting team, pools side by side */
+/* CAT 2.0: three games a round, resting team, pools side by side */
 @media (min-width: 820px) { .pair.three { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1180px) { .pair.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .slot-h .bye { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -577,6 +578,36 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
 @keyframes r-in { 0%, 45% { opacity: 0; } 50%, 90% { opacity: 1; } 100% { opacity: 0; } }
 .a-hand { animation: spin 3s linear infinite; }
 
+/* rotation pictures */
+.sv .hl { fill: none; stroke: #f5b301; stroke-width: 3.5; }
+.sv .lbl { fill: #fff; font-size: 10px; }
+.a-ser4 { animation: r-ser4 6s infinite; }
+@keyframes r-ser4 { 0%, 22% { transform: translate(75px, 52px); } 25%, 47% { transform: translate(165px, 55px); } 50%, 72% { transform: translate(82px, 90px); } 75%, 97% { transform: translate(158px, 88px); } 100% { transform: translate(75px, 52px); } }
+.a-ser3 { animation: r-ser3 4.5s infinite; }
+@keyframes r-ser3 { 0%, 30% { transform: translate(60px, 45px); } 33%, 63% { transform: translate(100px, 70px); } 66%, 96% { transform: translate(60px, 95px); } 100% { transform: translate(60px, 45px); } }
+.a-rot3 { animation: r-rot3 6s ease-in-out infinite; }
+@keyframes r-rot3 { 0%, 22% { transform: translate(60px, 45px); } 33%, 55% { transform: translate(102px, 70px); } 66%, 88% { transform: translate(60px, 95px); } 100% { transform: translate(60px, 45px); } }
+
+/* scorecard in landscape: by turning the phone, or with the Landscape button */
+.pop-h .rot { margin-left: auto; padding: 7px 14px; font-size: 14px; }
+dialog.pop.lay { --H: 100dvh; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; border-radius: 0; }
+.lay .pop-in { height: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr) auto auto; align-items: center; gap: 10px 12px; padding: 12px 16px; }
+.lay .pop-h { gap: 8px; }
+.lay .pop-h h2 { font-size: 20px; }
+.lay .pop-in > select { padding: 8px 12px; }
+.lay .clock { padding: 6px 12px; flex-wrap: nowrap; }
+.lay .clock .t { font-size: 26px; }
+.lay .clock .t small { display: none; }
+.lay .clock .btn { padding: 6px 12px; font-size: 14px; }
+.lay .sides { grid-column: 1 / -1; height: 100%; min-height: 0; }
+.lay .side { min-height: 0; }
+.lay .side .plus { flex: 1; min-height: 0; font-size: calc(var(--H) * .3); padding: 4px; }
+.lay .side .plus small { display: none; }
+.lay .row, .lay .msg2 { grid-column: 1 / -1; }
+.lay .msg2:last-child { display: none; }
+/* held upright with Landscape on: draw it turned a quarter, filling the screen */
+dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0; transform-origin: top left; transform: translateX(100vw) rotate(90deg); }
+
 /* footer */
 .foot { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: var(--muted); }
 .foot b { color: var(--ink); font-family: var(--display); font-weight: 800; letter-spacing: .2em; }
@@ -611,8 +642,8 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
   'use strict';
 
   /* ---------- tournaments ----------
-     Each tournament has its own teams, schedule and scores file. CAT SG 2.0 is the live one,
-     where admins save scores. CAT SG 1.0 sits under Previous and is read only. */
+     Each tournament has its own teams, schedule and scores file. CAT 2.0 is the live one,
+     where admins save scores. CAT 1.0 sits under Previous and is read only. */
   function pg(id, c, a, b) { return { id: id, c: c, a: a, b: b }; }
 
   var CAT1 = {
@@ -727,7 +758,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
   use(CAT2);
 
   var ADMINS = ['Yatha', 'Sat', 'Ash', 'Mika'];
-  /* When the sponsor is confirmed: { name: 'Brand', logo: 'assets/sponsor.png', url: 'https://example.com', line: 'Official partner of CAT SG 2.0' } */
+  /* When the sponsor is confirmed: { name: 'Brand', logo: 'assets/sponsor.png', url: 'https://example.com', line: 'Official partner of CAT 2.0' } */
   var SPONSOR = null;
 
   /* Team colour: hue, plus an optional stronger saturation for pale hues like yellow. */
@@ -805,12 +836,20 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
   function sget(k) { try { var v = sessionStorage.getItem(k); return v == null ? mem[k] : v; } catch (e) { return mem[k]; } }
   function sset(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
 
-  var PAGES = { cat2: 'CAT SG 2.0', previous: 'Previous', gallery: 'Gallery', rules: 'Rules', 'tournament-rules': 'Tournament rules' };
-  function hashPage() { var k = location.hash.slice(1); return PAGES.hasOwnProperty(k) ? k : k === 'cat1' ? 'previous' : null; }
+  var NAV = [['cat2', 'CAT 2.0'], ['past', 'Past Tournaments'], ['gallery', 'Gallery'], ['rules', 'Rules']];
+  /* sub-tabs sit under a main tab */
+  var SUB = { 'tournament-rules': 'cat2', 'rules-3v3': 'rules', rotation: 'rules' };
+  var CAT2_SUB = [['cat2', 'Scores and schedule'], ['tournament-rules', 'Tournament rules']];
+  var RULE_SUB = [['rules', '2v2 rules'], ['rules-3v3', '3v3 rules'], ['rotation', 'Rotation']];
+  /* links from before the rename still work */
+  var OLD = { cat1: 'past', previous: 'past' };
+  function known(k) { return k === 'cat2' || k === 'past' || k === 'gallery' || k === 'rules' || SUB.hasOwnProperty(k); }
+  function hashPage() { var k = location.hash.slice(1); return known(k) ? k : OLD[k] || null; }
   var page = hashPage() || sget('cat.page') || 'cat2';
-  if (!PAGES.hasOwnProperty(page)) page = 'cat2';
-  function pageTour() { return page === 'previous' ? CAT1 : CAT2; }
-  function tourPage() { return page === 'cat2' || page === 'previous'; }
+  page = OLD[page] || page;
+  if (!known(page)) page = 'cat2';
+  function pageTour() { return page === 'past' ? CAT1 : CAT2; }
+  function tourPage() { return page === 'cat2' || page === 'past'; }
 
   /* a shared link to a page or section (#gallery, #schedule, ...) opens the viewer straight away */
   var mode = sget('cat.mode') || (location.hash.length > 1 ? 'viewer' : '');
@@ -836,7 +875,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
 
   /* ---------- GitHub storage ----------
      Viewers read the scores file from this website. An admin device saves by
-     committing the CAT SG 2.0 scores file through the GitHub API with a token
+     committing the CAT 2.0 scores file through the GitHub API with a token
      that is kept on that device only (never in this repository). */
   var CFG = { owner: 'MikachuFM2202', repo: 'tourney-tracker', branch: 'main' };
   function lget(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return mem['l' + k] || ''; } }
@@ -912,7 +951,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
   }
 
-  /* ---------- unsaved entries (CAT SG 2.0 only) ---------- */
+  /* ---------- unsaved entries (CAT 2.0 only) ---------- */
   var R = resolve(STATE), VIEW = {}, FOOT = {};
   function curStr(id, side) { var v = VIEW[id]; return v && v.res ? String(v.res[side]) : ''; }
   function dstat(g) {
@@ -990,13 +1029,13 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
           return { sha: j.sha, state: st };
         });
       }).then(function (cur) {
-        /* the page may have changed tab while waiting, so work on CAT SG 2.0 explicitly */
+        /* the page may have changed tab while waiting, so work on CAT 2.0 explicitly */
         use(CAT2);
         if (cur.state && cur.state.scores && (cur.state.rev || 0) > (STATE.rev || 0)) setState(CAT2, cur.state);
         refresh();
         var next = nextState(reset);
         next.rev = (STATE.rev || 0) + 1;
-        var body = { message: (reset ? 'Clear all CAT SG 2.0 scores' : 'Update CAT SG 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
+        var body = { message: (reset ? 'Clear all CAT 2.0 scores' : 'Update CAT 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
           content: b64e(JSON.stringify(next, null, 1) + '\n'), branch: CFG.branch };
         if (cur.sha) body.sha = cur.sha;
         return gh('PUT', body).then(function (r) {
@@ -1039,9 +1078,9 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
 
   function topbar(main) {
     return h('header', { class: 'topbar' }, h('div', { class: 'topbar-in' },
-      h('a', { class: 'mark', href: '#cat2', 'aria-label': 'CAT SG 2.0 home' }, 'CAT SG ', h('b', { text: '2.0' })),
+      h('a', { class: 'mark', href: '#cat2', 'aria-label': 'Casual SG home' }, 'CASUAL ', h('b', { text: 'SG' })),
       h('nav', { class: 'nav', 'aria-label': 'Pages' },
-        Object.keys(PAGES).map(function (k) { return h('a', { href: '#' + k, text: PAGES[k], 'aria-current': main && page === k ? 'page' : null }); }),
+        NAV.map(function (n) { return h('a', { href: '#' + n[0], text: n[1], 'aria-current': main && (page === n[0] || SUB[page] === n[0]) ? 'page' : null }); }),
         page === 'cat2' ? h('button', { type: 'button', id: 'open-sc', text: 'Scorecard', onclick: openSc }) : null,
         installed() ? null : h('button', { type: 'button', id: 'open-app', text: 'Get the app', onclick: openApp })),
       h('div', { class: 'tools' },
@@ -1068,9 +1107,9 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     }
     return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ballEl('ballwrap'), h('div', { class: 'hero-in' },
       h('div', { class: 'hero-copy' },
-        h('p', { class: 'eyebrow', text: (TR.archived ? 'Previous tournament · ' : '') + 'Casual SG Advanced Tournament' }),
+        h('p', { class: 'eyebrow', text: (TR.archived ? 'Past tournament · ' : '') + 'Casual SG Advanced Tournament' }),
         h('div', { class: 'headline' },
-          h('h1', null, 'CAT ', h('span', { class: 'sg', text: 'SG' }), ' ', h('b', { text: TR.ver })),
+          h('h1', null, 'CAT ', h('b', { text: TR.ver })),
           ballEl('miniball')),
         h('p', { class: 'sub', text: TR.sub }),
         main ? h('div', { class: 'ctas' },
@@ -1090,7 +1129,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
 
   function footer() {
     return h('footer', { class: 'foot' },
-      h('span', null, h('b', { text: 'CAT SG' }), '  Casual SG Advanced Tournament'),
+      h('span', null, h('b', { text: 'Casual SG' }), '  Casual SG Advanced Tournament (CAT)'),
       h('span', { class: 'foot-r' }, 'Hosted by Casual SG', clubLogo('logo sm')));
   }
 
@@ -1273,7 +1312,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     else {
       root.appendChild(topbar(true));
       if (page === 'gallery') renderGallery();
-      else if (page === 'rules') renderRules();
+      else if (page === 'rules' || SUB[page] === 'rules') renderRules();
       else if (page === 'tournament-rules') renderTourRules();
       else renderTour();
     }
@@ -1283,8 +1322,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
 
   function renderTour() {
     var adm = admin();
-    if (TR.archived) root.appendChild(h('nav', { class: 'subtabs', 'aria-label': 'Previous tournaments' }, h('div', { class: 'subtabs-in' },
-      h('span', { class: 'k', text: 'Previous tournaments' }), h('a', { href: '#cat1', 'aria-current': 'page', text: 'CAT SG 1.0 · 5 Oct 2026' }))));
+    root.appendChild(TR.archived ? subtabs('Past Tournaments', [['past', 'CAT 1.0 · 5 Oct 2026']]) : subtabs('CAT 2.0', CAT2_SUB));
     root.appendChild(hero(true, !revealed));
     var wrap = h('div', { class: 'wrap' });
     var jumps = [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']];
@@ -1359,7 +1397,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
               else if (pwHash(v) === PW) { resetMsg = ''; save(true); }
               else { resetMsg = v ? 'That password is not right. Nothing was reset.' : 'Type the password to reset.'; render(); var f = document.getElementById('rpw'); f.focus(); f.scrollIntoView({ block: 'center' }); }
             } },
-            h('p', null, h('b', { text: 'Warning: this deletes every saved CAT SG 2.0 score for everyone. ' }),
+            h('p', null, h('b', { text: 'Warning: this deletes every saved CAT 2.0 score for everyone. ' }),
               'Standings, blacked-out games, withdrawals, the semi-finals and the final go back to empty. This cannot be undone. Type the organiser password to confirm.'),
             h('input', { id: 'rpw', class: 'field', type: 'password', placeholder: 'Organiser password', autocomplete: 'off', 'aria-label': 'Organiser password' }),
             h('button', { class: 'btn warn solid', type: 'submit', text: 'Reset all scores' }),
@@ -1407,6 +1445,11 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
       } })));
   }
 
+  function subtabs(label, items) {
+    return h('nav', { class: 'subtabs', 'aria-label': label }, h('div', { class: 'subtabs-in' }, h('span', { class: 'k', text: label }),
+      items.map(function (i) { return h('a', { href: '#' + i[0], 'aria-current': page === i[0] ? 'page' : null, text: i[1] }); })));
+  }
+
   function svgIcon(paths) {
     var s = h('span', { 'aria-hidden': 'true' });
     s.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' + paths + '</svg>';
@@ -1435,7 +1478,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
       h('p', { class: 'note', text: TR.koNote }));
   }
 
-  /* ---------- sponsor and admins (CAT SG 2.0) ---------- */
+  /* ---------- sponsor and admins (CAT 2.0) ---------- */
   function sponsorBlock() {
     var s = SPONSOR;
     return h('section', { id: 'sponsor', class: 'sponsor' + (s ? '' : ' tbc'), 'aria-label': 'Sponsor' },
@@ -1444,7 +1487,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
       h('div', { class: 'scopy' },
         h('p', { class: 'k', text: 'Official sponsor' }),
         h('p', { class: 'v', text: s ? s.name : 'To be announced' }),
-        h('p', { class: 'note', text: s ? (s.line || '') : 'This space is saved for the CAT SG 2.0 sponsor. Watch this spot.' })));
+        h('p', { class: 'note', text: s ? (s.line || '') : 'This space is saved for the CAT 2.0 sponsor. Watch this spot.' })));
   }
   function adminsSection() {
     var hues = [210, 40, 10, 150];
@@ -1463,14 +1506,14 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     return a;
   }
   var GALLERY = [
-    { key: 'cat2', name: 'CAT SG 2.0', items: [], empty: 'Photos and videos from CAT SG 2.0 go up here after the event.' },
-    { key: 'cat1', name: 'CAT SG 1.0', when: '5 October 2026 · Kallang Beach Courts',
+    { key: 'cat2', name: 'CAT 2.0', items: [], empty: 'Photos and videos from CAT 2.0 go up here after the event.' },
+    { key: 'cat1', name: 'CAT 1.0', when: '5 October 2026 · Kallang Beach Courts',
       items: [{ v: true, src: 'assets/gallery/cat1/v1.mp4', th: 'assets/gallery/cat1/v1-t.jpg' }].concat(shots('assets/gallery/cat1/', 33)) }
   ];
   var galKey = sget('cat.gal') || 'cat1';
   function renderGallery() {
     var cur = GALLERY.filter(function (x) { return x.key === galKey; })[0] || GALLERY[1];
-    root.appendChild(pageHead('Photos and videos', 'Gallery', 'Pictures and clips from every CAT SG tournament. Tap one to open it full size.'));
+    root.appendChild(pageHead('Photos and videos', 'Gallery', 'Pictures and clips from every CAT tournament. Tap one to open it full size.'));
     root.appendChild(h('div', { class: 'wrap' },
       h('div', { class: 'chips', role: 'group', 'aria-label': 'Tournament' }, GALLERY.map(function (x) {
         return h('button', { type: 'button', class: 'chipbtn', 'aria-pressed': x === cur ? 'true' : 'false',
@@ -1572,28 +1615,68 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
       svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><circle cx="120" cy="64" r="36" class="face"/>' +
         '<line x1="120" y1="64" x2="120" y2="36" class="hand a-hand"/><circle cx="120" cy="64" r="3" class="no"/>' + txt(120, 124, '30 seconds · one per team per set') + '</svg>' }
   ];
+  /* 3v3 is not an FIVB format: these are the CAT house rules, built on the 2v2 beach rules */
+  var RULES3 = [
+    { t: 'Three players a side', p: 'Each team has three players on court, on the same 16 m by 8 m beach court and the same net as 2v2.',
+      svg: court('<g class="a-shuf1"><circle cx="62" cy="45" r="7" class="pa"/><circle cx="100" cy="70" r="7" class="pa"/><circle cx="62" cy="95" r="7" class="pa"/></g>' +
+        '<g class="a-shuf2"><circle cx="178" cy="45" r="7" class="pb"/><circle cx="140" cy="70" r="7" class="pb"/><circle cx="178" cy="95" r="7" class="pb"/></g>' + txt(80, 20, '3 players') + txt(160, 20, '3 players')) },
+    { t: 'Where players stand', p: 'There are no fixed positions. Most teams play one player at the net and two back, or two at the net and one back, and move as the rally needs.',
+      svg: court('<g class="a-alt1"><circle cx="105" cy="70" r="7" class="pa"/><circle cx="60" cy="48" r="7" class="pa"/><circle cx="60" cy="92" r="7" class="pa"/>' + txt(80, 128, '1 up, 2 back') + '</g>' +
+        '<g class="a-alt2"><circle cx="105" cy="48" r="7" class="pa"/><circle cx="105" cy="92" r="7" class="pa"/><circle cx="58" cy="70" r="7" class="pa"/>' + txt(80, 128, '2 up, 1 back') + '</g>' +
+        '<circle cx="160" cy="70" r="7" class="pb"/><circle cx="175" cy="48" r="7" class="pb"/><circle cx="175" cy="92" r="7" class="pb"/>') },
+    { t: 'Serving in turn', p: 'The three players serve in a set order, one after another. The order and how players move round is on the Rotation tab.',
+      svg: court('<circle cx="60" cy="45" r="8" class="pa"/><circle cx="100" cy="70" r="8" class="pa"/><circle cx="60" cy="95" r="8" class="pa"/>' +
+        '<circle r="13" class="hl a-ser3" transform="translate(60 45)"/>' + txt(60, 48.5, '1', 'lbl') + txt(100, 73.5, '2', 'lbl') + txt(60, 98.5, '3', 'lbl') + txt(80, 20, 'serve order 1 → 2 → 3')) },
+    { t: 'The rest is beach rules', p: 'Everything else follows the 2v2 beach rules: up to three hits a side, the block counts as a hit, no open-hand tips, a ball on the line is in, and touching the net is a fault.',
+      svg: side(fig(30, 'pa') + fig(65, 'pa') + fig(100, 'pa') + fig(145, 'pb') + fig(180, 'pb') + fig(215, 'pb') + ball('a-arc', 40, 80) + txt(120, 22, 'Same beach rules, 3 a side')) }
+  ];
+  var ROT = [
+    { t: '2v2: who serves next', p: 'Each team serves in a fixed order. When your team wins the serve back, the partner who did not serve last time serves. If every rally changes the serve, it goes: your player 1, their player 1, your player 2, their player 2, and round again.',
+      svg: court('<circle cx="75" cy="52" r="8" class="pa"/><circle cx="82" cy="90" r="8" class="pa"/><circle cx="165" cy="55" r="8" class="pb"/><circle cx="158" cy="88" r="8" class="pb"/>' +
+        '<circle r="13" class="hl a-ser4" transform="translate(75 52)"/>' + txt(75, 55.5, '1', 'lbl') + txt(165, 58.5, '2', 'lbl') + txt(82, 93.5, '3', 'lbl') + txt(158, 91.5, '4', 'lbl') + txt(120, 18, 'serve order across both teams')) },
+    { t: 'Keep serving while you win', p: 'The same player keeps serving for as long as the team wins the rallies. The serve only moves on when the team loses a rally.',
+      svg: '<svg class="sv" viewBox="0 0 240 140"><rect width="240" height="140" class="sky"/><rect y="105" width="240" height="35" class="sand"/>' +
+        fig(178, 'pa') + ball('a-toss', 184, 72) + txt(130, 50, '+1', 'big ok a-plus fb') + txt(120, 126, 'Same server until you lose a rally') + '</svg>' },
+    { t: '3v3: rotate clockwise', p: 'When your team wins the serve back, all three players move one spot clockwise. The player who moves into the back-right spot serves. You do not rotate after scoring on your own serve, only when you win the serve back.',
+      svg: court([1, 2, 3].map(function (n, i) {
+          return '<g class="a-rot3" style="animation-delay:' + (-2 * i) + 's" transform="translate(60 45)"><circle r="8" class="pa"/><text y="3.5" text-anchor="middle" class="lbl">' + n + '</text></g>';
+        }).join('') + '<circle cx="44" cy="95" r="4" class="bl"/>' + txt(60, 124, 'back right serves') + txt(80, 20, 'rotate clockwise ↻')) },
+    { t: 'Wrong server', p: 'If the wrong player serves, the rally goes to the other team and the serving order is put right before the next serve.',
+      svg: court('<circle cx="75" cy="52" r="8" class="pa"/><circle cx="82" cy="90" r="8" class="pa"/><circle cx="165" cy="70" r="8" class="pb"/>' +
+        txt(98, 98, '✗', 'mk no a-pop1 fb') + txt(165, 30, '+1', 'big ok a-plus fb') + txt(120, 128, 'wrong server: point to the other team')) }
+  ];
+  function ruleCards(list) {
+    return h('div', { class: 'rules' }, list.map(function (r, i) {
+      var card = h('article', { class: 'rule' });
+      var pic = h('button', { class: 'rfig', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Pause the picture for ' + r.t, onclick: function () {
+        var on = card.classList.toggle('paused');
+        pic.setAttribute('aria-pressed', on ? 'true' : 'false');
+      } });
+      pic.innerHTML = r.svg;
+      pic.firstChild.setAttribute('aria-hidden', 'true');
+      card.appendChild(pic);
+      card.appendChild(h('div', { class: 'rt' }, h('span', { class: 'rn', text: (i < 9 ? '0' : '') + (i + 1) }), h('h3', { text: r.t }), h('p', { text: r.p })));
+      return card;
+    }));
+  }
   function renderRules() {
-    root.appendChild(pageHead('Official FIVB beach volleyball rules', 'Rules', 'The main rules of beach volleyball from the FIVB, the world governing body. Tap a picture to pause it.'));
+    root.appendChild(subtabs('Rules', RULE_SUB));
+    var v = page === 'rules-3v3'
+      ? ['3v3 beach volleyball', '3v3 rules', 'How 3v3 works at CAT: the 2v2 beach rules, with three players a side. Tap a picture to pause it.', RULES3,
+         '3v3 is not an official FIVB format. These are the CAT house rules. The tournament rules of each event come first.']
+      : page === 'rotation'
+        ? ['Serving order', 'Rotation', 'Who serves next, and how players move round, in 2v2 and 3v3. Tap a picture to pause it.', ROT,
+           'Based on the FIVB beach rules for 2v2, and the CAT house rules for 3v3.']
+        : ['Official FIVB beach volleyball rules', '2v2 rules', 'The main rules of 2v2 beach volleyball from the FIVB, the world governing body. Tap a picture to pause it.', RULES,
+           'A short guide based on the FIVB Official Beach Volleyball Rules. When the FIVB rules and the tournament rules differ, the tournament rules apply at CAT.'];
+    root.appendChild(pageHead(v[0], v[1], v[2]));
     root.appendChild(h('div', { class: 'wrap' },
-      h('p', { class: 'banner' }, h('b', { text: 'Playing CAT SG 2.0? ' }), 'Our games are shorter than an FIVB match: one game, first to 15, no deuce. ',
+      h('p', { class: 'banner' }, h('b', { text: 'Playing CAT 2.0? ' }), 'Our games are shorter than an FIVB match: one game, first to 15, no deuce. ',
         h('a', { href: '#tournament-rules', text: 'Read the tournament rules' }), '.'),
-      h('div', { class: 'rules' }, RULES.map(function (r, i) {
-        var card = h('article', { class: 'rule' });
-        var pic = h('button', { class: 'rfig', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Pause the picture for ' + r.t, onclick: function () {
-          var on = card.classList.toggle('paused');
-          pic.setAttribute('aria-pressed', on ? 'true' : 'false');
-        } });
-        pic.innerHTML = r.svg;
-        pic.firstChild.setAttribute('aria-hidden', 'true');
-        card.appendChild(pic);
-        card.appendChild(h('div', { class: 'rt' }, h('span', { class: 'rn', text: (i < 9 ? '0' : '') + (i + 1) }), h('h3', { text: r.t }), h('p', { text: r.p })));
-        return card;
-      })),
-      h('p', { class: 'note', text: 'A short guide based on the FIVB Official Beach Volleyball Rules. When the FIVB rules and the tournament rules differ, the tournament rules apply at CAT SG.' }),
-      footer()));
+      ruleCards(v[3]), h('p', { class: 'note', text: v[4] }), footer()));
   }
 
-  /* ---------- tournament rules: CAT SG 2.0 ---------- */
+  /* ---------- tournament rules: CAT 2.0 ---------- */
   var TOUR_RULES = [
     ['👥', 'Format', '14 teams of two in two pools of seven. Each team plays every other team in its pool once, so six games each. In every round one team in the pool rests.'],
     ['🕓', 'Start times', 'Pool A starts at 4:00 PM. Pool B starts at 5:30 PM. Be at the courts and warmed up before your pool starts.'],
@@ -1607,12 +1690,13 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     ['📘', 'Everything else', 'Anything these rules do not cover follows the FIVB beach volleyball rules on the Rules page.']
   ];
   function renderTourRules() {
-    root.appendChild(pageHead('CAT SG 2.0', 'Tournament rules', 'How CAT SG 2.0 is played: two pools, semi-finals and the final, every game first to 15 with no deuce.'));
+    root.appendChild(subtabs('CAT 2.0', CAT2_SUB));
+    root.appendChild(pageHead('Casual SG Advanced Tournament', 'Tournament rules', 'How CAT 2.0 is played: two pools, semi-finals and the final, every game first to 15 with no deuce.'));
     root.appendChild(h('div', { class: 'wrap' },
       h('div', { class: 'tlist' }, TOUR_RULES.map(function (r) {
         return h('article', { class: 'tcard' }, h('span', { class: 'ic', 'aria-hidden': 'true', text: r[0] }), h('h3', { text: r[1] }), h('p', { text: r[2] }));
       })),
-      h('div', { class: 'ctas' }, h('a', { class: 'pill solid', href: '#cat2', text: 'Back to CAT SG 2.0' }), h('a', { class: 'pill', href: '#rules', text: 'FIVB rules' })),
+      h('div', { class: 'ctas' }, h('a', { class: 'pill solid', href: '#cat2', text: 'Back to CAT 2.0' }), h('a', { class: 'pill', href: '#rules', text: '2v2 beach rules' })),
       footer()));
   }
 
@@ -1639,7 +1723,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     return b;
   }
 
-  /* ---------- scorecard: a point counter and match clock for anyone at the courts (CAT SG 2.0) ----------
+  /* ---------- scorecard: a point counter and match clock for anyone at the courts (CAT 2.0) ----------
      Kept on this device only. The clock stores when it started, not a tick count, so it stays
      right when the phone sleeps, the tab is closed or the page reloads. */
   var sc = { g: '', a: 0, b: 0, start: null, acc: 0 };
@@ -1704,7 +1788,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
   function scBuild() {
     if (!scDlg) {
       scDlg = popup('scorecard', 'Scorecard');
-      scDlg.addEventListener('close', function () { clearInterval(scTick); scTick = null; unlockScreen(); });
+      scDlg.addEventListener('close', function () { clearInterval(scTick); scTick = null; unlockScreen(); scFull(false); });
     }
     scDlg.textContent = '';
     var sel = h('select', { 'aria-label': 'Which game', onchange: function (ev) { sc.g = ev.target.value; scKeep(); scPaint(); } },
@@ -1738,16 +1822,46 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
       scEl.msg.className = 'msg2 good';
       scEl.msg.textContent = 'Added to Game ' + t.g.id + '. Close this and tap Save scores to publish it.';
     } });
-    scDlg.appendChild(h('div', { class: 'pop-in' }, popHead(scDlg, 'Scorecard'), sel, scEl.clock,
+    var head = popHead(scDlg, 'Scorecard');
+    scEl.rot = h('button', { class: 'btn rot', type: 'button', onclick: function () {
+      scLand = !scLand; lset('cat.land', scLand ? '1' : ''); scFull(scLand); scLayout();
+    } });
+    head.insertBefore(scEl.rot, head.lastChild);
+    scDlg.appendChild(h('div', { class: 'pop-in' }, head, sel, scEl.clock,
       h('div', { class: 'sides' }, scSide('a'), scSide('b')),
       h('div', { class: 'row' }, twoTap('Reset score to 0–0', function () { sc.a = 0; sc.b = 0; scEl.msg.textContent = ''; scKeep(); scPaint(); }), scEl.use),
       scEl.msg,
       h('p', { class: 'msg2', text: 'First to 15, no deuce. Only on this phone: it does not change the scores on the website.' })));
     scPaint();
   }
+  /* Landscape: turning the phone sideways switches the layout by itself. The toggle forces it:
+     where the browser allows, it goes full screen and locks to landscape; otherwise (iPhone) the
+     scorecard is drawn turned sideways, so the phone just needs to be held sideways. */
+  var scLand = lget('cat.land') === '1';
+  var mqWide = matchMedia('(orientation: landscape) and (max-height: 540px)'), mqTall = matchMedia('(orientation: portrait)');
+  function scLayout() {
+    if (!scDlg) return;
+    scDlg.classList.toggle('lay', scLand || mqWide.matches);
+    scDlg.classList.toggle('turn', scLand && mqTall.matches);
+    scEl.rot.textContent = scLand ? 'Portrait' : mqWide.matches ? 'Lock landscape' : 'Landscape';
+    scEl.rot.setAttribute('aria-pressed', scLand ? 'true' : 'false');
+  }
+  function scFull(on) {
+    try {
+      if (on && scDlg.open && scDlg.requestFullscreen && !document.fullscreenElement) {
+        scDlg.requestFullscreen().then(function () { return screen.orientation && screen.orientation.lock('landscape'); }).then(scLayout, scLayout);
+      } else if (!on && document.fullscreenElement) {
+        if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        document.exitFullscreen().catch(function () {});
+      }
+    } catch (e) {}
+  }
+  [mqWide, mqTall].forEach(function (m) { if (m.addEventListener) m.addEventListener('change', scLayout); });
   function openSc() {
     scBuild();
     if (!scDlg.open) scDlg.showModal();
+    scLayout();
+    if (scLand) scFull(true);
     clearInterval(scTick);
     scTick = setInterval(scClock, 250);
     lockScreen();
@@ -1768,7 +1882,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     }
     var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     var steps = ios
-      ? ['Tap the Share button (the square with an arrow) in Safari’s toolbar.', 'Scroll down and tap Add to Home Screen.', 'Tap Add. CAT SG now opens from your home screen like an app.']
+      ? ['Tap the Share button (the square with an arrow) in Safari’s toolbar.', 'Scroll down and tap Add to Home Screen.', 'Tap Add. Casual SG now opens from your home screen like an app.']
       : /Android/.test(ua)
         ? ['Tap the browser menu (⋮) at the top right.', 'Tap Install app or Add to Home screen.', 'Tap Install or Add.']
         : ['Click the install icon at the right end of the address bar, if there is one.', 'Or open the browser menu and choose Install, or Save and share, then Install page as app.', 'In Safari on a Mac: File, then Add to Dock.'];
@@ -1776,7 +1890,7 @@ dialog.pop.lb { width: min(1100px, calc(100% - 24px)); }
     appDlg.textContent = '';
     var copied = h('p', { class: 'msg2', role: 'status' });
     appDlg.appendChild(h('div', { class: 'pop-in' }, popHead(appDlg, 'Get the app'),
-      h('p', { text: 'Add CAT SG to your home screen to open live scores and the scorecard in one tap.' }),
+      h('p', { text: 'Add Casual SG to your home screen to open live scores and the scorecard in one tap.' }),
       h('ol', null, steps.map(function (s) { return h('li', { text: s }); })),
       h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', text: 'Copy the link', onclick: function () {
         var url = location.origin + location.pathname;
