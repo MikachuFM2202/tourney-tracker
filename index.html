@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Casual SG</title>
-<meta name="description" content="Live scores, standings and knockouts for CAT 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
+<meta name="description" content="Live scores, standings and knockouts for CAT 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Sunday 25 October 2026, 4:00 to 9:00 PM. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
@@ -706,33 +706,60 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   var POOL_A = [duo('yh', '🦅', 10, 'Yatharth', 'Harish'), duo('dm', '🐬', 200, 'David', 'Mitch'), duo('cn', '🌵', 120, 'Cynthia', 'Neil'),
     duo('lh', '🦁', 38, 'Léo', 'Hamza'), duo('ec', '🍉', 350, 'Edoardo', 'Crystal'), duo('sp', '🐙', 275, 'Shane', 'Peter'), duo('tc', '🌸', 320, 'Thitikorn', 'Charlene')];
   var POOL_B = [duo('rs', '🚀', 225, 'Rob', 'Stan'), duo('as', '⚡', 50, 'Ash', 'Sat', 78), duo('rk', '🦖', 90, 'Rossi', 'Khai'),
-    duo('uk', '🐯', 25, 'Udhaya', 'Karthi'), duo('sf', '🐼', 155, 'Supi', 'Fai'), duo('tj', '🎯', 0, 'TBC', 'Josh'), duo('ks', '🌊', 190, 'Khather', 'Syed')];
+    duo('uk', '🐯', 25, 'Udhaya', 'Karthi'), duo('sf', '🐼', 155, 'Supi', 'Fai'), duo('tj', '🎯', 0, 'Anand', 'Josh'), duo('ks', '🌊', 190, 'Khather', 'Syed')];
   function ids(l) { return l.map(function (t) { return t.id; }); }
-  /* Every team plays every other team in its pool once (circle method): 7 rounds of 3 games, one team rests each round. */
-  function roundRobin(teams, id, pool, start, c) {
-    var arr = teams.concat([null]), n = arr.length, out = [];
-    for (var r = 0; r < n - 1; r++) {
-      var g = [], bye = null;
-      for (var i = 0; i < n / 2; i++) {
-        var a = arr[i], b = arr[n - 1 - i];
-        if (!a || !b) { bye = a || b; continue; }
-        var x = pg(id++, c, a, b); x.chip = 'Pool ' + pool; g.push(x);
-      }
-      out.push({ t: 'Round ' + (r + 1), stage: 'Pool ' + pool + (r ? '' : ' · starts ' + start), grp: pool, bye: bye, g: g });
-      arr.splice(1, 0, arr.pop());
-    }
-    return out;
+  /* Sunday 25 October: 2 nets, 12-minute slots from 4:00 PM. Pool A plays alone until Pool B starts at 5:36 PM.
+     Pools end at 8:24 PM, the semi-finals and final finish by 9:00 PM. Each row is one slot:
+     Court 1 teams, then Court 2 teams ('' = court free). Searched so no team plays three games in a row
+     and only 3 teams ever play two in a row. */
+  var SCHED = [
+    ['yh', 'tc', 'ec', 'sp'],
+    ['dm', 'lh', '', ''],
+    ['ec', 'tc', 'cn', 'sp'],
+    ['lh', 'ec', 'yh', 'dm'],
+    ['sp', 'tc', '', ''],
+    ['yh', 'cn', 'dm', 'ec'],
+    ['lh', 'tc', 'yh', 'sp'],
+    ['dm', 'tc', 'cn', 'ec'],
+    ['rs', 'sf', 'as', 'ks'],
+    ['rk', 'uk', 'cn', 'tc'],
+    ['sf', 'tj', 'rs', 'as'],
+    ['yh', 'ec', 'rk', 'ks'],
+    ['lh', 'sp', 'as', 'uk'],
+    ['sf', 'ks', 'rk', 'tj'],
+    ['rs', 'uk', 'dm', 'cn'],
+    ['tj', 'ks', 'as', 'rk'],
+    ['yh', 'lh', 'uk', 'sf'],
+    ['as', 'tj', 'rs', 'ks'],
+    ['dm', 'sp', 'rk', 'sf'],
+    ['rs', 'tj', 'uk', 'ks'],
+    ['as', 'sf', 'cn', 'lh'],
+    ['uk', 'tj', 'rs', 'rk']
+  ];
+  function hm(m) { var hh = Math.floor(m / 60) % 12 || 12, mm = m % 60; return hh + ':' + (mm < 10 ? '0' : '') + mm; }
+  function timed(sched) {
+    var id = 1, aIds = ids(POOL_A);
+    return sched.map(function (row, k) {
+      var start = 16 * 60 + 12 * k, g = [], pools = {};
+      [[row[0], row[1]], [row[2], row[3]]].forEach(function (p, c) {
+        if (!p[0]) return;
+        var pool = aIds.indexOf(p[0]) > -1 ? 'A' : 'B', x = pg(id++, c + 1, p[0], p[1]);
+        x.chip = 'Court ' + (c + 1) + ' · Pool ' + pool; pools[pool] = 1; g.push(x);
+      });
+      return { t: hm(start) + ' – ' + hm(start + 12), stage: 'Pool ' + Object.keys(pools).sort().join(' and '), g: g };
+    });
   }
   var CAT2 = {
     key: 'cat2', ver: '2.0', path: 'scores-cat2.json', cap: 15,
-    sub: 'Beach volleyball, 2v2. 14 teams in two pools, then the semi-finals and the final. Every game is first to 15, no deuce.',
+    sub: 'Beach volleyball, 2v2. Sunday 25 October 2026, 4:00 to 9:00 PM on 2 courts. 14 teams in two pools, then the semi-finals and the final.',
+    day: { y: 2026, m: 9, d: 25, tz: 8 },
     ball: { src: 'assets/mikasa.png', w: 480, h: 480 },
     teams: POOL_A.concat(POOL_B),
-    slots: roundRobin(ids(POOL_A), 1, 'A', '4:00 PM', 1).concat(roundRobin(ids(POOL_B), 22, 'B', '5:30 PM', 2), [
-      { t: 'Semi-finals', stage: 'Knockouts', grp: 'KO', g: [
-        { id: 43, c: 0, chip: '', ko: 'Semi-final 1', wait: 'Teams are set once every Pool A and Pool B game is done.' },
-        { id: 44, c: 0, chip: '', ko: 'Semi-final 2', wait: 'Teams are set once every Pool A and Pool B game is done.' }] },
-      { t: 'Final', stage: 'Knockouts', grp: 'KO', g: [{ id: 45, c: 0, chip: '', ko: 'Final', wait: 'Teams are set once both semi-finals have a score.' }] }]),
+    slots: timed(SCHED).concat([
+      { t: '8:24 – 8:42', stage: 'Semi-finals', grp: 'KO', g: [
+        { id: 43, c: 1, ko: 'Semi-final 1', wait: 'Teams are set once every Pool A and Pool B game is done.' },
+        { id: 44, c: 2, ko: 'Semi-final 2', wait: 'Teams are set once every Pool A and Pool B game is done.' }] },
+      { t: '8:42 – 9:00', stage: 'Final', grp: 'KO', g: [{ id: 45, c: 1, ko: 'Final', wait: 'Teams are set once both semi-finals have a score.' }] }]),
     pools: [{ name: 'Pool A', q: 2, teams: ids(POOL_A) }, { name: 'Pool B', q: 2, teams: ids(POOL_B) }],
     final: 45, bracket: [[43, 44], [45]],
     ko: function (S, mk, K) {
@@ -741,12 +768,16 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       mk(44, B && B[0], A && A[1], 'Pool B winner', 'Pool A 2nd place');
       mk(45, K[43].win, K[44].win, 'Winner of Semi-final 1', 'Winner of Semi-final 2');
     },
-    stats: function (done) { return [['14', 'Teams'], ['2', 'Pools'], ['15', 'Points to win'], [done + '/45', 'Games done']]; },
-    schedNote: 'Pool A starts at 4:00 PM and Pool B at 5:30 PM. Games are played in this order, one round after the other. In each round one team rests.',
+    stats: function (done) { return [['14', 'Teams'], ['2', 'Courts'], ['15', 'Points to win'], [done + '/45', 'Games done']]; },
+    schedNote: 'Sunday 25 October, 2 courts, 12-minute slots. Pool A starts at 4:00 PM and Pool B joins at 5:36 PM. Pool games are first to 15 with an 11-minute cap. The semi-finals start at 8:24 PM and the final at 8:42 PM, done by 9:00 PM.',
     qText: 'The top 2 in each pool play the semi-finals.',
     rankText: 'Ranked by wins, then point difference, then points scored, then the result between the two teams when exactly two are level. Blacked-out games do not count for anyone. A team that withdrew drops to the bottom.',
-    koNote: 'Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. Knockout games are also first to 15, no deuce.',
-    check: function (a, b) { return Math.max(a, b) !== 15 || a === b ? 'First to 15, no deuce: the winning team has exactly 15 and the other team 0 to 14.' : ''; }
+    koNote: 'Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. Knockout games are first to 15, no deuce, with no time cap.',
+    /* pool games can end at the 11-minute cap below 15; knockouts always go to 15 */
+    check: function (a, b, g) {
+      if (g.ko) return Math.max(a, b) !== 15 || a === b ? 'Knockouts are first to 15, no deuce: the winning team has exactly 15 and the other team 0 to 14.' : '';
+      return a === b || Math.max(a, b) > 15 ? 'Pool games have no draws and no score above 15: first to 15, or the team ahead at the 11-minute cap.' : '';
+    }
   };
 
   [CAT1, CAT2].forEach(function (tr) {
@@ -1394,7 +1425,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     wrap.appendChild(h('nav', { class: 'jump', 'aria-label': 'Jump to' }, jumps.map(function (l) { return h('a', { class: 'pill sm', href: l[0], text: l[1] }); })));
 
     if (adm) wrap.appendChild(h('p', { class: 'banner' }, h('b', { text: 'Admin. ' }),
-      'Type both scores for a game, then tap Save scores at the bottom. Every game is first to 15, no deuce, so the winner has exactly 15. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
+      'Type both scores for a game, then tap Save scores at the bottom. Pool games: first to 15, or the team ahead at the 11-minute cap, never a draw. Knockouts: the winner has exactly 15. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
     if (adm) adminExtra(wrap);
 
     var champ = R.K[TR.final].win, done = doneCount();
@@ -1742,12 +1773,12 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
 
   /* ---------- tournament rules: CAT 2.0 ---------- */
   var TOUR_RULES = [
-    ['👥', 'Format', '14 teams of two in two pools of seven. Each team plays every other team in its pool once, so six games each. In every round one team in the pool rests.'],
-    ['🕓', 'Start times', 'Pool A starts at 4:00 PM. Pool B starts at 5:30 PM. Be at the courts and warmed up before your pool starts.'],
-    ['🏐', 'Scoring', 'Every game is one set, first to 15 points, no deuce. At 14–14 the next rally wins the game 15–14. Every rally wins a point, whoever served.'],
+    ['👥', 'Format', '14 teams of two in two pools of seven. Each team plays every other team in its pool once, so six games each. Games run in 12-minute slots on 2 courts: check the schedule for your times.'],
+    ['🕓', 'Date and times', 'Sunday 25 October 2026. Pool A starts at 4:00 PM. Pool B’s first games start at 5:36 PM, so be there by 5:30 PM. The semi-finals start at 8:24 PM and the final at 8:42 PM. Everything ends by 9:00 PM. With only 2 courts, be ready when your game is called.'],
+    ['🏐', 'Scoring', 'Every game is one set, first to 15 points, no deuce: at 14–14 the next rally wins 15–14. Pool games have an 11-minute cap: when time is up, the team ahead wins, and if the scores are level the next rally wins. The semi-finals and the final have no cap. Every rally wins a point, whoever served.'],
     ['↔️', 'Changing ends', 'Teams change ends every 5 points, counting both scores together (at 5, 10, 15, 20 and so on), as in the deciding set of an FIVB match.'],
     ['📊', 'Pool ranking', 'Teams are ranked by wins, then point difference, then points scored. If exactly two teams are still level, the game between them decides.'],
-    ['🏆', 'Semi-finals and final', 'The top 2 of each pool go through. Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. These games are also first to 15, no deuce.'],
+    ['🏆', 'Semi-finals and final', 'The top 2 of each pool go through. Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. These games are first to 15, no deuce, with no time cap.'],
     ['⬛', 'Absent or leaving early', 'If a team does not turn up for a game, or leaves before its games are done, the admins black out those games. A blacked-out game does not count for either team. A team that withdraws drops to the bottom of its pool and cannot reach the semi-finals. A team that misses a semi-final or the final loses it 15–0.'],
     ['📝', 'Scores', 'Only the admins (' + ADMINS.join(', ') + ') enter scores on this site. Tell an admin the final score as soon as your game ends. Both teams should agree the score before they leave the court.'],
     ['⚖️', 'Disputes', 'The admins settle any dispute on the spot. Their decision is final.'],

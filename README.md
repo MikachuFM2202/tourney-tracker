@@ -1,8 +1,8 @@
 # Casual SG — CAT (Casual SG Advanced Tournament) tracker
 
 Live schedule, scores, standings and knockouts for CAT 2.0, hosted by Casual SG.
-14 teams, 2v2, two pools of 7 (Pool A from 4:00 PM, Pool B from 5:30 PM), then semi-finals and the final.
-Every game is first to 15, no deuce.
+Sunday 25 October 2026, 4:00 to 9:00 PM, 2 courts. 14 teams, 2v2, two pools of 7 (Pool A from 4:00 PM, Pool B from 5:36 PM),
+then semi-finals (8:24 PM) and the final (8:42 PM). Every game is first to 15, no deuce; pool games have an 11-minute cap.
 
 Tabs: **CAT 2.0** (sub-tabs: scores and schedule `#cat2`, tournament rules `#tournament-rules`), **Past Tournaments**
 (CAT 1.0, read only, `#past`), **Gallery** (`#gallery`) and **Rules** (sub-tabs: 2v2 `#rules`, 3v3 `#rules-3v3`,
@@ -84,6 +84,6 @@ The organiser password is the same as the admin password.
 ## Changing the tournament
 
 CAT 2.0 is the `CAT2` object near the top of the script in `index.html`: teams are `POOL_A` and `POOL_B`,
-the schedule is generated round by round from them. CAT 1.0 is `CAT1`.
+the timed 2-court schedule is the `SCHED` list (one row per 12-minute slot: Court 1 teams, Court 2 teams). CAT 1.0 is `CAT1`.
 The sponsor goes in `SPONSOR` (logo file in `assets/`). Gallery photos are listed in `GALLERY`.
 The repository name and owner are in `CFG` in the same file.
