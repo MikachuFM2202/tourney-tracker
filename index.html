@@ -856,6 +856,10 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   var draft = {};
   try { draft = JSON.parse(sget('cat2.draft') || '{}') || {}; } catch (e) { draft = {}; }
   function keepDraft() { sset('cat2.draft', JSON.stringify(draft)); }
+  /* what a saved game looks like, ignoring who saved it */
+  function sig(r) { return r ? [r.a, r.b, r.x || 0].join(',') : ''; }
+  /* each entry remembers the saved game it started from, so a save can tell when another admin changed that game meanwhile */
+  function mark(id, d) { d.base = sig(STATE.scores[id]); draft[id] = d; return d; }
   var query = '';
   /* The password only hides the admin screen. What actually protects the scores is who is allowed to save. */
   var unlocked = sget('cat.unlock') === '1', pwMsg = '', who = sget('cat.who') || '';
@@ -991,8 +995,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     Object.keys(STATE.scores).forEach(function (k) { next.scores[k] = STATE.scores[k]; });
     POOL.forEach(function (g) {
       var s = dstat(g);
-      if (s.k === 'ok') next.scores[g.id] = { a: s.a, b: s.b };
-      else if (s.k === 'out') next.scores[g.id] = { x: 1 };
+      if (s.k === 'ok') next.scores[g.id] = { a: s.a, b: s.b, by: who || undefined };
+      else if (s.k === 'out') next.scores[g.id] = { x: 1, by: who || undefined };
       else if (s.k === 'clear') delete next.scores[g.id];
     });
     var gs = goneSet(STATE), gd = draft.gone || {};
@@ -1002,7 +1006,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     GAMES.filter(function (g) { return g.ko; }).forEach(function (g) {
       var s = dstat(g), k = resolve(next).K[g.id];
       if (s.k === 'clear') delete next.scores[g.id];
-      else if (s.k === 'ok' && k.a && k.b) next.scores[g.id] = { a: s.a, b: s.b, ta: k.a, tb: k.b };
+      else if (s.k === 'ok' && k.a && k.b) next.scores[g.id] = { a: s.a, b: s.b, ta: k.a, tb: k.b, by: who || undefined };
     });
     return next;
   }
@@ -1033,6 +1037,11 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
         use(CAT2);
         if (cur.state && cur.state.scores && (cur.state.rev || 0) > (STATE.rev || 0)) setState(CAT2, cur.state);
         refresh();
+        var clash = reset ? [] : GAMES.filter(function (g) {
+          var d = draft[g.id];
+          return d && d.base !== undefined && d.base !== sig(STATE.scores[g.id]) && dstat(g).k !== 'none';
+        });
+        if (clash.length) throw { code: 'clash', games: clash };
         var next = nextState(reset);
         next.rev = (STATE.rev || 0) + 1;
         var body = { message: (reset ? 'Clear all CAT 2.0 scores' : 'Update CAT 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
@@ -1053,6 +1062,15 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       saving = false;
       var code = err && err.code;
       if (code === 'auth') saveMsg = 'GitHub refused the save. Check the token on this device: it needs Contents read and write access to the tourney-tracker repository. Your entries are kept.';
+      else if (code === 'clash') {
+        /* show what the other admin saved; a second tap on Save then replaces it on purpose */
+        saveMsg = err.games.map(function (g) {
+          var r = STATE.scores[g.id], what = !r ? 'cleared it' : r.x ? 'blacked it out' : 'saved ' + r.a + '–' + r.b;
+          draft[g.id].base = sig(r);
+          return 'Game ' + g.id + ': ' + (r && r.by ? r.by : 'another admin') + ' ' + what;
+        }).join('. ') + ' while you were typing. Nothing was saved. Check those games: tap Save scores again to use your entries, or Undo to keep theirs.';
+        keepDraft();
+      }
       else if (code === 'conflict') saveMsg = 'Another admin saved at the same moment. Tap Save scores again. Your entries are kept.';
       else if (code) saveMsg = 'The scores were not saved (' + code + '). Your entries are kept. Try again.';
       else saveMsg = 'No connection to GitHub. Your entries are kept. Try again when you have signal.';
@@ -1196,17 +1214,21 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     var f = FOOT[g.id]; if (!f) return;
     f.textContent = '';
     var v = VIEW[g.id], s = dstat(g), cls = 'st', txt;
-    if (s.k === 'ok') { cls += ' pend'; txt = 'Not saved yet: ' + s.a + '–' + s.b; }
-    else if (s.k === 'out') { cls += ' pend'; txt = 'This game will be blacked out when you save. It will not count for either team.'; }
-    else if (s.k === 'clear') { cls += ' pend'; txt = v.out ? 'This game comes back when you save.' : 'This score will be cleared when you save.'; }
+    var prev = STATE.scores[g.id], by = prev && prev.by ? ' by ' + prev.by : '';
+    var other = prev && prev.by && prev.by !== who && (v.res || v.out)
+      ? ' Careful: this replaces ' + (v.out ? 'the blackout' : v.res.a + '–' + v.res.b) + ' saved by ' + prev.by + '.' : '';
+    if (s.k === 'ok') { cls += ' pend'; txt = 'Not saved yet: ' + s.a + '–' + s.b + '.' + other; }
+    else if (s.k === 'out') { cls += ' pend'; txt = 'This game will be blacked out when you save. It will not count for either team.' + other; }
+    else if (s.k === 'clear') { cls += ' pend'; txt = (v.out ? 'This game comes back when you save.' : 'This score will be cleared when you save.') + other; }
     else if (s.k === 'err') { cls += ' bad'; txt = s.m; }
-    else if (v.out) { cls += ' bad'; txt = 'Blacked out. It does not count for either team.'; }
-    else if (v.res) { cls += ' good'; txt = 'Saved: ' + v.res.a + '–' + v.res.b; }
+    else if (v.out) { cls += ' bad'; txt = 'Blacked out' + by + '. It does not count for either team.'; }
+    else if (v.res) { cls += ' good'; txt = 'Saved: ' + v.res.a + '–' + v.res.b + by; }
     else if (v.stale) { cls += ' bad'; txt = 'The teams in this game changed after its score was saved, so that score no longer counts. Enter the new score.'; }
     else if (g.ko && !(v.a && v.b)) txt = g.wait;
     else txt = 'No score yet.';
     f.appendChild(h('span', { class: cls, text: txt }));
-    function set(d) { return function () { if (d) draft[g.id] = d; else delete draft[g.id]; keepDraft(); render(); }; }
+    function set(d) { return function () { if (d) mark(g.id, d); else delete draft[g.id]; keepDraft(); render(); }; }
+    if (other && draft[g.id]) f.firstChild.className = 'st bad';
     if (draft[g.id]) f.appendChild(h('button', { type: 'button', text: 'Undo', onclick: set(null) }));
     else if (v.out) f.appendChild(h('button', { type: 'button', text: 'Bring back', onclick: set({ clear: true }) }));
     else {
@@ -1217,9 +1239,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
 
   function onScore(g, side, ev) {
     var d = draft[g.id];
-    if (!d || d.clear || d.out) d = { a: curStr(g.id, 'a'), b: curStr(g.id, 'b') };
+    if (!d || d.clear || d.out) d = mark(g.id, { a: curStr(g.id, 'a'), b: curStr(g.id, 'b') });
     d[side] = ev.target.value.trim();
-    draft[g.id] = d;
     if (dstat(g).k === 'none' && d.a === curStr(g.id, 'a') && d.b === curStr(g.id, 'b')) delete draft[g.id];
     keepDraft();
     fillFoot(g); updateBar();
@@ -1433,7 +1454,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       h('button', { class: 'btn warn', type: 'button', text: 'Mark withdrawn', onclick: function () {
         var id = sel.value;
         draft.gone = draft.gone || {}; draft.gone[id] = true;
-        mine(id).forEach(function (g) { var v = VIEW[g.id]; if (!v.res && !v.out && !draft[g.id]) draft[g.id] = { out: true }; });
+        mine(id).forEach(function (g) { var v = VIEW[g.id]; if (!v.res && !v.out && !draft[g.id]) mark(g.id, { out: true }); });
         keepDraft(); render();
       } }),
       h('button', { class: 'btn', type: 'button', text: 'Undo withdrawal', onclick: function () {
@@ -1816,7 +1837,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     scEl.use = h('button', { class: 'btn primary', type: 'button', hidden: true, onclick: function () {
       var t = scTeams();
       if (!admin() || !t.g || !t.a || !t.b) return;
-      draft[t.g.id] = { a: String(sc.a), b: String(sc.b) };
+      mark(t.g.id, { a: String(sc.a), b: String(sc.b) });
       keepDraft();
       render();
       scEl.msg.className = 'msg2 good';

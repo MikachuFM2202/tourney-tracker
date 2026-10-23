@@ -66,6 +66,9 @@ The organiser password is the same as the admin password.
 - Scores are whole numbers from 0 to 99. A knockout game cannot be level.
 - A knockout score only counts for the two teams it was saved against. If a correction changes who is in that game, the admin is asked to enter the score again.
 - If two admins save at the same moment, the second save is placed on top of the first. Nothing is overwritten.
+- Each saved game records which admin saved it. If another admin saved a game while you were typing a score
+  for it, Save stops and says who saved what. Tap Save scores again to replace it, or Undo to keep theirs.
+  Typing over a score another admin saved shows a red warning before you save.
 - "On court now" follows the clock in Singapore time, so it moves to the next slot by itself.
 - If a phone loses signal, a red "No connection" strip shows under the top bar until the next successful check.
 - A link that ends in a section name opens straight at that section, for example `#schedule`, `#standings` or `#bracket`.
