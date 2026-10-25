@@ -9,9 +9,9 @@
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Casual SG · CAT 2.0 live scores">
-<meta property="og:description" content="Casual SG Advanced Tournament. 2v2 beach volleyball, 14 teams in two pools. Pool A from 4:00 PM, Pool B from 5:30 PM. Schedule, live scores, standings, knockouts and rules.">
+<meta property="og:description" content="Casual SG Advanced Tournament, Sunday 25 October. 2v2 beach volleyball, 14 teams in two pools. Pool A from 4:00 PM, Pool B from 5:30 PM. Schedule, live scores, standings, knockouts and rules.">
 <meta property="og:url" content="https://mikachufm2202.github.io/tourney-tracker/">
-<meta property="og:image" content="https://mikachufm2202.github.io/tourney-tracker/og.png?v=2">
+<meta property="og:image" content="https://mikachufm2202.github.io/tourney-tracker/og.png?v=3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -221,6 +221,9 @@ h1, h2, h3, p { margin: 0; }
 .livepill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--live); }
 .livepill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 var(--live); animation: pulse 1.6s ease-out infinite; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.mybox .field { flex: 0 1 16rem; }
+.myrec { flex-basis: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+.match.mine { outline: 3px solid var(--accent); outline-offset: -3px; }
 .champ { background: var(--dark); color: var(--dark-on); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 6px; }
 .champ .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 .champ .v { font-family: var(--display); font-weight: 700; font-size: clamp(36px, 7vw, 60px); line-height: 1; letter-spacing: -.03em; }
@@ -420,6 +423,7 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 .subtabs a[aria-current="page"] { color: var(--bg); background: var(--ink); }
 .jump { display: flex; flex-wrap: wrap; gap: 8px; }
 .ctas a { text-decoration: none; }
+button.pill { font-family: inherit; cursor: pointer; }
 
 /* CAT 2.0: three games a round, resting team, pools side by side */
 @media (min-width: 820px) { .pair.three { grid-template-columns: 1fr 1fr; } }
@@ -442,18 +446,6 @@ dialog.pop::backdrop { background: rgba(0, 0, 0, .55); }
 .xo { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #fff; border: 1.5px solid rgba(255, 255, 255, .5); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
 .mhead .done.x { color: rgba(255, 255, 255, .8); }
 .mfoot button.blk { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-/* sponsor */
-.sponsor { position: relative; overflow: hidden; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px 22px; border-radius: 28px; padding: 22px 24px; background: linear-gradient(120deg, var(--accent-soft), var(--surface) 70%); scroll-margin-top: 110px; }
-@media (min-width: 900px) { .sponsor { scroll-margin-top: 72px; } }
-.sponsor .slogo { width: 92px; height: 92px; border-radius: 24px; display: grid; place-items: center; background: var(--card); overflow: hidden; }
-.sponsor .slogo img { width: 100%; height: 100%; object-fit: contain; }
-.sponsor.tbc .slogo { background: transparent; border: 2px dashed var(--muted); color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-.sponsor .scopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.sponsor .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
-.sponsor .v { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; letter-spacing: -.02em; }
-.sponsor.tbc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .35) 50%, transparent 65%); transform: translateX(-100%); animation: sheen 4.5s var(--ease) infinite; pointer-events: none; }
-@keyframes sheen { 60%, 100% { transform: translateX(100%); } }
 
 /* admins */
 .admins { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -705,7 +697,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function duo(id, e, hue, a, b, sat) { return { id: id, e: e, h: hue, s: sat, p: [a, b], n: a + ' & ' + b }; }
   var POOL_A = [duo('yh', '🦅', 10, 'Yatharth', 'Harish'), duo('dm', '🐬', 200, 'David', 'Mitch'), duo('cn', '🌵', 120, 'Cynthia', 'Neil'),
     duo('lh', '🦁', 38, 'Léo', 'Hamza'), duo('ec', '🍉', 350, 'Edoardo', 'Crystal'), duo('sp', '🐙', 275, 'Shane', 'Peter'), duo('tc', '🌸', 320, 'Thitikorn', 'Charlene')];
-  var POOL_B = [duo('rs', '🚀', 225, 'Rob', 'Stan'), duo('as', '⚡', 50, 'Ash', 'Sat', 78), duo('rk', '🦖', 90, 'Rossi', 'Khai'),
+  var POOL_B = [duo('rs', '🚀', 225, 'Rob', 'Stan'), duo('as', '⚡', 50, 'Ash', 'Sat', 78), duo('rk', '⚽', 90, 'Rossi', 'Khai'),
     duo('uk', '🐯', 25, 'Udhaya', 'Karthi'), duo('sf', '🐼', 155, 'Supi', 'Fai'), duo('tj', '🎯', 0, 'Anand', 'Josh'), duo('ks', '🌊', 190, 'Khather', 'Syed')];
   function ids(l) { return l.map(function (t) { return t.id; }); }
   /* Sunday 25 October: 2 nets, no time limit. Games go on in this order: when a court is free, the next game
@@ -749,7 +741,9 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     });
   }
   var CAT2 = {
-    key: 'cat2', ver: '2.0', path: 'scores-cat2.json', cap: 15,
+    key: 'cat2', ver: '2.0', path: 'scores-cat2.json',
+    /* When the venue is confirmed: { name: 'Kallang Beach Courts', map: 'https://maps.app.goo.gl/...' } */
+    venue: null,
     sub: 'Beach volleyball, 2v2. Sunday 25 October 2026, from 4:00 PM on 2 courts. 14 teams in two pools, then the semi-finals and the final. Every game is first to 15, no deuce.',
     ball: { src: 'assets/mikasa.png', w: 480, h: 480 },
     teams: POOL_A.concat(POOL_B),
@@ -771,7 +765,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     qText: 'The top 2 in each pool play the semi-finals.',
     rankText: 'Ranked by wins, then point difference, then points scored, then the result between the two teams when exactly two are level. Blacked-out games do not count for anyone. A team that withdrew drops to the bottom.',
     koNote: 'Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. Knockout games are also first to 15, no deuce.',
-    check: function (a, b) { return Math.max(a, b) !== 15 || a === b ? 'First to 15, no deuce: the winning team has exactly 15 and the other team 0 to 14.' : ''; }
+    /* games are normally to 15, but some may be played to 21, so any winning score is allowed; over 15 gets a * for the admins */
+    check: function (a, b) { return a === b ? 'A game needs a winner. The scores cannot be level.' : ''; }
   };
 
   [CAT1, CAT2].forEach(function (tr) {
@@ -791,8 +786,6 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   use(CAT2);
 
   var ADMINS = ['Yatha', 'Sat', 'Ash', 'Mika'];
-  /* When the sponsor is confirmed: { name: 'Brand', logo: 'assets/sponsor.png', url: 'https://example.com', line: 'Official partner of CAT 2.0' } */
-  var SPONSOR = null;
 
   /* Team colour: hue, plus an optional stronger saturation for pale hues like yellow. */
   function tint(t) { return '--h:' + t.h + (t.s ? ';--tint-s:' + t.s + '%' : ''); }
@@ -1166,10 +1159,49 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
         main ? h('div', { class: 'ctas' },
           h('a', { class: 'pill solid', href: '#schedule', text: 'See the schedule' }),
           h('a', { class: 'pill', href: '#standings', text: 'Standings' }),
-          TR.archived ? null : h('a', { class: 'pill', href: '#tournament-rules', text: 'Tournament rules' })) : null),
+          TR.archived ? null : h('a', { class: 'pill', href: '#tournament-rules', text: 'Tournament rules' }),
+          TR.venue ? h('a', { class: 'pill', href: TR.venue.map, target: '_blank', rel: 'noopener', text: '📍 ' + TR.venue.name }) : null,
+          shareBtn('pill', 'Share', function () { return 'CAT ' + TR.ver + ' live scores'; })) : null),
       h('div', { class: 'stats' },
         TR.stats(doneCount()).map(function (s) { return h('div', { class: 'stat' }, h('b', { text: s[0] }), h('span', { text: s[1] })); })),
       upd ? h('p', { class: 'stamp', text: upd }) : null));
+  }
+
+  /* the phone's share sheet when there is one, otherwise copy the link */
+  function shareBtn(cls, label, text) {
+    var b = h('button', { class: cls, type: 'button', text: label });
+    b.onclick = function () {
+      var url = location.href.split('#')[0] + (TR.archived ? '#past' : ''), t = text();
+      if (navigator.share) { navigator.share({ title: 'CAT ' + TR.ver, text: t, url: url }).catch(function () {}); return; }
+      var done = function () { b.textContent = 'Link copied'; setTimeout(function () { b.textContent = label; }, 2000); };
+      if (navigator.clipboard) navigator.clipboard.writeText(t + ' ' + url).then(done, function () {});
+    };
+    return b;
+  }
+
+  /* a viewer picks their own team: their games get a ring and the box shows their record and next game */
+  var myTeam = lget('cat2.team');
+  function myBox() {
+    var t = T[myTeam];
+    var sel = h('select', { class: 'field', id: 'myteam', 'aria-label': 'Your team',
+      onchange: function (ev) { myTeam = ev.target.value; lset('cat2.team', myTeam); render(); } },
+      h('option', { value: '', text: 'Pick your team' }),
+      TEAMS.map(function (x) { return h('option', { value: x.id, text: x.e + ' ' + tn(x), selected: x.id === myTeam }); }));
+    if (!t) return h('div', { class: 'next mybox' }, h('span', { class: 'k', text: 'Your team' }), sel);
+    var r = R.rows[t.id], pi = 0, slotOf = {};
+    TR.pools.forEach(function (p, i) { if (p.teams.indexOf(t.id) > -1) pi = i; });
+    var rank = R.st[pi].list.map(function (x) { return x.id; }).indexOf(t.id) + 1;
+    SLOTS.forEach(function (s, i) { s.g.forEach(function (g) { slotOf[g.id] = i; }); });
+    var nx = GAMES.filter(function (g) { var v = VIEW[g.id]; return (v.a === t.id || v.b === t.id) && !v.res && !v.out; })[0];
+    var vs = nx && T[VIEW[nx.id].a === t.id ? VIEW[nx.id].b : VIEW[nx.id].a];
+    var line = r.w + (r.w === 1 ? ' win, ' : ' wins, ') + r.l + (r.l === 1 ? ' loss' : ' losses') + (r.p ? ' · ' + rank + ' in ' + (TR.pools[pi].name || 'the table') : '');
+    var nxt = r.gone ? 'Withdrawn' : nx ? SLOTS[slotOf[nx.id]].t + ' · ' + chipText(nx) + ' vs ' + (vs ? tn(vs) : 'TBC') : 'No more games';
+    return h('div', { class: 'next mybox', style: tint(t) },
+      h('span', { class: 'k', text: 'Your team' }), sel,
+      h('span', { class: 'myrec', text: line }),
+      h('span', { class: 'myrec' }, h('b', { text: 'Next: ' }), nxt),
+      nx && !r.gone ? h('a', { class: 'pill sm', href: '#slot' + slotOf[nx.id], text: 'Go to this game' }) : null,
+      shareBtn('pill sm', 'Share', function () { return t.e + ' ' + tn(t) + ' at CAT ' + TR.ver + ': ' + line + '. Next: ' + nxt + '.'; }));
   }
 
   /* smaller header for the pages that are not a tournament */
@@ -1227,7 +1259,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px' });
-    root.querySelectorAll('.next, .champ, .search, .sh, .tscroll, .slot, .bnode, .team, .choice, .gatehead, .sponsor, .admin, .rule, .tcard').forEach(function (el) {
+    root.querySelectorAll('.next, .champ, .search, .sh, .tscroll, .slot, .bnode, .team, .choice, .gatehead, .admin, .rule, .tcard').forEach(function (el) {
       el.classList.add('rv'); io.observe(el);
     });
   }
@@ -1265,7 +1297,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
                 h('input', { id: 'pw', class: 'field', type: 'password', placeholder: 'Admin password', autocomplete: 'off', 'aria-label': 'Admin password' }),
                 h('button', { class: 'go', type: 'submit', id: 'go-admin', text: 'Open admin' })),
           pwMsg ? h('p', { class: 'access no', text: pwMsg }) : null)),
-      sponsorBlock(), footer()));
+      footer()));
   }
 
   function teamBlock(id, label, right, res, mine, theirs) {
@@ -1284,12 +1316,12 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     var prev = STATE.scores[g.id], by = prev && prev.by ? ' by ' + prev.by : '';
     var other = prev && prev.by && prev.by !== who && (v.res || v.out)
       ? ' Careful: this replaces ' + (v.out ? 'the blackout' : v.res.a + '–' + v.res.b) + ' saved by ' + prev.by + '.' : '';
-    if (s.k === 'ok') { cls += ' pend'; txt = 'Not saved yet: ' + s.a + '–' + s.b + '.' + other; }
+    if (s.k === 'ok') { cls += ' pend'; txt = 'Not saved yet: ' + s.a + '–' + s.b + '.' + (Math.max(s.a, s.b) > 15 ? ' * Over 15: check it was played to more than 15.' : '') + other; }
     else if (s.k === 'out') { cls += ' pend'; txt = 'This game will be blacked out when you save. It will not count for either team.' + other; }
     else if (s.k === 'clear') { cls += ' pend'; txt = (v.out ? 'This game comes back when you save.' : 'This score will be cleared when you save.') + other; }
     else if (s.k === 'err') { cls += ' bad'; txt = s.m; }
     else if (v.out) { cls += ' bad'; txt = 'Blacked out' + by + '. It does not count for either team.'; }
-    else if (v.res) { cls += ' good'; txt = 'Saved: ' + v.res.a + '–' + v.res.b + by; }
+    else if (v.res) { cls += ' good'; txt = 'Saved: ' + v.res.a + '–' + v.res.b + by + (Math.max(v.res.a, v.res.b) > 15 ? '. * Over 15.' : ''); }
     else if (v.stale) { cls += ' bad'; txt = 'The teams in this game changed after its score was saved, so that score no longer counts. Enter the new score.'; }
     else if (g.ko && !(v.a && v.b)) txt = g.wait;
     else txt = 'No score yet.';
@@ -1339,7 +1371,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     } else {
       mid = h('div', { class: 'mid' }, h('span', { class: 'vs', text: 'vs' }));
     }
-    var card = h('article', { class: 'match' + (v.out ? ' out' : ''), 'data-s': names.join(' ').toLowerCase() },
+    var card = h('article', { class: 'match' + (v.out ? ' out' : '') + (myTeam && TR === CAT2 && (v.a === myTeam || v.b === myTeam) ? ' mine' : ''), 'data-s': names.join(' ').toLowerCase() },
       h('div', { class: 'mhead' },
         h('span', { class: 'gno', text: 'Game ' + g.id }),
         chip ? h('span', { class: 'chip c' + g.c, text: chip }) : null,
@@ -1415,11 +1447,11 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     root.appendChild(hero(true, !revealed));
     var wrap = h('div', { class: 'wrap' });
     var jumps = [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']];
-    if (!TR.archived) jumps.push(['#sponsor', 'Sponsor'], ['#admins', 'Admins']);
+    if (!TR.archived) jumps.push(['#admins', 'Admins']);
     wrap.appendChild(h('nav', { class: 'jump', 'aria-label': 'Jump to' }, jumps.map(function (l) { return h('a', { class: 'pill sm', href: l[0], text: l[1] }); })));
 
     if (adm) wrap.appendChild(h('p', { class: 'banner' }, h('b', { text: 'Admin. ' }),
-      'Type both scores for a game, then tap Save scores at the bottom. Every game is first to 15, no deuce, so the winner has exactly 15. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
+      'Type both scores for a game, then tap Save scores at the bottom. Games are normally first to 15. A score over 15 (for example a game to 21) is allowed and gets a * here, so the admins can double-check it. Nothing changes for other people until you save. To correct a score, type over it and save again.'));
     if (adm) adminExtra(wrap);
 
     var champ = R.K[TR.final].win, done = doneCount();
@@ -1440,7 +1472,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
         h('a', { class: 'pill sm', href: '#slot' + idx, text: 'Go to these games' }),
         n ? null : h('span', { class: 'prog', text: done + ' of ' + GAMES.length + ' games done' })));
     });
-    if (!TR.archived) wrap.appendChild(sponsorBlock());
+    if (!TR.archived && !adm) wrap.appendChild(myBox());
 
     wrap.appendChild(h('label', { class: 'search', for: 'q' },
       svgIcon('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
@@ -1567,17 +1599,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       h('p', { class: 'note', text: TR.koNote }));
   }
 
-  /* ---------- sponsor and admins (CAT 2.0) ---------- */
-  function sponsorBlock() {
-    var s = SPONSOR;
-    return h('section', { id: 'sponsor', class: 'sponsor' + (s ? '' : ' tbc'), 'aria-label': 'Sponsor' },
-      s ? h('a', { class: 'slogo', href: s.url, target: '_blank', rel: 'noopener' }, h('img', { src: s.logo, alt: s.name + ' logo' }))
-        : h('div', { class: 'slogo', 'aria-hidden': 'true', text: 'Logo' }),
-      h('div', { class: 'scopy' },
-        h('p', { class: 'k', text: 'Official sponsor' }),
-        h('p', { class: 'v', text: s ? s.name : 'To be announced' }),
-        h('p', { class: 'note', text: s ? (s.line || '') : 'This space is saved for the CAT 2.0 sponsor. Watch this spot.' })));
-  }
+  /* ---------- admins (CAT 2.0) ---------- */
   function adminsSection() {
     var hues = [210, 40, 10, 150];
     return h('section', { id: 'admins' }, sh('Admins'),
@@ -1769,7 +1791,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   var TOUR_RULES = [
     ['👥', 'Format', '14 teams of two in two pools of seven. Each team plays every other team in its pool once, so six games each. There are 2 courts: when a court is free, the next game in the schedule goes on.'],
     ['🕓', 'Date and times', 'Sunday 25 October 2026. Pool A starts at 4:00 PM. Pool B starts from 5:30 PM. There is no time limit, so we aim to finish around 9:00 PM but it can run later. With only 2 courts, stay close and be ready when your game is called.'],
-    ['🏐', 'Scoring', 'Every game is one set, first to 15 points, no deuce, with no time limit. At 14–14 the next rally wins the game 15–14. Every rally wins a point, whoever served.'],
+    ['🏐', 'Scoring', 'Every game is one set, first to 15 points, no deuce, with no time limit. At 14–14 the next rally wins the game 15–14. The admins may set some games to 21 instead, with the same no-deuce rule. Every rally wins a point, whoever served.'],
     ['↔️', 'Changing ends', 'Teams change ends every 5 points, counting both scores together (at 5, 10, 15, 20 and so on), as in the deciding set of an FIVB match.'],
     ['📊', 'Pool ranking', 'Teams are ranked by wins, then point difference, then points scored. If exactly two teams are still level, the game between them decides.'],
     ['🏆', 'Semi-finals and final', 'The top 2 of each pool go through. Semi-final 1: Pool A winner against Pool B 2nd. Semi-final 2: Pool B winner against Pool A 2nd. The two winners play the final. These games are also first to 15, no deuce.'],
@@ -1870,9 +1892,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function scPoint(k, d) {
     var n = sc[k] + d;
     if (n < 0 || n > 99) return;
-    /* first to 15, no deuce: the game ends the moment one side reaches 15 */
-    if (d > 0 && CAT2.cap && (sc.a >= CAT2.cap || sc.b >= CAT2.cap)) { scEl.msg.className = 'msg2'; scEl.msg.textContent = 'Game over at ' + CAT2.cap + '. Reset the score for the next game.'; return; }
-    sc[k] = n; scEl.msg.className = 'msg2'; scEl.msg.textContent = n === CAT2.cap && d > 0 ? 'Game! ' + sc.a + '–' + sc.b + '.' : ''; scKeep(); scPaint();
+    /* no cap: some games are played to 21 */
+    sc[k] = n; scEl.msg.className = 'msg2'; scEl.msg.textContent = ''; scKeep(); scPaint();
   }
   function scBuild() {
     if (!scDlg) {
@@ -1920,7 +1941,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       h('div', { class: 'sides' }, scSide('a'), scSide('b')),
       h('div', { class: 'row' }, twoTap('Reset score to 0–0', function () { sc.a = 0; sc.b = 0; scEl.msg.textContent = ''; scKeep(); scPaint(); }), scEl.use),
       scEl.msg,
-      h('p', { class: 'msg2', text: 'First to 15, no deuce. Only on this phone: it does not change the scores on the website.' })));
+      h('p', { class: 'msg2', text: 'Only on this phone: it does not change the scores on the website.' })));
     scPaint();
   }
   /* Landscape: turning the phone sideways switches the layout by itself. The toggle forces it:
