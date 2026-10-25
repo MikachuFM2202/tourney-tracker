@@ -1,6 +1,14 @@
 {
  "v": 1,
- "scores": {},
- "updated": null,
- "rev": 0
+ "scores": {
+  "1": {
+   "a": 10,
+   "b": 15,
+   "by": "Yatha"
+  }
+ },
+ "updated": "2026-10-25T00:12:23.216Z",
+ "by": "Yatha",
+ "gone": [],
+ "rev": 1
 }
