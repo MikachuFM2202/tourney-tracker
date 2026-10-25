@@ -1083,7 +1083,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       });
     }
     attempt(0).then(function () {
-      saving = false; confirmReset = false; if (reset) { draft = {}; keepDraft(); }
+      saving = false; confirmReset = false; wdMsg = ''; if (reset) { draft = {}; keepDraft(); }
       render();
     }, function (err) {
       saving = false;
@@ -1548,6 +1548,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
 
   /* A team that is absent or leaves early: every game it has not finished is blacked out,
      and it drops to the bottom of its pool so it cannot be seeded into the semi-finals. */
+  var wdMsg = '';
   function withdrawBox(wrap) {
     var cur = goneSet(STATE), gd = draft.gone || {};
     function isGone(id) { return gd.hasOwnProperty(id) ? gd[id] : !!cur[id]; }
@@ -1559,9 +1560,17 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       h('p', null, h('b', { text: 'Team absent or left early? ' }),
         'Mark it as withdrawn: every game it has not finished is blacked out, and it drops to the bottom of its pool, so it cannot reach the semi-finals. To black out one game only, tap Black out on that game. Then tap Save scores. ' +
         (list.length ? 'Withdrawn: ' + list.join(', ') + '.' : 'No team has withdrawn.')),
+      wdMsg ? h('p', { class: 'access no', role: 'alert', text: wdMsg }) : null,
       sel,
       h('button', { class: 'btn warn', type: 'button', text: 'Mark withdrawn', onclick: function () {
-        var id = sel.value;
+        var id = sel.value, pi = 0;
+        TR.pools.forEach(function (p, i) { if (p.teams.indexOf(id) > -1) pi = i; });
+        /* once a pool is finished its seeding is fixed: withdrawing then would reshuffle the knockouts and void their scores */
+        if (R.st[pi].done && !isGone(id)) {
+          wdMsg = tn(T[id]) + ': ' + (TR.pools[pi].name || 'the pool') + ' is finished, so the team keeps its place. If it misses a knockout game, enter 15–0 for the other team.';
+          render(); return;
+        }
+        wdMsg = '';
         draft.gone = draft.gone || {}; draft.gone[id] = true;
         mine(id).forEach(function (g) { var v = VIEW[g.id]; if (!v.res && !v.out && !draft[g.id]) mark(g.id, { out: true }); });
         keepDraft(); render();
