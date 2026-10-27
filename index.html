@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Casual SG</title>
-<meta name="description" content="Live scores, standings and knockouts for CAT 2.0 (Casual SG Advanced Tournament), 2v2 beach volleyball. Sunday 25 October 2026, from 4:00 PM. Two pools, semi-finals and the final, first to 15. Gallery, rules and past tournaments.">
+<meta name="description" content="CAT 3.0 (Casual SG Advanced Tournament) is coming soon. Results, standings and photos from CAT 2.0 and CAT 1.0, plus the gallery and rules.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Casual SG · CAT 2.0 live scores">
-<meta property="og:description" content="Casual SG Advanced Tournament, Sunday 25 October. 2v2 beach volleyball, 14 teams in two pools. Pool A from 4:00 PM, Pool B from 5:30 PM. Schedule, live scores, standings, knockouts and rules.">
+<meta property="og:title" content="Casual SG · CAT 3.0 coming soon">
+<meta property="og:description" content="Casual SG Advanced Tournament. CAT 3.0 is coming soon. See the CAT 2.0 results, standings, knockouts and photos.">
 <meta property="og:url" content="https://mikachufm2202.github.io/tourney-tracker/">
 <meta property="og:image" content="https://mikachufm2202.github.io/tourney-tracker/og.png?v=3">
 <meta property="og:image:width" content="1200">
@@ -643,8 +643,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   'use strict';
 
   /* ---------- tournaments ----------
-     Each tournament has its own teams, schedule and scores file. CAT 2.0 is the live one,
-     where admins save scores. CAT 1.0 sits under Previous and is read only. */
+     Each tournament has its own teams, schedule and scores file. CAT 3.0 is coming soon. CAT 2.0 and
+     CAT 1.0 sit under Past Tournaments; admins can still correct CAT 2.0 scores. */
   function pg(id, c, a, b) { return { id: id, c: c, a: a, b: b }; }
 
   var CAT1 = {
@@ -742,7 +742,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     });
   }
   var CAT2 = {
-    key: 'cat2', ver: '2.0', path: 'scores-cat2.json',
+    key: 'cat2', ver: '2.0', path: 'scores-cat2.json', archived: true,
     /* When the venue is confirmed: { name: 'Kallang Beach Courts', map: 'https://maps.app.goo.gl/...' } */
     venue: null,
     sub: 'Beach volleyball, 2v2. Sunday 25 October 2026, from 4:00 PM on 2 courts. 14 teams in two pools, then the semi-finals and the final. Every game is first to 15, no deuce.',
@@ -863,18 +863,19 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function sget(k) { try { var v = sessionStorage.getItem(k); return v == null ? mem[k] : v; } catch (e) { return mem[k]; } }
   function sset(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
 
-  var NAV = [['cat2', 'CAT 2.0'], ['past', 'Past Tournaments'], ['gallery', 'Gallery'], ['rules', 'Rules']];
+  var NAV = [['cat3', 'CAT 3.0'], ['cat2', 'Past Tournaments'], ['gallery', 'Gallery'], ['rules', 'Rules']];
   /* sub-tabs sit under a main tab */
-  var SUB = { 'tournament-rules': 'cat2', 'rules-3v3': 'rules', rotation: 'rules' };
+  var SUB = { past: 'cat2', 'tournament-rules': 'cat2', 'rules-3v3': 'rules', rotation: 'rules' };
   var CAT2_SUB = [['cat2', 'Scores and schedule'], ['tournament-rules', 'Tournament rules']];
+  var PAST_SUB = [['cat2', 'CAT 2.0 · 25 Oct 2026'], ['past', 'CAT 1.0 · 5 Oct 2026']];
   var RULE_SUB = [['rules', '2v2 rules'], ['rules-3v3', '3v3 rules'], ['rotation', 'Rotation']];
   /* links from before the rename still work */
   var OLD = { cat1: 'past', previous: 'past' };
-  function known(k) { return k === 'cat2' || k === 'past' || k === 'gallery' || k === 'rules' || k === 'terms' || SUB.hasOwnProperty(k); }
+  function known(k) { return k === 'cat3' || k === 'cat2' || k === 'past' || k === 'gallery' || k === 'rules' || k === 'terms' || SUB.hasOwnProperty(k); }
   function hashPage() { var k = location.hash.slice(1); return known(k) ? k : OLD[k] || null; }
-  var page = hashPage() || sget('cat.page') || 'cat2';
+  var page = hashPage() || sget('cat.page') || 'cat3';
   page = OLD[page] || page;
-  if (!known(page)) page = 'cat2';
+  if (!known(page)) page = 'cat3';
   function pageTour() { return page === 'past' ? CAT1 : CAT2; }
   function tourPage() { return page === 'cat2' || page === 'past'; }
 
@@ -1123,7 +1124,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
 
   function topbar(main) {
     return h('header', { class: 'topbar' }, h('div', { class: 'topbar-in' },
-      h('a', { class: 'mark', href: '#cat2', 'aria-label': 'Casual SG home' }, 'CASUAL ', h('b', { text: 'SG' })),
+      h('a', { class: 'mark', href: '#cat3', 'aria-label': 'Casual SG home' }, 'CASUAL ', h('b', { text: 'SG' })),
       h('nav', { class: 'nav', 'aria-label': 'Pages' },
         NAV.map(function (n) { return h('a', { href: '#' + n[0], text: n[1], 'aria-current': main && (page === n[0] || SUB[page] === n[0]) ? 'page' : null }); }),
         page === 'cat2' ? h('button', { type: 'button', id: 'open-sc', text: 'Scorecard', onclick: openSc }) : null,
@@ -1160,7 +1161,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
         main ? h('div', { class: 'ctas' },
           h('a', { class: 'pill solid', href: '#schedule', text: 'See the schedule' }),
           h('a', { class: 'pill', href: '#standings', text: 'Standings' }),
-          TR.archived ? null : h('a', { class: 'pill', href: '#tournament-rules', text: 'Tournament rules' }),
+          TR === CAT2 ? h('a', { class: 'pill', href: '#tournament-rules', text: 'Tournament rules' }) : null,
           TR.venue ? h('a', { class: 'pill', href: TR.venue.map, target: '_blank', rel: 'noopener', text: '📍 ' + TR.venue.name }) : null,
           shareBtn('pill', 'Share', function () { return 'CAT ' + TR.ver + ' live scores'; })) : null),
       h('div', { class: 'stats' },
@@ -1172,7 +1173,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function shareBtn(cls, label, text) {
     var b = h('button', { class: cls, type: 'button', text: label });
     b.onclick = function () {
-      var url = location.href.split('#')[0] + (TR.archived ? '#past' : ''), t = text();
+      var url = location.href.split('#')[0] + (TR === CAT1 ? '#past' : '#cat2'), t = text();
       if (navigator.share) { navigator.share({ title: 'CAT ' + TR.ver, text: t, url: url }).catch(function () {}); return; }
       var done = function () { b.textContent = 'Link copied'; setTimeout(function () { b.textContent = label; }, 2000); };
       if (navigator.clipboard) navigator.clipboard.writeText(t + ' ' + url).then(done, function () {});
@@ -1284,7 +1285,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       h('div', { class: 'gate' },
         h('div', { class: 'choice' },
           h('h2', { text: 'Viewer' }),
-          h('p', { text: 'See the schedule, every team, the scores and the standings. ' + doneCount() + ' of 45 games are done.' }),
+          h('p', { text: 'CAT 3.0 is coming soon. See the CAT 2.0 results, standings, knockouts and photos.' }),
           h('button', { class: 'go', type: 'button', id: 'go-viewer', text: 'Open viewer', onclick: function () { setMode('viewer'); } })),
         h('div', { class: 'choice' },
           h('h2', { text: 'Admin' }),
@@ -1444,15 +1445,29 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       else if (page === 'terms') renderTerms();
       else if (page === 'rules' || SUB[page] === 'rules') renderRules();
       else if (page === 'tournament-rules') renderTourRules();
+      else if (page === 'cat3') renderSoon();
       else renderTour();
     }
     reveal();
     if (scDlg && scDlg.open) scPaint();
   }
 
+  /* the live tab between tournaments: CAT 2.0's champions and links to its results */
+  function renderSoon() {
+    var champ = R.K[TR.final].win;
+    root.appendChild(pageHead('Casual SG Advanced Tournament', 'CAT 3.0', 'Coming soon. The date, venue and teams go up here once they are set.'));
+    root.appendChild(h('div', { class: 'wrap' },
+      champ ? h('div', { class: 'champ' }, h('p', { class: 'k', text: 'CAT 2.0 champions' }),
+        h('p', { class: 'v', text: T[champ].e + ' ' + tn(T[champ]) }), h('p', { text: T[champ].p.join(', ') })) : null,
+      h('div', { class: 'ctas' },
+        h('a', { class: 'pill solid', href: '#cat2', text: 'CAT 2.0 results' }),
+        h('a', { class: 'pill', href: '#gallery', onclick: function () { galKey = 'cat2'; sset('cat.gal', galKey); }, text: 'CAT 2.0 photos' })),
+      footer()));
+  }
+
   function renderTour() {
     var adm = admin();
-    root.appendChild(TR.archived ? subtabs('Past Tournaments', [['past', 'CAT 1.0 · 5 Oct 2026']]) : subtabs('CAT 2.0', CAT2_SUB));
+    root.appendChild(TR.archived ? subtabs('Past Tournaments', PAST_SUB) : subtabs('CAT 2.0', CAT2_SUB));
     root.appendChild(hero(true, !revealed));
     var wrap = h('div', { class: 'wrap' });
     var jumps = [['#live', 'Live'], ['#standings', 'Standings'], ['#schedule', 'Schedule'], ['#bracket', 'Knockouts'], ['#teams', 'Teams']];
@@ -1635,13 +1650,14 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     return a;
   }
   var GALLERY = [
-    { key: 'cat2', name: 'CAT 2.0', items: [], empty: 'Photos and videos from CAT 2.0 go up here after the event.' },
+    { key: 'cat2', name: 'CAT 2.0', when: '25 October 2026',
+      items: [1, 2].map(function (n) { return { v: true, src: 'assets/gallery/cat2/v' + n + '.mp4', th: 'assets/gallery/cat2/v' + n + '-t.jpg' }; }).concat(shots('assets/gallery/cat2/', 98)) },
     { key: 'cat1', name: 'CAT 1.0', when: '5 October 2026 · Kallang Beach Courts',
       items: [{ v: true, src: 'assets/gallery/cat1/v1.mp4', th: 'assets/gallery/cat1/v1-t.jpg' }].concat(shots('assets/gallery/cat1/', 33)) }
   ];
-  var galKey = sget('cat.gal') || 'cat1';
+  var galKey = sget('cat.gal') || 'cat2';
   function renderGallery() {
-    var cur = GALLERY.filter(function (x) { return x.key === galKey; })[0] || GALLERY[1];
+    var cur = GALLERY.filter(function (x) { return x.key === galKey; })[0] || GALLERY[0];
     root.appendChild(pageHead('Photos and videos', 'Gallery', 'Pictures and clips from every CAT tournament. Tap one to open it full size.'));
     root.appendChild(h('div', { class: 'wrap' },
       h('div', { class: 'chips', role: 'group', 'aria-label': 'Tournament' }, GALLERY.map(function (x) {
