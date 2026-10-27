@@ -259,12 +259,27 @@ body.s3d-lock { overflow: hidden; }
 @keyframes s3dpop { from { opacity: 0; margin-top: 10px; } 15% { opacity: 1; } to { opacity: 0; margin-top: -50px; } }
 .s3d-panel { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(11, 34, 51, .35); }
 .s3d-panel[hidden] { display: none; }
-.s3d-card { background: var(--bg); color: var(--ink); border-radius: 24px; padding: 22px; max-width: 360px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 20px 50px -15px rgba(0, 0, 0, .5); }
+.s3d-card { background: var(--bg); color: var(--ink); border-radius: 24px; padding: 22px; max-width: 380px; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 20px 50px -15px rgba(0, 0, 0, .5); }
+.s3d-how { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.s3d-how b { font-weight: 700; }
+.s3d-board { list-style: none; margin: 0; padding: 0; counter-reset: r; font-size: 15px; }
+.s3d-board li { counter-increment: r; display: flex; gap: 10px; padding: 6px 4px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.s3d-board li::before { content: counter(r); width: 1.4em; color: var(--muted); font-weight: 700; }
+.s3d-board li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.s3d-board li b { font-weight: 800; }
+.s3d-board li.me { background: var(--accent-soft); border-radius: 8px; }
+.s3d-board li.neg b { color: var(--err); }
+.s3d-add { display: flex; gap: 8px; }
+.s3d-add input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); }
+.s3d-add button, .s3d-link { border: 1.5px solid var(--ink); border-radius: 999px; padding: 9px 16px; background: transparent; color: var(--ink); font: inherit; font-weight: 700; }
 .s3d-card h3 { font-family: var(--display); font-size: 28px; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
 .s3d-card p { margin: 0; font-size: 15px; }
 .s3d-k { font-size: 12px !important; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .s3d-best { font-weight: 700; }
 .s3d-go { margin-top: 6px; border: 0; border-radius: 999px; padding: 13px 18px; background: var(--ink); color: var(--bg); font: inherit; font-weight: 800; font-size: 16px; }
+/* the long how-to scrolls inside the card; Start stays in view */
+.s3d-card { padding-bottom: 0; }
+.s3d-card .s3d-go { position: sticky; bottom: 18px; margin-bottom: 18px; box-shadow: 0 0 0 8px var(--bg), 0 18px 0 8px var(--bg); }
 .s3d-hap { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .champ { background: var(--dark); color: var(--dark-on); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 6px; }
 .champ .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
@@ -724,7 +739,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     ball: { src: 'assets/yatha.png', w: 543, h: 720 },
     photos: [1, 2, 3].map(function (n) {
       return { src: 'assets/gallery/cat1/team' + n + '.webp', th: 'assets/gallery/cat1/team' + n + '-t.webp', alt: 'The CAT 1.0 ' + ['winners', 'runners-up', '3rd place team'][n - 1], team: ['ash', 'sat', 'barath'][n - 1], place: n };
-    }).concat([{ src: 'assets/gallery/cat1/minion.webp', th: 'assets/gallery/cat1/minion-t.webp', alt: 'Team Minion', cap: 'Team Minion' },
+    }).concat([{ src: 'assets/gallery/cat1/minion.webp', th: 'assets/gallery/cat1/minion-t.webp', alt: 'Team Minion, special mention for the best team outfit', cap: 'Special mention · Best team outfit · Team Minion' },
       { src: 'assets/gallery/cat1/group.webp', th: 'assets/gallery/cat1/group-t.webp', alt: 'Everyone who played CAT 1.0', cap: 'Everyone who played CAT 1.0' }]),
     day: { y: 2026, m: 9, d: 5, tz: 8 },
     teams: [
@@ -1632,13 +1647,13 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function gameSection() {
     if (!GM) {
       GM = h('div', { class: 's3d' }, h('p', { class: 's3d-load', text: 'Loading the court…' }));
-      import('./assets/serve3d.js?v=2').then(function (m) { return m.mount(GM, { get: lget, set: lset }); }).catch(function (e) {
+      import('./assets/serve3d.js?v=3').then(function (m) { return m.mount(GM, { get: lget, set: lset }); }).catch(function (e) {
         console.error('game failed', e);
         GM.textContent = ''; GM.appendChild(h('p', { class: 's3d-load', text: 'The game could not load. Check the connection and reload the page.' }));
       });
     }
     return h('section', { class: 'game', id: 'game' }, sh('Serve practice'),
-      h('p', { class: 'note', text: 'Warm up for CAT 3.0. Swipe up to serve (or hold Space on a keyboard): the faster the swipe, the harder the hit. Knock over everything on the far side in 5 levels and 2 minutes.' }),
+      h('p', { class: 'note', text: 'Warm up for CAT 3.0. Swipe up to serve (or hold Space on a keyboard): the faster the swipe, the harder the hit. Knock over everything on the far side in 5 levels and 2 minutes. Tap How to play in the game for the full rules, and Leaderboard to see the scores to beat.' }),
       GM);
   }
 

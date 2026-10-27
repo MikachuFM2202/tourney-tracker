@@ -391,29 +391,74 @@ export async function mount(root, store) {
     pops.append(p); setTimeout(function () { p.remove(); }, 1000);
   }
 
-  function showPanel(kind) {
+  /* ---------- leaderboard: club scores to beat, plus scores added on this device (kept in localStorage, not shared) ---------- */
+  var CLUB = [['Mika', 4870], ['Rossi', 3920], ['Ash', 3410], ['Sat', 2980], ['Barath', 2250], ['Yatha', -120]];
+  function mine() { try { var a = JSON.parse(store.get('cat.serve.board') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function board() {
+    var rows = CLUB.map(function (r) { return { n: r[0], s: r[1] }; }).concat(mine().map(function (r) { return { n: String(r.n).slice(0, 16), s: +r.s || 0, me: true }; }));
+    return rows.sort(function (a, b) { return b.s - a.s; }).slice(0, 10);
+  }
+  function boardEl() {
+    var ol = el('ol', 's3d-board');
+    board().forEach(function (r) { var li = el('li', (r.me ? 'me' : '') + (r.s < 0 ? ' neg' : '')); li.append(el('span', null, r.n), el('b', null, String(r.s))); ol.append(li); });
+    return ol;
+  }
+  function addScore(name, s) {
+    var a = mine(); a.push({ n: name.slice(0, 16), s: s });
+    a.sort(function (x, y) { return y.s - x.s; });
+    store.set('cat.serve.board', JSON.stringify(a.slice(0, 10)));
+  }
+  function howTo() {
+    var ul = el('ul', 's3d-how');
+    [['Goal', 'knock over everything on the far side of the net. Clear a level to go to the next one.'],
+     ['Serve', (coarse ? 'swipe up' : 'drag up') + ' on the court. A faster swipe hits harder and further. Too slow hits the net, too fast lands out.'],
+     ['Aim', 'lean the swipe left or right. A small lean is enough.'],
+     ['Guide', 'the dotted line shows where the ball will go: white is in, red is out. It gets shorter in later levels.'],
+     ['Wind', 'from level 4 the wind pushes the ball sideways. The flag and the Wind chip show which way.'],
+     ['Points', '100 for one hit. Hit two with one serve for 400, three for 900. Clear all 5 levels for 10 points per second left.']]
+      .forEach(function (x) { var li = el('li'); li.append(el('b', null, x[0] + ': '), x[1]); ul.append(li); });
+    if (!coarse) { var li = el('li'); li.append(el('b', null, 'Keyboard: '), 'hold Space to power up, ← → to aim, let go to serve. P pauses.'); ul.append(li); }
+    return ul;
+  }
+  function showPanel(kind, view) {
     panel.textContent = ''; panel.hidden = false;
     var box = el('div', 's3d-card'), btn = el('button', 's3d-go'); btn.type = 'button';
-    if (kind === 'menu') {
-      box.append(el('p', 's3d-k', 'Serve practice'), el('h3', null, 'Knock them all over'),
-        el('p', null, (coarse ? 'Swipe up' : 'Drag up') + ' on the court to serve. The faster the swipe, the harder the hit. Lean the swipe left or right to aim.'),
-        coarse ? null : el('p', null, 'Keyboard: hold Space to power up, ← → to aim, let go to serve. P pauses.'),
-        el('p', null, '5 levels, 2 minutes. The dotted line shows where the ball goes, and fades out in the later levels.'));
+    function link(text, fn) { var b = el('button', 's3d-link', text); b.type = 'button'; b.onclick = fn; return b; }
+    if (kind === 'menu' && view === 'board') {
+      box.append(el('p', 's3d-k', 'Leaderboard'), el('h3', null, 'Scores to beat'), boardEl(),
+        el('p', 's3d-k', 'Scores you add stay on this device.'), link('How to play', function () { showPanel('menu'); }));
       btn.textContent = 'Start'; btn.onclick = startGame;
-      if (best) box.append(el('p', 's3d-best', 'Best score: ' + best));
+    } else if (kind === 'menu') {
+      box.append(el('p', 's3d-k', 'Serve practice · how to play'), el('h3', null, 'Knock them all over'),
+        el('p', null, 'Serve the ball over the net and knock down the targets. 5 levels, 2 minutes.'), howTo(),
+        best ? el('p', 's3d-best', 'Your best score: ' + best) : null, link('Leaderboard', function () { showPanel('menu', 'board'); }));
+      btn.textContent = 'Start'; btn.onclick = startGame;
     } else if (kind === 'pause') {
-      box.append(el('p', 's3d-k', 'Paused'), el('h3', null, fmt(timeLeft) + ' left'), el('p', null, 'Level ' + (level + 1) + ' · ' + score + ' points'));
+      box.append(el('p', 's3d-k', 'Paused'), el('h3', null, fmt(timeLeft) + ' left'), el('p', null, 'Level ' + (level + 1) + ' · ' + score + ' points'), howTo());
       btn.textContent = 'Carry on'; btn.onclick = resume;
     } else {
       var all = cleared === LEVELS.length;
       box.append(el('p', 's3d-k', all ? 'All 5 levels done' : 'Time!'), el('h3', null, score + ' points'),
         el('p', null, cleared + ' of 5 levels cleared · ' + hitsTotal + ' knocked over with ' + serves + ' serves' + (serves ? ' (' + Math.round(hitsTotal / serves * 100) + '% per serve)' : '') + '.'),
         el('p', 's3d-best', score >= best && score ? 'New best score!' : 'Best score: ' + best));
+      if (score > 0 && !added) {
+        var f = el('form', 's3d-add'), name = el('input'), go = el('button', null, 'Add');
+        name.placeholder = 'Your name'; name.maxLength = 16; name.value = store.get('cat.serve.name') || ''; name.setAttribute('aria-label', 'Your name for the leaderboard');
+        go.type = 'submit';
+        f.onsubmit = function (ev) {
+          ev.preventDefault();
+          var n = name.value.trim(); if (!n) { name.focus(); return; }
+          store.set('cat.serve.name', n); addScore(n, score); added = true; showPanel('over');
+        };
+        f.append(name, go); box.append(el('p', 's3d-k', 'Add your score to the leaderboard'), f);
+      }
+      box.append(el('p', 's3d-k', 'Leaderboard'), boardEl());
       btn.textContent = 'Play again'; btn.onclick = startGame;
     }
     box.append(btn); panel.append(box);
-    setTimeout(function () { if (!panel.hidden) btn.focus({ preventScroll: true }); }, 50);
+    setTimeout(function () { if (!panel.hidden && !panel.contains(document.activeElement)) btn.focus({ preventScroll: true }); }, 50);
   }
+  var added = false;
   function hidePanel() { panel.hidden = true; panel.textContent = ''; }
 
   function readyBall() {
@@ -422,7 +467,7 @@ export async function mount(root, store) {
   }
   function startGame() {
     audio(); buzz(10);
-    level = 0; score = 0; timeLeft = P.TIME; serves = 0; hitsTotal = 0; cleared = 0; lastTick = -1;
+    level = 0; score = 0; timeLeft = P.TIME; serves = 0; hitsTotal = 0; cleared = 0; lastTick = -1; added = false;
     trailDots.count = 0; hidePanel(); spawnLevel(0); readyBall();
     state = 'banner'; banner = 1.3; say('Level 1 · ' + LEVELS[0].name, 1.3); paintHud(); loop();
     canvas.focus({ preventScroll: true });
@@ -450,7 +495,7 @@ export async function mount(root, store) {
     var up = (first.y - last.y) / dt * 1000 / H; /* canvas heights per second, upwards */
     var dx = last.x - drag.x0, dy = drag.y0 - last.y;
     drag.p = Math.max(-0.1, Math.min(1.25, (up - 0.9) / 5.4));
-    drag.yaw = Math.max(-0.42, Math.min(0.42, Math.atan2(dx, Math.max(8, dy)) * 0.7));
+    drag.yaw = Math.max(-0.42, Math.min(0.42, Math.atan2(dx, Math.max(8, dy)) * 0.55));
     drag.ok = dy > H * 0.06 && up > 0.4;
   }
   canvas.addEventListener('pointerdown', function (ev) {
@@ -505,8 +550,8 @@ export async function mount(root, store) {
       drag.t += dt;
       var ph = drag.t / 1.4 % 2; /* 0 → 1 → 0 over 2.8 s */
       drag.p = -0.1 + 1.35 * (ph < 1 ? ph : 2 - ph);
-      drag.yaw = Math.max(-0.42, Math.min(0.42, drag.yaw + kbAim * 0.5 * dt));
-    } else if (kbAim && state === 'play' && !shot) { kbYaw = Math.max(-0.42, Math.min(0.42, kbYaw + kbAim * 0.5 * dt)); peek = 0.9; }
+      drag.yaw = Math.max(-0.42, Math.min(0.42, drag.yaw + kbAim * 0.4 * dt));
+    } else if (kbAim && state === 'play' && !shot) { kbYaw = Math.max(-0.42, Math.min(0.42, kbYaw + kbAim * 0.4 * dt)); peek = 0.9; }
     if (peek > 0) peek -= dt;
   }
 
