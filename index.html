@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Casual SG</title>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
 <meta name="description" content="CAT 3.0 (Casual SG Advanced Tournament) is coming soon. Results, standings and photos from CAT 2.0 and CAT 1.0, plus the gallery and rules.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -225,13 +226,44 @@ h1, h2, h3, p { margin: 0; }
 .mybox .field { flex: 0 1 16rem; }
 .myrec { flex-basis: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
 .match.mine { outline: 3px solid var(--accent); outline-offset: -3px; }
-/* CAT 3.0 mini game */
+/* CAT 3.0 mini game: 3D serve practice (assets/serve3d.js) */
 .game { display: flex; flex-direction: column; gap: 10px; }
-.game canvas { display: block; width: 100%; max-width: 860px; aspect-ratio: 2 / 1; border-radius: 22px; background: #bfe3f5; touch-action: none; }
-.game .pad { display: flex; gap: 10px; }
-.game .pad button { flex: 1; border: 1.5px solid var(--line); border-radius: 18px; background: var(--card); color: var(--ink); font: inherit; font-weight: 700; font-size: 20px; text-align: center; padding: 14px 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.game .pad button.jump { flex: 1.4; background: var(--ink); color: var(--bg); border-color: var(--ink); }
-@media (hover: hover) and (pointer: fine) { .game .pad { display: none; } }
+.s3d { position: relative; width: 100%; aspect-ratio: 4 / 5; max-height: 82vh; border-radius: 22px; overflow: hidden; background: linear-gradient(#6fbde8, #fbeedb); color: #0b2233; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+@media (min-width: 768px) { .s3d { aspect-ratio: 16 / 9; } }
+.s3d.full { position: fixed; inset: 0; z-index: 60; max-height: none; aspect-ratio: auto; border-radius: 0; }
+body.s3d-lock { overflow: hidden; }
+.s3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.s3d-load { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-weight: 700; }
+.s3d-hud { position: absolute; inset: 0; pointer-events: none; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.s3d-top { display: flex; flex-wrap: wrap; gap: 6px; padding-right: 128px; }
+.s3d-chip { background: rgba(255, 255, 255, .86); border-radius: 999px; padding: 5px 11px; font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; box-shadow: 0 2px 8px rgba(0, 40, 90, .12); }
+.s3d-chip.tm.low { background: #e8573c; color: #fff; }
+.s3d-sub { display: flex; align-items: center; gap: 8px; }
+.s3d-left { display: flex; gap: 4px; padding: 6px 9px; background: rgba(255, 255, 255, .6); border-radius: 999px; }
+.s3d-left i { width: 10px; height: 10px; border-radius: 50%; background: #e8573c; }
+.s3d-left i.gone { background: rgba(11, 34, 51, .2); }
+.s3d-chip.wind[hidden] { display: none; }
+.s3d-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+.s3d-tool { pointer-events: auto; width: 38px; height: 38px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .86); font-size: 17px; line-height: 1; box-shadow: 0 2px 8px rgba(0, 40, 90, .12); }
+.s3d-power { position: absolute; right: 12px; bottom: 14px; width: 16px; height: 40%; border-radius: 10px; background: rgba(255, 255, 255, .55); overflow: hidden; opacity: 0; transition: opacity .15s; }
+.s3d-power.on { opacity: 1; }
+.s3d-power i { position: absolute; inset: 0; transform-origin: bottom; transform: scaleY(0); background: #3fae6a; }
+.s3d-power i.bad { background: #e8573c; }
+.s3d-power b { position: absolute; bottom: 100%; right: 0; font-size: 0; }
+.s3d-msg { align-self: center; margin-top: auto; margin-bottom: 8px; background: rgba(11, 34, 51, .82); color: #fff; font-weight: 700; border-radius: 999px; padding: 8px 16px; font-size: 15px; text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; }
+.s3d-msg.on { opacity: 1; transform: none; }
+.s3d-pops { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.s3d-pop { position: absolute; transform: translate(-50%, -50%); font-family: var(--display); font-weight: 800; font-size: 22px; color: #fff; text-shadow: 0 2px 6px rgba(0, 0, 0, .45); animation: s3dpop 1s ease-out forwards; white-space: nowrap; }
+@keyframes s3dpop { from { opacity: 0; margin-top: 10px; } 15% { opacity: 1; } to { opacity: 0; margin-top: -50px; } }
+.s3d-panel { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(11, 34, 51, .35); }
+.s3d-panel[hidden] { display: none; }
+.s3d-card { background: var(--bg); color: var(--ink); border-radius: 24px; padding: 22px; max-width: 360px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 20px 50px -15px rgba(0, 0, 0, .5); }
+.s3d-card h3 { font-family: var(--display); font-size: 28px; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+.s3d-card p { margin: 0; font-size: 15px; }
+.s3d-k { font-size: 12px !important; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.s3d-best { font-weight: 700; }
+.s3d-go { margin-top: 6px; border: 0; border-radius: 999px; padding: 13px 18px; background: var(--ink); color: var(--bg); font: inherit; font-weight: 800; font-size: 16px; }
+.s3d-hap { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .champ { background: var(--dark); color: var(--dark-on); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 6px; }
 .champ .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 .champ .v { font-family: var(--display); font-weight: 700; font-size: clamp(36px, 7vw, 60px); line-height: 1; letter-spacing: -.03em; }
@@ -1473,148 +1505,20 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       footer()));
   }
 
-  /* ---------- mini game: 1v1 beach volleyball against the computer, first to 7 ----------
-     The canvas and state live outside render(), so a re-render keeps the game going. */
+  /* ---------- mini game: 3D serve practice, in assets/serve3d.js (a module, loaded on first view).
+     The game element lives outside render(), so a re-render keeps the game going. */
   var GM = null;
   function gameSection() {
-    if (!GM) GM = makeGame();
-    return h('section', { class: 'game', id: 'game' }, sh('Mini game'),
-      h('p', { class: 'note', text: 'Warm up while you wait for CAT 3.0. Beat the computer to 7. Keys: ← → to move, ↑ or Space to jump. On a phone, use the buttons.' }),
-      GM.cv, GM.pad);
-  }
-  function makeGame() {
-    var W = 800, H = 400, G = 360, NX = 400, NT = 250, PR = 30, BR = 15;
-    var cv = h('canvas', { width: String(W), height: String(H), tabindex: '0', 'aria-label': 'Volleyball mini game' });
-    var ctx = cv.getContext('2d'), ballImg = new Image(); ballImg.src = 'assets/mikasa.png';
-    var keys = {}, me, cpu, ball, sc, serve, msg, state = 'menu', pause = 0, last = 0, best = +lget('cat.game.best') || 0;
-    function reset() { sc = [0, 0]; serve = 0; msg = ''; point(); }
-    function point() {
-      me = { x: 200, y: G, vx: 0, vy: 0 }; cpu = { x: 600, y: G, vx: 0, vy: 0 };
-      /* dropped just net-side of the server, so a bump sends it over */
-      ball = { x: serve ? 586 : 214, y: 120, vx: 0, vy: 0, a: 0 };
-    }
-    function hold(k) {
-      return function (ev) { ev.preventDefault(); keys[k] = ev.type === 'pointerdown'; if (keys[k] && state !== 'play') start(); };
-    }
-    function padBtn(k, t, cls) {
-      return h('button', { type: 'button', class: cls || null, text: t, 'aria-label': k, onpointerdown: hold(k), onpointerup: hold(k), onpointerleave: hold(k), onpointercancel: hold(k) });
-    }
-    var pad = h('div', { class: 'pad' }, padBtn('left', '◀'), padBtn('right', '▶'), padBtn('jump', 'Jump', 'jump'));
-    var KEY = { ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right', ArrowUp: 'jump', w: 'jump', ' ': 'jump' };
-    function onKey(ev) {
-      var k = KEY[ev.key] || KEY[ev.key.toLowerCase()];
-      if (!k || !cv.isConnected || page !== 'cat3') return;
-      /* only take the keys over while a game is on, so the page still scrolls otherwise */
-      if (state !== 'play' && !(ev.type === 'keydown' && document.activeElement === cv)) return;
-      ev.preventDefault();
-      keys[k] = ev.type === 'keydown';
-      if (state !== 'play' && keys[k]) start();
-    }
-    document.addEventListener('keydown', onKey); document.addEventListener('keyup', onKey);
-    cv.addEventListener('pointerdown', function () { if (state !== 'play') start(); });
-    function start() { if (state === 'over' || state === 'menu') reset(); else msg = ''; state = 'play'; pause = 40; cv.focus({ preventScroll: true }); loop(); }
-
-    function move(p, l, r, j, minX, maxX, dt) {
-      p.vx = (r - l) * 6;
-      if (j && p.y >= G) p.vy = -11.5;
-      p.vy += 0.6 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
-      if (p.y > G) { p.y = G; p.vy = 0; }
-      p.x = Math.max(minX + PR, Math.min(maxX - PR, p.x));
-    }
-    /* the player is a circle on top of the body: the ball bounces off it */
-    function hit(p) {
-      var cx = p.x, cy = p.y - 45, dx = ball.x - cx, dy = ball.y - cy, d = Math.hypot(dx, dy);
-      if (d >= PR + BR || d === 0) return;
-      var nx = dx / d, ny = dy / d, rv = (ball.vx - p.vx) * nx + (ball.vy - p.vy) * ny;
-      ball.x = cx + nx * (PR + BR); ball.y = cy + ny * (PR + BR);
-      if (rv < 0) { ball.vx -= 1.8 * rv * nx; ball.vy -= 1.8 * rv * ny; }
-      ball.vx += p.vx * 0.4; ball.vy = Math.min(ball.vy, -7) + p.vy * 0.3;
-      var sp = Math.hypot(ball.vx, ball.vy);
-      if (sp > 15) { ball.vx *= 15 / sp; ball.vy *= 15 / sp; }
-    }
-    function cpuThink() {
-      /* aim to stand a little behind where the ball comes down on its side */
-      var t = ball.x, vy = ball.vy, y = ball.y, x = ball.x, vx = ball.vx, n = 0;
-      while (y < G - 60 && n++ < 200) { vy += 0.35; y += vy; x += vx; if (x < BR || x > W - BR) vx = -vx; }
-      t = x > NX ? x + 14 : 600;
-      var l = cpu.x > t + 6, r = cpu.x < t - 6;
-      var j = ball.x > NX && Math.abs(ball.x - cpu.x) < 60 && ball.y > 150 && ball.y < G - 90 && ball.vy > 0;
-      return [l, r, j];
-    }
-    function step(dt) {
-      if (pause > 0) { pause -= dt; return; }
-      move(me, keys.left ? 1 : 0, keys.right ? 1 : 0, keys.jump, 0, NX - 4, dt);
-      var c = cpuThink();
-      move(cpu, c[0] ? 0.85 : 0, c[1] ? 0.85 : 0, c[2], NX + 4, W, dt);
-      ball.vy += 0.35 * dt; ball.x += ball.vx * dt; ball.y += ball.vy * dt; ball.a += ball.vx * 0.03 * dt;
-      if (ball.x < BR) { ball.x = BR; ball.vx = Math.abs(ball.vx); }
-      if (ball.x > W - BR) { ball.x = W - BR; ball.vx = -Math.abs(ball.vx); }
-      if (ball.y < BR) { ball.y = BR; ball.vy = Math.abs(ball.vy); }
-      /* the net: a post with a round top */
-      if (ball.y > NT - BR && Math.abs(ball.x - NX) < 5 + BR) {
-        /* a ball on top of the post rolls off to one side, so it can never rest there */
-        if (ball.y < NT && ball.vy > 0) { ball.y = NT - BR; ball.vy = -Math.abs(ball.vy) * 0.7; ball.vx += ball.x < NX ? -1 : 1; }
-        else { ball.x = ball.x < NX ? NX - 5 - BR : NX + 5 + BR; ball.vx = -ball.vx * 0.6; }
-      }
-      hit(me); hit(cpu);
-      if (ball.y >= G - BR) {
-        var w = ball.x < NX ? 1 : 0;
-        sc[w]++; serve = w;
-        if (sc[w] >= 7) {
-          state = 'over'; msg = w ? 'The computer wins ' + sc[1] + '–' + sc[0] + '. Tap to play again.' : 'You win ' + sc[0] + '–' + sc[1] + '! Tap to play again.';
-          if (!w) { var diff = sc[0] - sc[1]; if (diff > best) { best = diff; lset('cat.game.best', String(best)); } }
-        }
-        else { msg = w ? 'Point to the computer' : 'Your point!'; pause = 50; point(); }
-      }
-      if (!pause) msg = '';
-    }
-    function fig(p, col) {
-      ctx.fillStyle = col;
-      ctx.beginPath(); ctx.arc(p.x, p.y - 45, PR, Math.PI, 0); ctx.lineTo(p.x + PR, p.y); ctx.lineTo(p.x - PR, p.y); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x + (ball.x > p.x ? 10 : -10), p.y - 55, 6, 0, 7); ctx.fill();
-      ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(p.x + (ball.x > p.x ? 12 : -8), p.y - 55, 3, 0, 7); ctx.fill();
-    }
-    function draw() {
-      var sky = ctx.createLinearGradient(0, 0, 0, G); sky.addColorStop(0, '#8fd0f2'); sky.addColorStop(1, '#e3f4fb');
-      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, G);
-      ctx.fillStyle = '#ecd29b'; ctx.fillRect(0, G, W, H - G);
-      ctx.fillStyle = '#d9bb7e'; ctx.fillRect(0, G, W, 4);
-      ctx.fillStyle = '#334'; ctx.fillRect(NX - 3, NT, 6, G - NT);
-      ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(NX - 5, NT, 10, 26);
-      ctx.save(); ctx.beginPath(); ctx.ellipse(ball.x, G + 6, BR * Math.max(.4, 1 - (G - ball.y) / 400), 4, 0, 0, 7); ctx.fillStyle = 'rgba(0,0,0,.15)'; ctx.fill(); ctx.restore();
-      fig(me, '#2f7cf6'); fig(cpu, '#e8573c');
-      ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.a);
-      if (ballImg.complete && ballImg.naturalWidth) ctx.drawImage(ballImg, -BR, -BR, BR * 2, BR * 2);
-      else { ctx.fillStyle = '#fbd34d'; ctx.beginPath(); ctx.arc(0, 0, BR, 0, 7); ctx.fill(); }
-      ctx.restore();
-      ctx.fillStyle = '#0b2233'; ctx.textAlign = 'center'; ctx.font = '700 44px system-ui, sans-serif';
-      ctx.fillText(sc[0] + '  –  ' + sc[1], W / 2, 60);
-      ctx.font = '600 16px system-ui, sans-serif'; ctx.fillText('You', W / 2 - 70, 84); ctx.fillText('Computer', W / 2 + 70, 84);
-      var m = state === 'menu' ? 'Tap or press Space to start' : msg;
-      if (m) {
-        ctx.font = '700 22px system-ui, sans-serif'; var tw = ctx.measureText(m).width + 48;
-        ctx.fillStyle = 'rgba(11,34,51,.8)';
-        ctx.fillRect(W / 2 - tw / 2, 130, tw, 48); ctx.fillStyle = '#fff'; ctx.fillText(m, W / 2, 162);
-      }
-      if (best) { ctx.font = '600 14px system-ui, sans-serif'; ctx.fillStyle = '#0b2233'; ctx.textAlign = 'right'; ctx.fillText('Best win: by ' + best, W - 16, 26); }
-    }
-    var running = false;
-    function loop() {
-      if (running) return;
-      running = true; last = 0;
-      requestAnimationFrame(function tick(t) {
-        /* stop when the page changes or the tab is hidden; the next tap starts it again */
-        if (!cv.isConnected || document.hidden || state !== 'play') {
-          if (state === 'play') { state = 'paused'; msg = 'Paused. Tap to carry on.'; }
-          running = false; keys = {}; draw(); return;
-        }
-        var dt = last ? Math.min(2, (t - last) / 16.67) : 1; last = t;
-        step(dt); draw();
-        requestAnimationFrame(tick);
+    if (!GM) {
+      GM = h('div', { class: 's3d' }, h('p', { class: 's3d-load', text: 'Loading the court…' }));
+      import('./assets/serve3d.js?v=1').then(function (m) { return m.mount(GM, { get: lget, set: lset }); }).catch(function (e) {
+        console.error('game failed', e);
+        GM.textContent = ''; GM.appendChild(h('p', { class: 's3d-load', text: 'The game could not load. Check the connection and reload the page.' }));
       });
     }
-    reset(); ballImg.onload = draw; draw();
-    return { cv: cv, pad: pad };
+    return h('section', { class: 'game', id: 'game' }, sh('Serve practice'),
+      h('p', { class: 'note', text: 'Warm up for CAT 3.0. Swipe up to serve: the faster the swipe, the harder the hit. Knock over everything on the far side in 5 levels and 2 minutes.' }),
+      GM);
   }
 
   function renderTour() {
