@@ -1321,7 +1321,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function paintGuests() {
     document.querySelectorAll('.guestwrap').forEach(function (w) {
       w.querySelector('.guest').style.visibility = flying ? 'hidden' : '';
-      w.querySelector('.guesthint').textContent = flying ? 'Wheeee!' : 'Click the image';
+      w.querySelector('.guesthint').textContent = flying ? 'Wheeee!' : 'Click me';
     });
   }
 
@@ -1335,7 +1335,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       var img = h('img', { src: TR.ball.src, alt: '', width: String(TR.ball.w), height: String(TR.ball.h) });
       if (TR.ball.guest) return h('div', { class: cls + ' guestwrap' },
         h('button', { class: 'guest', type: 'button', style: flying ? 'visibility:hidden' : null, 'aria-label': TR.ball.guest + '. Click to make him fly', onclick: fly }, img),
-        h('p', { class: 'guesthint', 'aria-hidden': 'true', text: flying ? 'Wheeee!' : 'Click the image' }));
+        h('p', { class: 'guesthint', 'aria-hidden': 'true', text: flying ? 'Wheeee!' : 'Click me' }));
       return h('div', { class: cls, 'aria-hidden': 'true' }, h('div', { class: 'ball' }, img));
     }
     return h('div', { class: 'hero' + (intro ? ' intro' : ''), id: 'top' }, ballEl('ballwrap'), h('div', { class: 'hero-in' },
