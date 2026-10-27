@@ -2,7 +2,7 @@
 // A toy beach court in the WarranteeLah Blender-kit look (chunky rounded shapes, matte colours, warm sun,
 // soft shadows). The player serves by swiping up: a faster swipe hits harder, a sideways lean aims.
 // 5 levels of things to knock over on the far side, 2 minutes in total.
-// three.js comes from jsDelivr through the import map in index.html. The pure physics below has no
+// three.js r170 is self-hosted in assets/vendor/three and mapped by the import map in index.html. The pure physics below has no
 // three.js in it, so it can be checked in node (see the bottom of this file).
 
 export const P = {
