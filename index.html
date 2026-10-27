@@ -269,6 +269,34 @@ body.s3d-lock { overflow: hidden; }
 .champ { background: var(--dark); color: var(--dark-on); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 6px; }
 .champ .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 .champ .v { font-family: var(--display); font-weight: 700; font-size: clamp(36px, 7vw, 60px); line-height: 1; letter-spacing: -.03em; }
+.podium { background: var(--dark); color: var(--dark-on); border-radius: 28px; padding: 24px 16px 0; overflow: hidden; }
+.podium .k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); text-align: center; }
+.steps { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 8px; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-width: 0; }
+.step .em { font-size: 34px; line-height: 1; }
+.step .tname { font-family: var(--display); font-size: clamp(15px, 3.4vw, 24px); line-height: 1.1; overflow-wrap: anywhere; }
+.step .pl { font-size: 12px; opacity: .75; }
+.step .block { align-self: stretch; margin-top: 6px; border-radius: 14px 14px 0 0; display: grid; place-items: start center; padding-top: 10px; font-family: var(--display); font-weight: 800; font-size: clamp(22px, 5vw, 40px); color: #1a1205; }
+.step.p1 .block { height: 130px; background: var(--gold); }
+.step.p2 .block { height: 96px; background: #c3c9d1; }
+.step.p3 .block { height: 72px; background: #c98a52; }
+.photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; gap: 10px; }
+.titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.soon { font-family: var(--body); font-weight: 800; font-size: clamp(14px, 2.4vw, 20px); letter-spacing: .14em; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; white-space: nowrap; }
+.top3 { margin: 0; }
+.top3 .shot { position: relative; border-radius: 22px; overflow: hidden; }
+.top3 img { display: block; width: 100%; height: auto; }
+.top3 figcaption { padding: 8px 4px 0; }
+.top3 .tag { position: absolute; top: 0; bottom: 0; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.top3 .tip { position: absolute; left: 50%; top: 10%; transform: translate(-50%, 6px); white-space: nowrap; background: rgba(0, 0, 0, .78); color: #fff; font-size: 13px; padding: 6px 10px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s var(--ease); }
+.top3 .tag:first-of-type .tip { left: 4px; transform: translate(0, 6px); }
+.top3 .tag:last-of-type .tip { left: auto; right: 4px; transform: translate(0, 6px); }
+.top3 .tag:hover .tip, .top3 .tag:focus-visible .tip, .top3 .tag.on .tip { opacity: 1; transform: translate(-50%, 0); }
+.top3 .tag:first-of-type:hover .tip, .top3 .tag:first-of-type:focus-visible .tip, .top3 .tag:first-of-type.on .tip,
+.top3 .tag:last-of-type:hover .tip, .top3 .tag:last-of-type:focus-visible .tip, .top3 .tag:last-of-type.on .tip { transform: none; }
+.gi.wide { aspect-ratio: auto; }
+.gi.wide img { height: auto; }
+.endbox .field { flex: 1 1 14rem; }
 
 /* search */
 .search { display: flex; align-items: center; gap: 10px; background: var(--surface); border-radius: 999px; padding: 0 20px; transition: box-shadow .2s; }
@@ -720,7 +748,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
       { t: '10:00 – 10:20', stage: '3rd place', grp: 'KO', g: [{ id: 24, c: 0, ko: '3rd place', wait: 'Teams are set once both semi-finals have a score.' }] },
       { t: '10:20 – 10:40', stage: 'Final', grp: 'KO', g: [{ id: 25, c: 0, ko: 'Final', wait: 'Teams are set once both semi-finals have a score.' }] }
     ],
-    final: 25, bracket: [[22, 23], [25, 24]],
+    final: 25, third: 24, bracket: [[22, 23], [25, 24]],
     ko: function (S, mk, K) {
       var s = S[0];
       mk(22, s && s[0], s && s[3], '1st place', '4th place');
@@ -788,6 +816,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     venue: null,
     sub: 'Beach volleyball, 2v2. Sunday 25 October 2026, from 4:00 PM on 2 courts. 14 teams in two pools, then the semi-finals and the final. Every game is first to 15, no deuce.',
     ball: { src: 'assets/mikasa.png', w: 480, h: 480 },
+    photos: [{ src: 'assets/gallery/cat2/top3.webp', th: 'assets/gallery/cat2/top3-t.webp', alt: 'The CAT 2.0 top 3 teams with their medals' },
+      { src: 'assets/gallery/cat2/group.webp', th: 'assets/gallery/cat2/group-t.webp', alt: 'Everyone who played CAT 2.0' }],
     teams: POOL_A.concat(POOL_B),
     slots: rounds(SCHED).concat([
       { t: 'Semi-finals', stage: 'Knockouts', grp: 'KO', g: [
@@ -961,7 +991,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     if (!s || typeof s.scores !== 'object' || !s.scores) return;
     if ((s.rev || 0) <= (tr.state.rev || 0)) return;
     setState(tr, s);
-    if (saving || !tourPage() || pageTour() !== tr) return;
+    /* the CAT 3.0 page shows every tournament's podium, so it redraws for any of them */
+    if (saving || page !== 'cat3' && (!tourPage() || pageTour() !== tr)) return;
     if (typing()) { pendingRender = true; return; }
     render();
   }
@@ -1061,6 +1092,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function nextState(reset) {
     var next = { v: 1, scores: {}, updated: new Date().toISOString(), by: who || undefined };
     if (reset) return next;
+    if (STATE.ended) next.ended = STATE.ended;
     Object.keys(STATE.scores).forEach(function (k) { next.scores[k] = STATE.scores[k]; });
     POOL.forEach(function (g) {
       var s = dstat(g);
@@ -1088,7 +1120,8 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   }
   function b64e(s) { return btoa(unescape(encodeURIComponent(s))); }
   function b64d(s) { return decodeURIComponent(escape(atob(s.replace(/\s/g, '')))); }
-  function save(reset) {
+  /* end: { top: [1st, 2nd, 3rd] } ends the tournament, null reopens it, left out keeps it as it is */
+  function save(reset, end) {
     if (saving || !token) return;
     saving = true; saveMsg = ''; updateBar();
     /* read the latest file first, put this device's changes on top of it, then write it back */
@@ -1112,8 +1145,10 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
         });
         if (clash.length) throw { code: 'clash', games: clash };
         var next = nextState(reset);
+        if (end) next.ended = { top: end.top, at: next.updated, by: who || undefined };
+        else if (end === null) delete next.ended;
         next.rev = (STATE.rev || 0) + 1;
-        var body = { message: (reset ? 'Clear all CAT 2.0 scores' : 'Update CAT 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
+        var body = { message: (reset ? 'Clear all CAT 2.0 scores' : end ? 'End CAT 2.0' : end === null ? 'Reopen CAT 2.0' : 'Update CAT 2.0 scores') + ' (rev ' + next.rev + ')' + (who ? ' by ' + who : ''),
           content: b64e(JSON.stringify(next, null, 1) + '\n'), branch: CFG.branch };
         if (cur.sha) body.sha = cur.sha;
         return gh('PUT', body).then(function (r) {
@@ -1248,9 +1283,10 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   }
 
   /* smaller header for the pages that are not a tournament */
-  function pageHead(eyebrow, title, sub) {
+  function pageHead(eyebrow, title, sub, badge) {
     return h('div', { class: 'hero phead' + (revealed ? '' : ' intro'), id: 'top' }, h('div', { class: 'hero-in' }, h('div', { class: 'hero-copy' },
-      h('p', { class: 'eyebrow', text: eyebrow }), h('h1', { text: title }), h('p', { class: 'sub', text: sub }))));
+      h('p', { class: 'eyebrow', text: eyebrow }), h('div', { class: 'titlerow' }, h('h1', { text: title }), badge ? h('b', { class: 'soon', text: badge }) : null),
+      h('p', { class: 'sub', text: sub }))));
   }
 
   var SOCIAL = [
@@ -1493,17 +1529,89 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     if (scDlg && scDlg.open) scPaint();
   }
 
-  /* the live tab between tournaments: CAT 2.0's champions and links to its results */
+  /* ---------- podium: the top 3 of a tournament that an admin has ended (state.ended.top = [1st, 2nd, 3rd]) ---------- */
+  var PLACE = ['1st', '2nd', '3rd'];
+  function podium(tr, id) {
+    var top = tr.state.ended.top;
+    /* 2nd on the left, 1st in the middle, 3rd on the right */
+    return h('section', { class: 'podium', id: id || null, 'aria-label': 'CAT ' + tr.ver + ' top 3' },
+      h('p', { class: 'k', text: 'CAT ' + tr.ver + ' podium' }),
+      h('ol', { class: 'steps' }, [1, 0, 2].map(function (i) {
+        var t = tr.T[top[i]];
+        return t ? h('li', { class: 'step p' + (i + 1), style: tint(t) },
+          h('span', { class: 'em', 'aria-hidden': 'true', text: t.e }),
+          h('b', { class: 'tname', text: tn(t) }),
+          t.n ? null : h('span', { class: 'pl', text: t.p.join(', ') }),
+          h('span', { class: 'block' }, h('span', { text: PLACE[i] }))) : h('li', { class: 'step p' + (i + 1) });
+      })));
+  }
+  function photoRow(tr) {
+    var set = { name: 'CAT ' + tr.ver, items: tr.photos };
+    return h('div', { class: 'photos' }, tr.photos.map(function (it, i) {
+      return h('button', { class: 'gi', type: 'button', 'aria-label': 'Open: ' + it.alt, onclick: function () { openLb(set, i); } },
+        h('img', { src: it.th, alt: it.alt, decoding: 'async', width: '520', height: '390' }));
+    }));
+  }
+  /* the CAT 2.0 top 3 photo: hover (or tap) a person to see who they are. Left edge of each person, in % of the width. */
+  var TOP3_TAGS = [['Josh', 2, 0], ['Anand', 2, 28], ['Harish', 1, 41], ['Yatharth', 1, 54], ['Mitchel', 3, 66], ['David', 3, 78]];
+  function top3Photo() {
+    var p = CAT2.photos[0];
+    var tags = TOP3_TAGS.map(function (x, i) {
+      var w = (i + 1 < TOP3_TAGS.length ? TOP3_TAGS[i + 1][2] : 100) - x[2];
+      var b = h('button', { class: 'tag', type: 'button', style: 'left:' + x[2] + '%;width:' + w + '%', 'aria-label': x[0] + ', ' + PLACE[x[1] - 1] + ' place',
+        onclick: function () { var on = b.classList.contains('on'); tags.forEach(function (t) { t.classList.remove('on'); }); b.classList.toggle('on', !on); } },
+        h('span', { class: 'tip' }, h('b', { text: x[0] }), ' · ' + PLACE[x[1] - 1] + ' place'));
+      return b;
+    });
+    return h('figure', { class: 'top3' }, h('div', { class: 'shot' }, h('img', { src: p.src, alt: p.alt, decoding: 'async', width: '1600', height: '1114' }), tags),
+      h('figcaption', { class: 'note', text: 'CAT 2.0 top 3. Hover over or tap a player to see their name.' }));
+  }
+
+  /* admins end a tournament when they decide, whether or not every score is in; the podium then shows on the site */
+  function endBox() {
+    if (STATE.ended) return h('div', { class: 'danger' }, h('p', { text: 'This tournament has ended and the podium is showing. Reopen it to change the top 3.' }),
+      twoTap('Reopen tournament', function () { if (!saveBlock()) save(false, null); }));
+    var K = R.K, f = K[TR.final], third = TR.third && K[TR.third].win;
+    if (!third) {
+      /* no 3rd place game: suggest the semi-final loser with the better pool record */
+      var ls = TR.bracket[0].map(function (id) { return K[id].lose; }).filter(Boolean);
+      ls.sort(function (x, y) { var a = R.rows[x], b = R.rows[y]; return (b.w - a.w) || (b.pf - b.pa) - (a.pf - a.pa); });
+      third = ls[0];
+    }
+    var pick = [f.win, f.lose, third];
+    var sels = PLACE.map(function (pl, i) {
+      return h('select', { class: 'field', id: 'end' + i, 'aria-label': pl + ' place' }, h('option', { value: '', text: pl + ' place: pick a team' }),
+        TEAMS.map(function (t) { return h('option', { value: t.id, text: pl + ': ' + t.e + ' ' + tn(t), selected: t.id === pick[i] }); }));
+    });
+    return h('div', { class: 'danger endbox' },
+      h('p', null, h('b', { text: 'End the tournament. ' }), 'Check the top 3, then tap End tournament. The podium shows at the top of this page and on the CAT 3.0 page. Unsaved scores are saved with it.'),
+      sels,
+      endMsg ? h('p', { class: 'access no', role: 'alert', text: endMsg }) : null,
+      twoTap('End tournament', function () {
+        var top = sels.map(function (x) { return x.value; });
+        if (saveBlock()) endMsg = 'This device cannot save yet. Paste the GitHub token in the box at the top first.';
+        else if (top.indexOf('') > -1 || top[0] === top[1] || top[0] === top[2] || top[1] === top[2]) endMsg = 'Pick three different teams.';
+        else { endMsg = ''; save(false, { top: top }); return; }
+        render();
+      }));
+  }
+  var endMsg = '';
+
+  /* the live tab between tournaments: coming soon, photos and podiums from past tournaments, then the mini game */
   function renderSoon() {
-    var champ = R.K[TR.final].win;
-    root.appendChild(pageHead('Casual SG Advanced Tournament', 'CAT 3.0', 'Coming soon. The date, venue and teams go up here once they are set.'));
+    var past = [CAT2, CAT1].filter(function (tr) { return tr.state.ended; });
+    root.appendChild(pageHead('Casual SG Advanced Tournament', 'CAT 3.0', 'The date, venue and teams go up here once they are set.', 'COMING SOON'));
     root.appendChild(h('div', { class: 'wrap' },
-      gameSection(),
-      champ ? h('div', { class: 'champ' }, h('p', { class: 'k', text: 'CAT 2.0 champions' }),
-        h('p', { class: 'v', text: T[champ].e + ' ' + tn(T[champ]) }), h('p', { text: T[champ].p.join(', ') })) : null,
+      sh('CAT 2.0 highlights'),
+      h('div', { class: 'photos' }, top3Photo(),
+        h('button', { class: 'gi wide', type: 'button', 'aria-label': 'Open: ' + CAT2.photos[1].alt, onclick: function () { openLb({ name: 'CAT 2.0', items: CAT2.photos }, 1); } },
+          h('img', { src: CAT2.photos[1].src, alt: CAT2.photos[1].alt, decoding: 'async', loading: 'lazy', width: '1600', height: '1200' }))),
+      past.length ? sh('Past podiums') : null,
+      past.map(function (tr) { return podium(tr); }),
       h('div', { class: 'ctas' },
         h('a', { class: 'pill solid', href: '#cat2', text: 'CAT 2.0 results' }),
         h('a', { class: 'pill', href: '#gallery', onclick: function () { galKey = 'cat2'; sset('cat.gal', galKey); }, text: 'CAT 2.0 photos' })),
+      gameSection(),
       footer()));
   }
 
@@ -1544,8 +1652,11 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
     if (L >= 0 && SLOTS[L].g.some(open)) nexts.push(L);
     /* otherwise the next round to play in each pool (each pool runs on its own) */
     else SLOTS.forEach(function (s, i) { var k = s.grp || ''; if (!seen[k] && s.g.some(open)) { seen[k] = 1; nexts.push(i); } });
-    if (champ) wrap.appendChild(h('div', { class: 'champ', id: nexts.length ? null : 'live' }, h('p', { class: 'k', text: 'Champions' }),
+    if (STATE.ended) wrap.appendChild(podium(TR, nexts.length ? null : 'live'));
+    else if (champ) wrap.appendChild(h('div', { class: 'champ', id: nexts.length ? null : 'live' }, h('p', { class: 'k', text: 'Champions' }),
       h('p', { class: 'v', text: T[champ].e + ' ' + tn(T[champ]) }), h('p', { text: T[champ].p.join(', ') })));
+    if (TR.photos) wrap.appendChild(photoRow(TR));
+    if (adm) wrap.appendChild(endBox());
     nexts.forEach(function (idx, n) {
       var s = SLOTS[idx], live = idx === L;
       wrap.appendChild(h('div', { class: 'next', id: n ? null : 'live' },
@@ -1709,7 +1820,7 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   }
   var GALLERY = [
     { key: 'cat2', name: 'CAT 2.0', when: '25 October 2026',
-      items: [1, 2].map(function (n) { return { v: true, src: 'assets/gallery/cat2/v' + n + '.mp4', th: 'assets/gallery/cat2/v' + n + '-t.jpg' }; }).concat(shots('assets/gallery/cat2/', 98)) },
+      items: CAT2.photos.concat([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (n) { return { v: true, src: 'assets/gallery/cat2/v' + n + '.mp4', th: 'assets/gallery/cat2/v' + n + '-t.jpg' }; }), shots('assets/gallery/cat2/', 104)) },
     { key: 'cat1', name: 'CAT 1.0', when: '5 October 2026 · Kallang Beach Courts',
       items: [{ v: true, src: 'assets/gallery/cat1/v1.mp4', th: 'assets/gallery/cat1/v1-t.jpg' }].concat(shots('assets/gallery/cat1/', 33)) }
   ];
