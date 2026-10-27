@@ -65,7 +65,8 @@ export async function mount(root, store) {
 
   /* ---------- DOM: canvas, heads-up display, panels ---------- */
   root.textContent = '';
-  var canvas = el('canvas'); canvas.setAttribute('aria-label', 'Serve practice game. Swipe up on the court to serve.');
+  var canvas = el('canvas'); canvas.tabIndex = 0;
+  canvas.setAttribute('aria-label', 'Serve practice game. Swipe up on the court to serve, or hold Space to power up, use the left and right arrows to aim and let go to serve.');
   var hud = el('div', 's3d-hud');
   var top = el('div', 's3d-top'), lvEl = el('span', 's3d-chip', ''), tmEl = el('span', 's3d-chip tm', '2:00'), scEl = el('span', 's3d-chip', '0');
   top.append(lvEl, tmEl, scEl);
@@ -75,7 +76,7 @@ export async function mount(root, store) {
   function toolBtn(label, on, key) {
     var b = el('button', 's3d-tool'); b.type = 'button'; b.setAttribute('aria-label', label);
     b.setAttribute('aria-pressed', String(on)); b.title = label;
-    b.addEventListener('click', function () { var v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); if (key) store.set(key, v ? '' : 'off'); paintTools(); });
+    b.addEventListener('click', function () { if (state === 'play' || state === 'banner') setTimeout(function () { canvas.focus({ preventScroll: true }); }); var v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); if (key) store.set(key, v ? '' : 'off'); paintTools(); });
     return b;
   }
   var sndBtn = toolBtn('Sound', store.get('cat.serve.snd') !== 'off', 'cat.serve.snd');
@@ -396,6 +397,7 @@ export async function mount(root, store) {
     if (kind === 'menu') {
       box.append(el('p', 's3d-k', 'Serve practice'), el('h3', null, 'Knock them all over'),
         el('p', null, (coarse ? 'Swipe up' : 'Drag up') + ' on the court to serve. The faster the swipe, the harder the hit. Lean the swipe left or right to aim.'),
+        coarse ? null : el('p', null, 'Keyboard: hold Space to power up, ← → to aim, let go to serve. P pauses.'),
         el('p', null, '5 levels, 2 minutes. The dotted line shows where the ball goes, and fades out in the later levels.'));
       btn.textContent = 'Start'; btn.onclick = startGame;
       if (best) box.append(el('p', 's3d-best', 'Best score: ' + best));
@@ -423,12 +425,13 @@ export async function mount(root, store) {
     level = 0; score = 0; timeLeft = P.TIME; serves = 0; hitsTotal = 0; cleared = 0; lastTick = -1;
     trailDots.count = 0; hidePanel(); spawnLevel(0); readyBall();
     state = 'banner'; banner = 1.3; say('Level 1 · ' + LEVELS[0].name, 1.3); paintHud(); loop();
+    canvas.focus({ preventScroll: true });
   }
   function pause() {
     if (state !== 'play' && state !== 'banner') return;
     state = 'paused'; drag = null; guideDots.count = 0; ring.visible = false; power.classList.remove('on'); showPanel('pause');
   }
-  function resume() { hidePanel(); state = 'play'; buzz(10); loop(); }
+  function resume() { hidePanel(); state = 'play'; buzz(10); loop(); canvas.focus({ preventScroll: true }); }
   function endGame() {
     readyBall();
     state = 'over'; drag = null; guideDots.count = 0; ring.visible = false; power.classList.remove('on');
@@ -452,7 +455,7 @@ export async function mount(root, store) {
   }
   canvas.addEventListener('pointerdown', function (ev) {
     if (state !== 'play' || shot || drag) return;
-    ev.preventDefault(); audio();
+    ev.preventDefault(); audio(); canvas.focus({ preventScroll: true });
     try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
     drag = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, s: [{ x: ev.clientX, y: ev.clientY, t: ev.timeStamp }], p: 0, yaw: 0, ok: false };
     buzz(5);
@@ -475,6 +478,37 @@ export async function mount(root, store) {
   }
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
+
+  /* ---------- keyboard: hold to power up (the power rises and falls, so timing matters), arrows aim ---------- */
+  var kbYaw = 0, kbAim = 0, peek = 0;
+  var KB = { ' ': 'go', ArrowUp: 'go', w: 'go', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right', p: 'pause' };
+  canvas.addEventListener('keydown', function (ev) {
+    var k = KB[ev.key] || KB[ev.key.toLowerCase()];
+    if (!k) return;
+    ev.preventDefault();
+    if (k === 'pause') { pause(); return; }
+    if (state !== 'play') return;
+    if (k === 'left' || k === 'right') { kbAim = k === 'left' ? -1 : 1; if (!drag) { kbYaw = Math.max(-0.42, Math.min(0.42, kbYaw + kbAim * 0.03)); peek = 0.9; } return; }
+    if (ev.repeat || shot || drag) return;
+    audio(); drag = { kb: true, t: 0, p: -0.1, yaw: kbYaw, ok: true, s: [] }; buzz(5);
+  });
+  canvas.addEventListener('keyup', function (ev) {
+    var k = KB[ev.key] || KB[ev.key.toLowerCase()];
+    if (k === 'left' || k === 'right') { if (kbAim === (k === 'left' ? -1 : 1)) kbAim = 0; return; }
+    if (k !== 'go' || !drag || !drag.kb) return;
+    var d = drag; drag = null; guideDots.count = 0; ring.visible = false; power.classList.remove('on');
+    if (state === 'play' && !shot) { kbYaw = d.yaw; serve(d.p, d.yaw); shot.kb = true; }
+  });
+  canvas.addEventListener('blur', function () { kbAim = 0; if (drag && drag.kb) { drag = null; guideDots.count = 0; ring.visible = false; power.classList.remove('on'); } });
+  function kbStep(dt) {
+    if (drag && drag.kb) {
+      drag.t += dt;
+      var ph = drag.t / 1.4 % 2; /* 0 → 1 → 0 over 2.8 s */
+      drag.p = -0.1 + 1.35 * (ph < 1 ? ph : 2 - ph);
+      drag.yaw = Math.max(-0.42, Math.min(0.42, drag.yaw + kbAim * 0.5 * dt));
+    } else if (kbAim && state === 'play' && !shot) { kbYaw = Math.max(-0.42, Math.min(0.42, kbYaw + kbAim * 0.5 * dt)); peek = 0.9; }
+    if (peek > 0) peek -= dt;
+  }
 
   function serve(p, yaw) {
     serves++; swing = 0.22;
@@ -500,7 +534,7 @@ export async function mount(root, store) {
     stepBall(b, dt, windNow);
     if (netHit(z0, b)) {
       b.p[2] = P.BR; b.v[2] = Math.abs(b.v[2]) * 0.22; b.v[0] *= 0.3; b.v[1] = Math.min(b.v[1], 0);
-      if (!b.res) { b.res = 'net'; SFX.net(); buzz(70); say('Into the net. Swipe a bit faster.', 1.6); }
+      if (!b.res) { b.res = 'net'; SFX.net(); buzz(70); say(b.kb ? 'Into the net. Hold Space a bit longer.' : 'Into the net. Swipe a bit faster.', 1.6); }
     }
     if (b.p[0] < -14 || b.p[0] > 14 || b.p[2] < -20) { b.settle = 9; return; }
     targets.forEach(function (t) {
@@ -521,8 +555,8 @@ export async function mount(root, store) {
           if (!b.res) b.res = landing(b.p[0], b.p[2]);
           SFX.sand(); burst(b.p[0], 0.05, b.p[2], 10, 'sand');
           if (!b.hits) {
-            if (b.res === 'net') say('Too soft: it did not reach the net. Swipe faster.', 1.6);
-            else if (b.res === 'long') say('Long. Swipe a little slower.', 1.6);
+            if (b.res === 'net') say(b.kb ? 'Too soft: it did not reach the net. Hold Space longer.' : 'Too soft: it did not reach the net. Swipe faster.', 1.6);
+            else if (b.res === 'long') say(b.kb ? 'Long. Let go of Space at a lower power.' : 'Long. Swipe a little slower.', 1.6);
             else if (b.res === 'wide') say('Wide. Aim more to the middle.', 1.6);
             else if (b.res === 'in') say('In, but nothing hit.', 1.4);
           }
@@ -588,6 +622,7 @@ export async function mount(root, store) {
     /* arm: cocked while waiting, whips through on the serve */
     if (swing > 0) swing -= dt;
     rArm.rotation.x += ((swing > 0 ? ARM_HIT : shot ? -0.2 : ARM_COCK) - rArm.rotation.x) * Math.min(1, dt * (swing > 0 ? 40 : 8));
+    kbStep(dt);
     torso.rotation.x = drag ? -0.08 : 0;
     /* knocked-over targets tip away from the ball */
     targets.forEach(function (q) {
@@ -601,17 +636,19 @@ export async function mount(root, store) {
       q.obj.rotation.y += q.fall.spin * e;
     });
     /* the dotted line while swiping, cut shorter in later levels */
-    if (drag && drag.s.length > 1) {
-      var pr = predict(drag.p, drag.yaw, windNow), g = LEVELS[level].guide;
+    /* aiming with the arrow keys before powering up shows a medium serve */
+    var aim = drag && (drag.kb || drag.s.length > 1) ? drag : peek > 0 && state === 'play' && !shot ? { p: 0.45, yaw: kbYaw } : null;
+    if (aim) {
+      var pr = predict(aim.p, aim.yaw, windNow), g = LEVELS[level].guide;
       var col = pr.res === 'in' ? 0xffffff : 0xff6b5a;
       guideDots.material.color.setHex(col);
       placeDots(guideDots, pr.pts, g ? Math.max(0.12, g) : 0.12);
       ring.visible = g >= 1 && pr.res !== 'net';
       if (ring.visible) { ring.position.set(pr.land[0], 0.03, pr.land[2]); ring.material.color.setHex(col); }
       power.classList.add('on');
-      powerFill.style.transform = 'scaleY(' + Math.max(0.03, Math.min(1, (drag.p + 0.1) / 1.25)) + ')';
+      powerFill.style.transform = 'scaleY(' + Math.max(0.03, Math.min(1, (aim.p + 0.1) / 1.35)) + ')';
       powerFill.className = pr.res === 'in' ? 'ok' : 'bad';
-    }
+    } else if (!drag && (guideDots.count || ring.visible)) { guideDots.count = 0; ring.visible = false; power.classList.remove('on'); }
     if (trailFade > 0) { trailFade -= dt; trailDots.material.opacity = Math.max(0, Math.min(0.6, trailFade / 2)); if (trailFade <= 0) trailDots.count = 0; }
     if (flag.visible) { flag.rotation.y = (windNow < 0 ? Math.PI : 0) + Math.sin(clock * 6) * 0.15; flagCloth.rotation.x = Math.sin(clock * 9) * 0.1; }
     if (msgTimer > 0) { msgTimer -= dt; if (msgTimer <= 0) msgEl.classList.remove('on'); }

@@ -233,6 +233,7 @@ h1, h2, h3, p { margin: 0; }
 @media (min-width: 768px) { .s3d { aspect-ratio: 16 / 9; } }
 .s3d.full { position: fixed; inset: 0; z-index: 60; max-height: none; aspect-ratio: auto; border-radius: 0; }
 body.s3d-lock { overflow: hidden; }
+.s3d canvas:focus-visible { outline: 3px solid #2f7cf6; outline-offset: -3px; }
 .s3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 .s3d-load { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-weight: 700; }
 .s3d-hud { position: absolute; inset: 0; pointer-events: none; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
@@ -1512,13 +1513,13 @@ dialog.pop.turn { --H: 100vw; width: 100dvh; height: 100vw; inset: 0 auto auto 0
   function gameSection() {
     if (!GM) {
       GM = h('div', { class: 's3d' }, h('p', { class: 's3d-load', text: 'Loading the court…' }));
-      import('./assets/serve3d.js?v=1').then(function (m) { return m.mount(GM, { get: lget, set: lset }); }).catch(function (e) {
+      import('./assets/serve3d.js?v=2').then(function (m) { return m.mount(GM, { get: lget, set: lset }); }).catch(function (e) {
         console.error('game failed', e);
         GM.textContent = ''; GM.appendChild(h('p', { class: 's3d-load', text: 'The game could not load. Check the connection and reload the page.' }));
       });
     }
     return h('section', { class: 'game', id: 'game' }, sh('Serve practice'),
-      h('p', { class: 'note', text: 'Warm up for CAT 3.0. Swipe up to serve: the faster the swipe, the harder the hit. Knock over everything on the far side in 5 levels and 2 minutes.' }),
+      h('p', { class: 'note', text: 'Warm up for CAT 3.0. Swipe up to serve (or hold Space on a keyboard): the faster the swipe, the harder the hit. Knock over everything on the far side in 5 levels and 2 minutes.' }),
       GM);
   }
 
